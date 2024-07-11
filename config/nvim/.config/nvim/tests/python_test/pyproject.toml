@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "python-test"
+version = "0.1.0"
+description = ""
+authors = ["Kirk Sweeney <kirk.sweeney@LEGO.com>"]
+readme = "README.md"
+packages = [{include = "python_test"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pyspark = "^3.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
