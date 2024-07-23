@@ -6,7 +6,6 @@ with pkgs; [
   btop
   coreutils
   killall
-  # neofetch
   openssh
   sqlite
   wget
@@ -24,8 +23,6 @@ with pkgs; [
 
   # Text and terminal utilities
   htop
-  yq
-  jq
   ripgrep
   tree
   unrar
@@ -34,4 +31,10 @@ with pkgs; [
   # Python packages
   python311
   python311Packages.virtualenv # globally install virtualenv
+
+  # ai
+  ollama
+
+  # credential
+  docker-credential-helpers
 ]

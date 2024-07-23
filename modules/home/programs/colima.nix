@@ -13,6 +13,7 @@
         colima
       )
       minikube
+      lazydocker
     ];
   };
 }

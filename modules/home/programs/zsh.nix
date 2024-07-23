@@ -59,6 +59,8 @@
         if [[ $(uname -m) == 'arm64' ]]; then
             eval "$(/opt/homebrew/bin/brew shellenv)"
         fi
+
+        [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
       '';
     };
 

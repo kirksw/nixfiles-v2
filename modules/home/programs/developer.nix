@@ -12,7 +12,22 @@ let name = "Kirk Sweeney";
   config = lib.mkIf config.developer.enable {
     # development tools
     home.packages = with pkgs; [
-      lazygit
+      # cli tools 
+      lazygit # tui git client
+      pet # snippet manager
+      yq # cli yaml processor
+      jq # cli json processor
+      curl # cli http client
+
+      # languages
+      go
+      rustup
+
+      # rest client
+      bruno
+
+      # github cli
+      gh
     ];
 
     # tooling management

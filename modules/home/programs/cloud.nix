@@ -7,9 +7,9 @@
 
   config = lib.mkIf config.cloud.enable {
     # gcp
-    # environment.systemPackages = with pkgs; [
-    #   (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
-    # ];
+    home.packages = with pkgs; [
+      (google-cloud-sdk.withExtraComponents [google-cloud-sdk.components.gke-gcloud-auth-plugin])
+    ];
     # aws
     # azure
     # linode

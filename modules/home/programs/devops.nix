@@ -9,8 +9,7 @@
   config = lib.mkIf config.devops.enable {
     home.packages = with pkgs; [
       # terraform
-      terraform
-      terragrunt
+      tenv
 
       # ansible
       ansible
@@ -19,6 +18,7 @@
       # container/kubernetes
       docker
       kubectl
+      krew
       kubernetes-helm
       argocd 
       k9s

@@ -1,14 +1,8 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 let 
   user = "kirk";
 in {
-  # imports = [
-  #   ../../modules/shared
-  #   ../../modules/shared/cachix
-  #   ../../modules/darwin/dock
-  # ];
-
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
   nixpkgs.config.allowUnfree = true;
@@ -106,8 +100,11 @@ in {
 
       trackpad = {
         Clicking = true;
-        TrackpadThreeFingerDrag = false; # fucking hate this being true
+        TrackpadThreeFingerDrag = false; # true is no bueno
       };
+
+      screencapture.location = "~/Pictures/Screenshots";
+      screensaver.askForPasswordDelay = 10; # in seconds
     };
 
     keyboard = {
