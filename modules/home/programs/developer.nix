@@ -18,6 +18,7 @@ let name = "Kirk Sweeney";
       yq # cli yaml processor
       jq # cli json processor
       curl # cli http client
+      envsubst # cli env var substitution
 
       # languages
       go
@@ -37,17 +38,16 @@ let name = "Kirk Sweeney";
 
       globalConfig = {
         tools = {
-          python = "3.10";
-          node = "lts";
-          go = "prefix:1.20";
-          rust = "nightly";
-          java = "zulu-17";
-          dotnet = "7.0.201";
-          perl = "latest";
-          lua = "5.4";
-          maven = "3.9";
-          gradle = "8.7";
-          sbt = "latest";
+          python = "3.12.5";
+          node = "22.7.0";
+          go = "prefix:1.23";
+          java = "zulu-17.52.17";
+          dotnet = "8.0.401";
+          perl = "5.40.0";
+          lua = "5.4.7";
+          maven = "3.9.9";
+          gradle = "8.9";
+          sbt = "1.10.1";
           "cargo:arroyo" = "latest";
         };
       };
@@ -56,7 +56,7 @@ let name = "Kirk Sweeney";
     # every programmers best friend
     programs.git = {
       enable = true;
-      ignores = [ "*.swp" ];
+      ignores = ["*.swp"];
       userName = name;
       userEmail = email;
       lfs = {

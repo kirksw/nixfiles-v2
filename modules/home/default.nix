@@ -13,5 +13,6 @@
     ./programs/youtube.nix
     ./programs/zellij.nix
     ./programs/zsh.nix
+    ./programs/gowish.nix
   ];
 }

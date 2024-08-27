@@ -44,6 +44,7 @@ in {
   environment.variables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
+    INFISICAL_API_URL = "https://env.gowish.com/api";
   };
 
   fonts.packages = with pkgs; [
@@ -117,7 +118,7 @@ in {
     brewPrefix = "/opt/homebrew/bin"; # needed for arm64
     enable = true;
     casks = pkgs.callPackage ../../modules/darwin/casks.nix {};
-    # onActivation.cleanup = "uninstall";
+    onActivation.cleanup = "uninstall";
 
     # These app IDs are from using the mas CLI app
     # mas = mac app store

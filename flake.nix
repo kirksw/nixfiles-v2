@@ -35,10 +35,10 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, neovim-nightly-overlay } @inputs:
     let
       user = "kirk";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -97,8 +97,8 @@
                 sharedModules = [
                   ./modules/home
                 ];
-                # Optionally, use home-manager.extraSpecialArgs to pass arguments to home.nix
-                # extraSpecialArgs = { inherit inputs; };
+                # we pass inputs into home-manager so that we can utilize the overlays
+                extraSpecialArgs = { inherit inputs; };
               };
             }
             nix-homebrew.darwinModules.nix-homebrew

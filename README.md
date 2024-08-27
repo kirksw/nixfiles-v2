@@ -10,13 +10,19 @@ I wanted better handling of both mac and nix clients, as the initial config was 
 - [ ] reimplement darwin dock setup
 - [ ] correctly setup config for nixos host
 
+## Getting started
+
+- install nix
+- clone this repo
+- mac: `darwin-rebuild switch --flake ~/nixfiles-v2#aarch64-darwin`
+
 ## References
 
-### inspirations:
+### inspirations
 
 - [gh:dustinlyons/nisox-config](https://github.com/dustinlyons/nixos-config)
 
-### documentation:
+### documentation
 
 - [gh:nixpkgs](https://github.com/NixOS/nixpkgs)
 - [gh:home-manager](https://github.com/nix-community/home-manager/tree/master/modules/programs)

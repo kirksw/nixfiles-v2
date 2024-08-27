@@ -5,7 +5,9 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
+    # ideally move to packages
     neofetch
+    hugo
   ];
 
   # enabled custom modules
@@ -18,6 +20,7 @@
   devops.enable = true;
   wezterm.enable = true;
   youtube.enable = true;
+  gowish.enable = true;
 
   # disabled custom modules
   zellij.enable = false;
