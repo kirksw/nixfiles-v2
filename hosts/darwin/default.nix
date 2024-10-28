@@ -1,8 +1,12 @@
-{ pkgs, ... }:
+{ pkgs, homebrew-core, homebrew-cask, homebrew-bundle, ... }:
 
 let 
   user = "kirk";
 in {
+  imports = [
+    ../../modules/shared
+  ];
+
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
   nixpkgs.config.allowUnfree = true;
@@ -115,11 +119,26 @@ in {
   };
 
   homebrew = {
-    brewPrefix = "/opt/homebrew/bin"; # needed for arm64
     enable = true;
-    casks = pkgs.callPackage ../../modules/darwin/casks.nix {};
-    onActivation.cleanup = "uninstall";
 
+    global = {
+      brewfile = true;
+      autoUpdate = false;
+    };
+
+    brewPrefix = "/opt/homebrew/bin"; # needed for arm64
+    casks = pkgs.callPackage ../../modules/darwin/casks.nix {};
+    
+    onActivation = {
+      autoUpdate = false;
+      upgrade = false;
+      cleanup = "zap";
+    };
+
+    brews = [
+      #"infisical@0.24.0"
+    ];
+    
     # These app IDs are from using the mas CLI app
     # mas = mac app store
     # https://github.com/mas-cli/mas

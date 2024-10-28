@@ -12,7 +12,7 @@ let name = "Kirk Sweeney";
   config = lib.mkIf config.developer.enable {
     # development tools
     home.packages = with pkgs; [
-      # cli tools 
+      # cli tools
       lazygit # tui git client
       pet # snippet manager
       yq # cli yaml processor
@@ -23,6 +23,9 @@ let name = "Kirk Sweeney";
       # languages
       go
       rustup
+
+      # doc
+      pandoc
 
       # rest client
       bruno
@@ -37,17 +40,21 @@ let name = "Kirk Sweeney";
       enableZshIntegration = true;
 
       globalConfig = {
+        #settings = {
+        #  pipx_uvx = true;
+        #};
+
         tools = {
           python = "3.12.5";
           node = "22.7.0";
           go = "prefix:1.23";
-          java = "zulu-17.52.17";
+          java = "zulu-21.36.17";
           dotnet = "8.0.401";
           perl = "5.40.0";
           lua = "5.4.7";
-          maven = "3.9.9";
           gradle = "8.9";
           sbt = "1.10.1";
+          uv = "0.4.17";
           "cargo:arroyo" = "latest";
         };
       };

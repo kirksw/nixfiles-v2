@@ -1,5 +1,5 @@
 
-{ pkgs, lib, config, unstable, ... }:
+{ pkgs, lib, config, pkgs-unstable, ... }:
 
 {
   options = {

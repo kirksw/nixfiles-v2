@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, pkgs-unstable, lib, config, ... }:
 
 {
   options = {
@@ -8,7 +8,7 @@
   config = lib.mkIf config.gowish.enable {
     home.packages = with pkgs; [
       # secret manager
-      infisical
+      pkgs-unstable.infisical
     ];
   };
 }

@@ -7,7 +7,7 @@
       url = "github:nix-community/home-manager/release-24.05";
       inputs.nixpkgs.follows = "nixpkgs"; 
     };
-    # nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     # home-manager-unstable = {
     #   url = "github:nix-community/home-manager";
     #   inputs.nixpkgs.follows = "nixpkgs-unstable";
@@ -31,6 +31,14 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    homebrew-infisical = {
+      url = "github:infisical/homebrew-get-cli";
+      flake = false;
+    };
+    homebrew-nikitabobko = {
+      url = "github:nikitabobko/homebrew-tap";
+      flake = false;
+    };
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -38,7 +46,7 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, neovim-nightly-overlay } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-unstable, disko, neovim-nightly-overlay } @inputs:
     let
       user = "kirk";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -98,7 +106,13 @@
                   ./modules/home
                 ];
                 # we pass inputs into home-manager so that we can utilize the overlays
-                extraSpecialArgs = { inherit inputs; };
+                extraSpecialArgs = { 
+                  inherit inputs; 
+                  pkgs-unstable = import nixpkgs-unstable {
+                    inherit system;
+                    config.allowUnfree = true;
+                  };
+                };
               };
             }
             nix-homebrew.darwinModules.nix-homebrew
@@ -110,6 +124,8 @@
                   "homebrew/homebrew-core" = homebrew-core;
                   "homebrew/homebrew-cask" = homebrew-cask;
                   "homebrew/homebrew-bundle" = homebrew-bundle;
+                  "infisical/homebrew-get-cli" = homebrew-infisical;
+                  "nikitabobko/homebrew-tap" = homebrew-nikitabobko;
                 };
                 mutableTaps = false;
                 autoMigrate = true;

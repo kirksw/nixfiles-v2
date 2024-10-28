@@ -33,7 +33,8 @@ with pkgs; [
   python311Packages.virtualenv # globally install virtualenv
 
   # ai
-  ollama
+  # ollama (outdated)
+  llama-cpp
 
   # credential
   docker-credential-helpers
