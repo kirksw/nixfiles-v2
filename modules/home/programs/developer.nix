@@ -1,9 +1,10 @@
 
 { pkgs, lib, config, ... }:
 
-let name = "Kirk Sweeney";
-    user = "kirk";
-    email = "kirk.sweeney@outlook.com"; in
+let 
+  name = "Kirk Sweeney";
+  email = "kirk.sweeney@outlook.com"; 
+in
 {
   options = {
     developer.enable = lib.mkEnableOption "enables developer tools";
@@ -78,6 +79,23 @@ let name = "Kirk Sweeney";
         pull.rebase = true;
         rebase.autoStash = true;
       };
+
+      includes = [
+        {
+          condition = "gitdir:~/projects/work/*";
+          contents = {
+            user = {
+              name = name;
+              email = "ks@onskeskyen.dk";
+              signingKey = builtins.readFile ~/secrets/work.gpg;
+            };
+
+            commit = {
+              gpgSign = true;
+            };
+          };
+        }
+      ];
     };
   };
 }
