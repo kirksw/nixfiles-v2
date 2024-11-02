@@ -3,11 +3,11 @@
 let user = "kirk";
     keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
 {
-  # imports = [
-  #   ../../modules/nixos/disk-config.nix
-  #   ../../modules/shared
-  #   ../../modules/shared/cachix
-  # ];
+  imports = [
+    ../../modules/shared
+    #../../modules/nixos/disk-config.nix
+    #../../modules/shared/cachix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot = {
@@ -267,10 +267,10 @@ let user = "kirk";
       commands = [
        {
          command = "${pkgs.systemd}/bin/reboot";
-         options = [ "NOPASSWD" ];
+         options = ["NOPASSWD"];
         }
       ];
-      groups = [ "wheel" ];
+      groups = ["wheel"];
     }];
   };
 
@@ -288,6 +288,6 @@ let user = "kirk";
     inetutils
   ];
 
-  system.stateVersion = "21.05"; # Don't change this
+  system.stateVersion = "24.05"; # Don't change this
 
 }

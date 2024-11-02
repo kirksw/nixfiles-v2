@@ -21,8 +21,7 @@
   wezterm.enable = true;
   youtube.enable = true;
   gowish.enable = true;
-
-  # disabled custom modules
+  homerow.enable = false;
   zellij.enable = false;
   vscode.enable = false;
 }

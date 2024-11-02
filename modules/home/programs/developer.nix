@@ -33,7 +33,15 @@ in
 
       # github cli
       gh
+
+      # devenv
+      devenv
     ];
+
+    # direnv
+    programs.direnv = {
+      enable = true;
+    };
 
     # tooling management
     programs.mise = {
@@ -82,12 +90,12 @@ in
 
       includes = [
         {
-          condition = "gitdir:~/projects/work/*";
+          condition = "gitdir:~/projects/work/";
           contents = {
             user = {
               name = name;
               email = "ks@onskeskyen.dk";
-              signingKey = builtins.readFile ~/secrets/work.gpg;
+              signingKey = builtins.replaceStrings ["\n"] [""] (builtins.readFile ~/secrets/work.gpg);
             };
 
             commit = {

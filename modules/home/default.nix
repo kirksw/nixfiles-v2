@@ -14,5 +14,6 @@
     ./programs/zellij.nix
     ./programs/zsh.nix
     ./programs/gowish.nix
+    ./services/homerow.nix
   ];
 }
