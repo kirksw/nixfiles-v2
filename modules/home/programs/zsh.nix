@@ -60,7 +60,13 @@
             eval "$(/opt/homebrew/bin/brew shellenv)"
         fi
 
+        # k8s plugin manager
         [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
+
+        # if idea is installed, add it to the path
+        if [[ -f "/Applications/IntelliJ IDEA.app/Contents/MacOS/idea" ]]; then
+          export PATH="$PATH:/Applications/IntelliJ IDEA.app/Contents/MacOS"
+        fi
       '';
     };
 
