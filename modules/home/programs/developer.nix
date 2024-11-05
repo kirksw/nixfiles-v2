@@ -24,6 +24,7 @@ in
       # languages
       go
       rustup
+      coursier
 
       # doc
       pandoc
@@ -54,16 +55,17 @@ in
         #};
 
         tools = {
-          python = "3.12.5";
-          node = "22.7.0";
+          python = "3.12";
+          node = "22.7";
           go = "prefix:1.23";
-          java = "zulu-21.36.17";
-          dotnet = "8.0.401";
-          perl = "5.40.0";
-          lua = "5.4.7";
-          gradle = "8.9";
-          sbt = "1.10.1";
-          uv = "0.4.17";
+          java = "adoptopenjdk-21";
+          dotnet = "8.0";
+          perl = "5.40";
+          lua = "5.4";
+          gradle = "8.10";
+          sbt = "1.10";
+          uv = "0.4.29";
+          scala = "2.13";
           "cargo:arroyo" = "latest";
         };
       };
