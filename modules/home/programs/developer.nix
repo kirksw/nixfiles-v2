@@ -37,6 +37,12 @@ in
 
       # devenv
       devenv
+
+      # nix
+      # nil
+      
+      # duckdb
+      # duckdb
     ];
 
     # direnv

@@ -28,14 +28,14 @@ with pkgs; [
   unrar
   unzip
 
-  # Python packages
-  python311
-  python311Packages.virtualenv # globally install virtualenv
-
   # ai
   # ollama (outdated)
   llama-cpp
 
   # credential
   docker-credential-helpers
+
+  # ???
+  # vscode
+  # kcat
 ]

@@ -8,7 +8,7 @@
   config = lib.mkIf config.youtube.enable {
     home.packages = with pkgs; [
       yt-dlp
-      mpv
+      # mpv
       # ytui_music
     ];
   };

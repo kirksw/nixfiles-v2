@@ -1,4 +1,4 @@
-{ pkgs, homebrew-core, homebrew-cask, homebrew-bundle, ... }:
+{ pkgs, pkgs-unstable, ... }:
 
 let 
   user = "kirk";
@@ -45,6 +45,11 @@ in {
   ];
   programs.zsh.enable = true;
 
+# services.aerospace = {
+#   enable = true;
+#   #package = pkgs-unstable.aerospace;
+# };
+
   environment.variables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
@@ -60,8 +65,6 @@ in {
     dejavu_fonts
     jetbrains-mono
     font-awesome
-    noto-fonts
-    noto-fonts-emoji
   ];
 
   security.pam.enableSudoTouchIdAuth = true;

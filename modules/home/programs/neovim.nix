@@ -8,6 +8,7 @@
   config = lib.mkIf config.neovim.enable {
     programs.neovim = {
       enable = true;
+      # package = pkgs.neovim;
       package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
       viAlias = true;
       vimAlias = true;

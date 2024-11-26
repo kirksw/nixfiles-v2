@@ -11,10 +11,6 @@
       # terraform
       tenv
 
-      # ansible
-      ansible
-      ansible-lint
-
       # container/kubernetes
       docker
       kubectl
