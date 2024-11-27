@@ -6,15 +6,18 @@ I wanted better handling of both mac and nix clients, as the initial config was 
 
 ## TODO
 
-- [ ] add overlay example (neovim-nightly)
 - [ ] reimplement darwin dock setup
-- [ ] correctly setup config for nixos host
 
 ## Getting started
 
 - install nix
 - clone this repo
 - mac: `darwin-rebuild switch --flake ~/nixfiles-v2#aarch64-darwin`
+- nixos: `nixos-rebuild switch --flake ~/nixfiles-v2#x86_64-linux`
+
+## Adding packages
+
+
 
 ## References
 

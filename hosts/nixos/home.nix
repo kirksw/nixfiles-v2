@@ -3,26 +3,6 @@
 let
   user = "kirk";
   xdg_configHome  = "/home/${user}/.config";
-
-  polybar-user_modules = builtins.readFile (pkgs.substituteAll {
-    src = ../../modules/nixos/config/polybar/user_modules.ini;
-    packages = "${xdg_configHome}/polybar/bin/check-nixos-updates.sh";
-    searchpkgs = "${xdg_configHome}/polybar/bin/search-nixos-updates.sh";
-    launcher = "${xdg_configHome}/polybar/bin/launcher.sh";
-    powermenu = "${xdg_configHome}/rofi/bin/powermenu.sh";
-    calendar = "${xdg_configHome}/polybar/bin/popup-calendar.sh";
-  });
-
-  polybar-config = pkgs.substituteAll {
-    src = ../../modules/nixos/config/polybar/config.ini;
-    font0 = "DejaVu Sans:size=12;3";
-    font1 = "feather:size=12;3"; # from overlay
-  };
-
-  polybar-modules = builtins.readFile ./../modules/nixos/config/polybar/modules.ini;
-  polybar-bars = builtins.readFile ../../moudles/nixos/config/polybar/bars.ini;
-  polybar-colors = builtins.readFile ../../modules/nixos/config/polybar/colors.ini;
-
 in
 {
   home = {

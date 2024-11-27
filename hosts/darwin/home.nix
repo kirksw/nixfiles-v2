@@ -10,7 +10,12 @@
     hugo
   ];
 
+  # shared
+
   # enabled custom modules
+  darwin.aerospace.enable = true;
+
+  # home modules
   zsh.enable = true;
   neovim.enable = true;
   developer.enable = true;

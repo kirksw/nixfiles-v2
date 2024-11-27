@@ -2,18 +2,17 @@
 
 {
   imports = [ 
-    ./programs/cloud.nix
-    ./programs/colima.nix
-    ./programs/developer.nix
-    ./programs/devops.nix
-    ./programs/neovim.nix
-    ./programs/tmux.nix
-    ./programs/vscode.nix
-    ./programs/wezterm.nix
-    ./programs/youtube.nix
-    ./programs/zellij.nix
-    ./programs/zsh.nix
-    ./programs/gowish.nix
-    ./services/homerow.nix
+    ./toggle/cloud.nix
+    ./toggle/colima.nix
+    ./toggle/developer.nix
+    ./toggle/devops.nix
+    ./toggle/neovim.nix
+    ./toggle/tmux.nix
+    ./toggle/vscode.nix
+    ./toggle/wezterm.nix
+    ./toggle/youtube.nix
+    ./toggle/zellij.nix
+    ./toggle/zsh.nix
+    ./toggle/gowish.nix
   ];
 }
