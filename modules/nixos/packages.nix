@@ -50,20 +50,5 @@ shared-packages ++ [
   i3lock-fancy-rapid
   libnotify
   pcmanfm # File browser
-  sqlite
-  xdg-utils
-
-  # Other utilities
-  yad # yad-calendar is used with polybar
-  xdotool
   google-chrome
-
-  # PDF viewer
-  zathura
-
-  # Music and entertainment
-  spotify
-
-  # docker
-  docker
 ]

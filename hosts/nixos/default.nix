@@ -4,7 +4,7 @@ let
   user = "kirk";
 in {
   imports = [
-    ../../hardware-configuration.nix
+    ./hardware-configuration.nix
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -25,9 +25,9 @@ in {
   time.timeZone = "Europe/Copenhagen";
 
   networking = {
-    hostName = "%HOST%"; # Define your hostname.
+    hostName = "nixos-desktop"; # Define your hostname.
     useDHCP = false;
-    interfaces."%INTERFACE%".useDHCP = true;
+    interfaces."enp5s0".useDHCP = true;
   };
 
   # Turn on flag for proprietary software
@@ -55,13 +55,7 @@ in {
     xserver = {
       enable = true;
 
-      # Uncomment these for AMD or Nvidia GPU
-      # boot.initrd.kernelModules = [ "amdgpu" ];
-      # videoDrivers = [ "amdgpu" ];
       videoDrivers = [ "nvidia" ];
-
-      # Uncomment for Nvidia GPU
-      # This helps fix tearing of windows for Nvidia cards
       screenSection = ''
         Option       "metamodes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
         Option       "AllowIndirectGLXProtocol" "off"
@@ -94,95 +88,8 @@ in {
     # Let's be able to SSH into this machine
     openssh.enable = true;
 
-    # Picom, my window compositor with fancy effects
-    #
-    # Notes on writing exclude rules:
-    #
-    #   class_g looks up index 1 in WM_CLASS value for an application
-    #   class_i looks up index 0
-    #
-    #   To find the value for a specific application, use `xprop` at the
-    #   terminal and then click on a window of the application in question
-    #
     picom = {
       enable = true;
-      settings = {
-        animations = true;
-        animation-stiffness = 300.0;
-        animation-dampening = 35.0;
-        animation-clamping = false;
-        animation-mass = 1;
-        animation-for-workspace-switch-in = "auto";
-        animation-for-workspace-switch-out = "auto";
-        animation-for-open-window = "slide-down";
-        animation-for-menu-window = "none";
-        animation-for-transient-window = "slide-down";
-        corner-radius = 12;
-        rounded-corners-exclude = [
-          "class_i = 'polybar'"
-          "class_g = 'i3lock'"
-        ];
-        round-borders = 3;
-        round-borders-exclude = [];
-        round-borders-rule = [];
-        shadow = true;
-        shadow-radius = 8;
-        shadow-opacity = 0.4;
-        shadow-offset-x = -8;
-        shadow-offset-y = -8;
-        fading = false;
-        inactive-opacity = 0.8;
-        frame-opacity = 0.7;
-        inactive-opacity-override = false;
-        active-opacity = 1.0;
-        focus-exclude = [
-        ];
-
-        opacity-rule = [
-          "100:class_g = 'i3lock'"
-          "60:class_g = 'Dunst'"
-          "100:class_g = 'Alacritty' && focused"
-          "90:class_g = 'Alacritty' && !focused"
-        ];
-
-        blur-kern = "3x3box";
-        blur = {
-          method = "kernel";
-          strength = 8;
-          background = false;
-          background-frame = false;
-          background-fixed = false;
-          kern = "3x3box";
-        };
-
-        shadow-exclude = [
-          "class_g = 'Dunst'"
-        ];
-
-        blur-background-exclude = [
-          "class_g = 'Dunst'"
-        ];
-
-        backend = "glx";
-        vsync = false;
-        mark-wmwin-focused = true;
-        mark-ovredir-focused = true;
-        detect-rounded-corners = true;
-        detect-client-opacity = false;
-        detect-transient = true;
-        detect-client-leader = true;
-        use-damage = true;
-        log-level = "info";
-
-        wintypes = {
-          normal = { fade = true; shadow = false; };
-          tooltip = { fade = true; shadow = false; opacity = 0.75; focus = true; full-shadow = false; };
-          dock = { shadow = false; };
-          dnd = { shadow = false; };
-          popup_menu = { opacity = 1.0; };
-          dropdown_menu = { opacity = 1.0; };
-        };
-      };
     };
 
     gvfs.enable = true; # Mount, trash, and other functionalities
@@ -196,22 +103,7 @@ in {
   hardware = {
     opengl.enable = true;
     pulseaudio.enable = true;
-    hardware.nvidia.modesetting.enable = true;
-
-    # Enable Xbox support
-    # hardware.xone.enable = true;
-
-    # Crypto wallet support
-    ledger.enable = true;
-  };
-
-
-  # Add docker daemon
-  virtualisation = {
-    docker = {
-      enable = true;
-      logDriver = "json-file";
-    };
+    nvidia.modesetting.enable = true;
   };
 
   # It's me, it's you, it's everyone
@@ -223,11 +115,6 @@ in {
         "docker"
       ];
       shell = pkgs.zsh;
-      openssh.authorizedKeys.keys = keys;
-    };
-
-    root = {
-      openssh.authorizedKeys.keys = keys;
     };
   };
 
@@ -260,5 +147,4 @@ in {
   ];
 
   system.stateVersion = "24.05"; # Don't change this
-
 }

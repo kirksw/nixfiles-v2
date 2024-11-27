@@ -71,9 +71,6 @@
       # TODO: create some apps for making installation and management easier
     in
     {
-      devShells = forAllSystems devShell;
-      apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
-
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system: darwin.lib.darwinSystem {
           inherit system;
           specialArgs = inputs;
@@ -132,7 +129,7 @@
               useGlobalPkgs = true;
               useUserPackages = true;
               users.${user} = import ./hosts/nixos/home.nix;
-              home-manager.sharedModules = [
+              sharedModules = [
                   import ./modules/home
               ];
               # we pass inputs into home-manager so that we can utilize the overlays
