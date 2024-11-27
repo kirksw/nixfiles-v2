@@ -16,7 +16,4 @@ _:
 
   # Browsers
   "arc"
-
-  # tiling window manager
-  # "nikitabobko/tap/aerospace"
 ]
