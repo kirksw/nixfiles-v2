@@ -1,5 +1,5 @@
 
-{ pkgs, lib, config, pkgs-unstable, ... }:
+{ pkgs, lib, config, ... }:
 
 {
   options = {
@@ -36,6 +36,7 @@
           "rust"
           "python"
           "deno"
+          "kubectl"
         ];
       };
 

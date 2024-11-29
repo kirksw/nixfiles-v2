@@ -16,6 +16,8 @@
         local action = wezterm.action
 
         return {
+          window_decorations = "RESIZE",
+
           font = wezterm.font("Fira Code"),
           font_size = 16.0,
 
@@ -49,6 +51,11 @@
                 action.SendKey({ key = "a", mods = "CTRL" }),
                 action.SendKey({ key = "K" }),
               }),
+            },
+            {
+              key = "t",
+              mods = "CMD",
+              action = wezterm.action.DisableDefaultAssignment,
             },
           },
         }

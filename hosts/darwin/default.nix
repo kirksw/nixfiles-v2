@@ -1,4 +1,4 @@
-{ pkgs, pkgs-unstable, ... }:
+{ pkgs, ... }:
 
 let
   user = "kirk";
@@ -57,11 +57,7 @@ in {
   };
 
   fonts.packages = with pkgs; [
-    (nerdfonts.override {
-      fonts = [
-      "FiraCode"
-      ];
-    })
+    nerd-fonts.fira-code
     dejavu_fonts
     jetbrains-mono
     font-awesome
@@ -119,8 +115,28 @@ in {
 
     keyboard = {
       enableKeyMapping = true;
-      remapCapsLockToEscape = true;
-      nonUS.remapTilde = true;
+      
+      userKeyMapping = [
+        # remapCapsLockToEscape
+        {
+          HIDKeyboardModifierMappingDst = 30064771113;
+          HIDKeyboardModifierMappingSrc = 30064771129;
+        }
+        # nonUS.remapTilde
+        {
+          HIDKeyboardModifierMappingDst = 30064771125;
+          HIDKeyboardModifierMappingSrc = 30064771172;
+        }
+        # remapLeftControlToCommand
+        # {
+        #   HIDKeyboardModifierMappingSrc = 30064771299;
+        #   HIDKeyboardModifierMappingDst = 30064771298;
+        # }
+        # {
+        #   HIDKeyboardModifierMappingSrc = 30064771298;
+        #   HIDKeyboardModifierMappingDst = 30064771299;
+        # }
+      ];
     };
   };
 
@@ -190,6 +206,8 @@ in {
         alt-slash = "layout tiles horizontal vertical";
         alt-comma = "layout accordion horizontal vertical";
 
+        alt-q = "close";
+
         alt-h = "focus left";
         alt-j = "focus down";
         alt-k = "focus up";
@@ -250,7 +268,9 @@ in {
 
   services.jankyborders = {
     enable = true;
-    width = 3.0;
+    width = 5.0;
     hidpi = true;
+    active_color = "0xFFFFFF";
+    inactive_color = "0xCCCCCC";
   };
 }

@@ -17,7 +17,6 @@
     # stable mode end
     # unstable mode start
     nixpkgs-stable.url = "github:nixos/nixpkgs/release-24.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/release-24.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -62,7 +61,7 @@
     };
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, disko, neovim-nightly-overlay, wezterm } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay, wezterm } @inputs:
     let
       user = "kirk";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -125,10 +124,6 @@
                 extraSpecialArgs = {
                   inherit inputs;
                   pkgs-stable = import nixpkgs-stable {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                  pkgs-unstable = import nixpkgs-unstable {
                     inherit system;
                     config.allowUnfree = true;
                   };
