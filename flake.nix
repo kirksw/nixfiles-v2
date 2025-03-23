@@ -5,9 +5,9 @@
     # NOTE: uncomment one of the following blocks to switch between stable and unstable modes
     # stable mode start
     # nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # nixpkgs.url = "github:nixos/nixpkgs/release-24.05";
+    # nixpkgs.url = "github:nixos/nixpkgs/release-24.11";
     # home-manager = {
-    #   url = "github:nix-community/home-manager/release-24.05";
+    #   url = "github:nix-community/home-manager/release-24.11";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
     # darwin = {
@@ -16,7 +16,7 @@
     # };
     # stable mode end
     # unstable mode start
-    nixpkgs-stable.url = "github:nixos/nixpkgs/release-24.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/release-24.11";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -55,13 +55,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    wezterm = {
-      url = "github:wez/wezterm/main?dir=nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    wezterm.url = "github:wez/wezterm/main?dir=nix";
+    ghostty.url = "github:ghostty-org/ghostty";
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay, wezterm } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay, wezterm, ghostty } @inputs:
     let
       user = "kirk";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];

@@ -7,8 +7,6 @@ in {
     ../../modules/shared
   ];
 
-  # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
   nixpkgs.config.allowUnfree = true;
 
   users.users.kirk = with pkgs; {
@@ -27,7 +25,6 @@ in {
     settings.trusted-users = [ "@admin" "${user}" ];
 
     gc = {
-      user = "root";
       automatic = true;
       interval = { Weekday = 0; Hour = 2; Minute = 0; };
       options = "--delete-older-than 30d";
@@ -62,8 +59,6 @@ in {
     jetbrains-mono
     font-awesome
   ];
-
-  security.pam.enableSudoTouchIdAuth = true;
 
   system = {
     stateVersion = 4;
@@ -115,28 +110,30 @@ in {
 
     keyboard = {
       enableKeyMapping = true;
+
+      remapCapsLockToEscape = true;
       
-      userKeyMapping = [
-        # remapCapsLockToEscape
-        {
-          HIDKeyboardModifierMappingDst = 30064771113;
-          HIDKeyboardModifierMappingSrc = 30064771129;
-        }
-        # nonUS.remapTilde
-        {
-          HIDKeyboardModifierMappingDst = 30064771125;
-          HIDKeyboardModifierMappingSrc = 30064771172;
-        }
-        # remapLeftControlToCommand
-        # {
-        #   HIDKeyboardModifierMappingSrc = 30064771299;
-        #   HIDKeyboardModifierMappingDst = 30064771298;
-        # }
-        # {
-        #   HIDKeyboardModifierMappingSrc = 30064771298;
-        #   HIDKeyboardModifierMappingDst = 30064771299;
-        # }
-      ];
+      # userKeyMapping = [
+      #   # remapCapsLockToEscape
+      #   {
+      #     HIDKeyboardModifierMappingDst = 30064771113;
+      #     HIDKeyboardModifierMappingSrc = 30064771129;
+      #   }
+      #   # nonUS.remapTilde
+      #   {
+      #     HIDKeyboardModifierMappingDst = 30064771125;
+      #     HIDKeyboardModifierMappingSrc = 30064771172;
+      #   }
+      #   # remapLeftControlToCommand
+      #   # {
+      #   #   HIDKeyboardModifierMappingSrc = 30064771299;
+      #   #   HIDKeyboardModifierMappingDst = 30064771298;
+      #   # }
+      #   # {
+      #   #   HIDKeyboardModifierMappingSrc = 30064771298;
+      #   #   HIDKeyboardModifierMappingDst = 30064771299;
+      #   # }
+      # ];
     };
   };
 
@@ -145,7 +142,7 @@ in {
 
     global = {
       brewfile = true;
-      autoUpdate = false;
+      autoUpdate = true;
     };
 
     brewPrefix = "/opt/homebrew/bin"; # needed for arm64
@@ -158,6 +155,8 @@ in {
     };
 
     brews = [
+      # "ollama"
+      # "oterm"
       #"infisical@0.24.0"
     ];
 

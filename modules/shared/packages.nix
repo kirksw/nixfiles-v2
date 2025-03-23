@@ -29,13 +29,14 @@ with pkgs; [
   unzip
 
   # ai
-  # ollama (outdated)
-  llama-cpp
+  # not really build for mac
+  # ollama
+  # llama-cpp
+  # oterm
 
   # credential
   docker-credential-helpers
 
-  # ???
-  # vscode
-  # kcat
+  # apps
+  discord
 ]

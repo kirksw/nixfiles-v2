@@ -13,8 +13,5 @@
         google-cloud-sdk.components.managed-flink-client
       ])
     ];
-    # aws
-    # azure
-    # linode
   };
 }
