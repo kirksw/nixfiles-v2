@@ -80,19 +80,5 @@
       enable = true;
       enableZshIntegration = true;
     };
-
-    #xdg.configFile = {
-    #  "mise" = {
-    #    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/config/general/mise";  
-    #    recursive = true;
-    #  };
-    #};
-
-    #xdg.configFile = {
-    #  "scripts" = {
-    #    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/scripts";  
-    #    recursive = true;
-    #  };
-    #}; 
   };
 }
