@@ -1,10 +1,6 @@
 _:
 
 [
-  # Communication Tools
-  "notion"
-  "slack"
-
   # Utility Tools
   "syncthing"
 
@@ -16,4 +12,9 @@ _:
 
   # Browsers
   "arc"
+
+  # Other
+  "typora"
+  "ghostty"
+  
 ]

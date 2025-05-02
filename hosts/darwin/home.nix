@@ -24,5 +24,5 @@
   ghostty.enable = false; # NOTE: not ready for darwin yet
   homerow.enable = false;
   zellij.enable = false;
-  vscode.enable = true;
+  vscode.enable = false;
 }

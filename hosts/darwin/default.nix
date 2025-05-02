@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  user = "kirk";
+  user = "kisw";
 in {
   imports = [
     ../../modules/shared
@@ -9,8 +9,8 @@ in {
 
   nixpkgs.config.allowUnfree = true;
 
-  users.users.kirk = with pkgs; {
-    home = "/Users/kirk";
+  users.users.kisw = with pkgs; {
+    home = "/Users/kisw";
     shell = zsh;
   };
 
@@ -21,14 +21,15 @@ in {
     # package = pkgs.nixFlakes;
     # future: packages = pkgs.nixVersions.latest;
     # unstable mode
+    enable = false;
     package = pkgs.nixVersions.git;
     settings.trusted-users = [ "@admin" "${user}" ];
 
-    gc = {
-      automatic = true;
-      interval = { Weekday = 0; Hour = 2; Minute = 0; };
-      options = "--delete-older-than 30d";
-    };
+    # gc = {
+    #   automatic = true;
+    #   interval = { Weekday = 0; Hour = 2; Minute = 0; };
+    #   options = "--delete-older-than 30d";
+    # };
 
     # Turn this on to make command line easier
     extraOptions = ''
@@ -237,7 +238,7 @@ in {
         alt-shift-semicolon = "mode service";
 
         alt-a = "exec-and-forget open -a /Applications/Arc.app";
-        alt-w = "exec-and-forget open -a /etc/profiles/per-user/kirk/bin/wezterm";
+        alt-w = "exec-and-forget open -a /etc/profiles/per-user/kisw/bin/wezterm";
         alt-z = "exec-and-forget open -a /Applications/Zed.app";
         alt-i = "exec-and-forget open -a '/Applications/IntelliJ IDEA.app'";
         alt-d = "exec-and-forget open -a /Applications/DataGrip.app";

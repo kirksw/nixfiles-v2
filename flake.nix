@@ -61,7 +61,7 @@
 
   outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay, wezterm, ghostty } @inputs:
     let
-      user = "kirk";
+      user = "kisw";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" ];
       forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
@@ -102,7 +102,7 @@
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system: let
-        user = "kirk";
+        user = "kisw";
       in
         darwin.lib.darwinSystem {
           inherit system;
@@ -140,8 +140,8 @@
                   "infisical/homebrew-get-cli" = homebrew-infisical;
                   "nikitabobko/homebrew-tap" = homebrew-nikitabobko;
                 };
-                mutableTaps = false;
-                autoMigrate = true;
+                #mutableTaps = false;
+                #autoMigrate = true;
               };
             }
           ];
