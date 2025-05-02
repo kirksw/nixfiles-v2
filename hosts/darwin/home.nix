@@ -18,9 +18,10 @@
   cloud.enable = true;
   colima.enable = true;
   devops.enable = true;
-  wezterm.enable = true;
+  wezterm.enable = false;
   youtube.enable = true;
   gowish.enable = true;
+  ghostty.enable = false; # NOTE: not ready for darwin yet
   homerow.enable = false;
   zellij.enable = false;
   vscode.enable = false;

@@ -1,5 +1,5 @@
 
-{ pkgs, lib, config, ... }:
+{ inputs, pkgs, pkgs-stable, lib, config, ... }:
 
 {
   options = {
@@ -9,13 +9,15 @@
   config = lib.mkIf config.wezterm.enable {
     programs.wezterm = {
       enable = true;
-      # other settings here
+      package = inputs.wezterm.packages.${pkgs-stable.system}.default;
 
       extraConfig = ''
         local wezterm = require("wezterm")
         local action = wezterm.action
 
         return {
+          window_decorations = "RESIZE",
+
           font = wezterm.font("Fira Code"),
           font_size = 16.0,
 
@@ -49,6 +51,11 @@
                 action.SendKey({ key = "a", mods = "CTRL" }),
                 action.SendKey({ key = "K" }),
               }),
+            },
+            {
+              key = "t",
+              mods = "CMD",
+              action = wezterm.action.DisableDefaultAssignment,
             },
           },
         }

@@ -42,7 +42,7 @@ in
       # nil
       
       # duckdb
-      # duckdb
+      duckdb
     ];
 
     # direnv
@@ -73,6 +73,7 @@ in
           uv = "0.4.29";
           scala = "2.13";
           "cargo:arroyo" = "latest";
+          "cargo:bacon" = "3.4.0";
         };
       };
     };

@@ -2,20 +2,31 @@
   description = "Starter Configuration for MacOS and NixOS";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/release-24.05";
-    home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
-      inputs.nixpkgs.follows = "nixpkgs"; 
-    };
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # home-manager-unstable = {
-    #   url = "github:nix-community/home-manager";
-    #   inputs.nixpkgs.follows = "nixpkgs-unstable";
+    # NOTE: uncomment one of the following blocks to switch between stable and unstable modes
+    # stable mode start
+    # nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    # nixpkgs.url = "github:nixos/nixpkgs/release-24.11";
+    # home-manager = {
+    #   url = "github:nix-community/home-manager/release-24.11";
+    #   inputs.nixpkgs.follows = "nixpkgs";
     # };
+    # darwin = {
+    #   url = "github:lnl7/nix-darwin";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # stable mode end
+    # unstable mode start
+    nixpkgs-stable.url = "github:nixos/nixpkgs/release-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    home-manager = {
+      url = "github:nix-community/home-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # unstable mode end
     nix-homebrew = {
       url = "github:zhaofengli-wip/nix-homebrew";
     };
@@ -44,11 +55,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
+    wezterm.url = "github:wez/wezterm/main?dir=nix";
+    ghostty.url = "github:ghostty-org/ghostty";
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-unstable, disko, neovim-nightly-overlay } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay, wezterm, ghostty } @inputs:
     let
-      user = "kirk";
+      user = "kisw";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" ];
       forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
@@ -89,7 +102,7 @@
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system: let
-        user = "kirk";
+        user = "kisw";
       in
         darwin.lib.darwinSystem {
           inherit system;
@@ -106,9 +119,9 @@
                   ./modules/home
                 ];
                 # we pass inputs into home-manager so that we can utilize the overlays
-                extraSpecialArgs = { 
-                  inherit inputs; 
-                  pkgs-unstable = import nixpkgs-unstable {
+                extraSpecialArgs = {
+                  inherit inputs;
+                  pkgs-stable = import nixpkgs-stable {
                     inherit system;
                     config.allowUnfree = true;
                   };
@@ -127,8 +140,8 @@
                   "infisical/homebrew-get-cli" = homebrew-infisical;
                   "nikitabobko/homebrew-tap" = homebrew-nikitabobko;
                 };
-                mutableTaps = false;
-                autoMigrate = true;
+                #mutableTaps = false;
+                #autoMigrate = true;
               };
             }
           ];

@@ -1,5 +1,5 @@
 
-{ pkgs, lib, config, pkgs-unstable, ... }:
+{ pkgs, lib, config, ... }:
 
 {
   options = {
@@ -36,6 +36,7 @@
           "rust"
           "python"
           "deno"
+          "kubectl"
         ];
       };
 
@@ -48,7 +49,7 @@
       history.size = 10000;
       history.path = "${config.xdg.dataHome}/zsh/history";
 
-      initExtra = ''
+      initContent = ''
         if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
           . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
           . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
@@ -79,19 +80,5 @@
       enable = true;
       enableZshIntegration = true;
     };
-
-    #xdg.configFile = {
-    #  "mise" = {
-    #    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/config/general/mise";  
-    #    recursive = true;
-    #  };
-    #};
-
-    #xdg.configFile = {
-    #  "scripts" = {
-    #    source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/scripts";  
-    #    recursive = true;
-    #  };
-    #}; 
   };
 }

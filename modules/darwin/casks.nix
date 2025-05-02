@@ -1,10 +1,6 @@
 _:
 
 [
-  # Communication Tools
-  "notion"
-  "slack"
-
   # Utility Tools
   "syncthing"
 
@@ -17,6 +13,8 @@ _:
   # Browsers
   "arc"
 
-  # tiling window manager
-  # "nikitabobko/tap/aerospace"
+  # Other
+  "typora"
+  "ghostty"
+  
 ]
