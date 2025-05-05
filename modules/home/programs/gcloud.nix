@@ -2,11 +2,10 @@
 
 {
   options = {
-    cloud.enable = lib.mkEnableOption "enables cloud";
+    gcloud.enable = lib.mkEnableOption "enables gcloud";
   };
 
-  config = lib.mkIf config.cloud.enable {
-    # gcp
+  config = lib.mkIf config.gcloud.enable {
     home.packages = with pkgs; [
       (google-cloud-sdk.withExtraComponents [
         google-cloud-sdk.components.gke-gcloud-auth-plugin

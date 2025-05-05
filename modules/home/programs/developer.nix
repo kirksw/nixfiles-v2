@@ -74,6 +74,7 @@ in
           scala = "2.13";
           "cargo:arroyo" = "latest";
           "cargo:bacon" = "3.4.0";
+          "cargo:gitnow" = "latest";
         };
       };
     };

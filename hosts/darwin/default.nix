@@ -44,6 +44,20 @@ in {
     font-awesome
   ];
 
+  security.pam.services.sudo_local = {
+    enable = true;
+    reattach = true;
+    touchIdAuth = true;
+    watchIdAuth = true;
+  };
+
+  security.sudo = {
+    extraConfig = ''
+      Defaults  timestamp_timeout=5
+    '';
+
+  };
+
   system = {
     stateVersion = 4;
 
@@ -238,17 +252,17 @@ in {
     };
   };
 
-  services.sketchybar = {
-    enable = true;
-    config = ''
-      sketchybar --bar height=24
-      sketchybar --update
-    '';
-  };
+    # services.sketchybar = {
+    #   enable = true;
+    #   config = ''
+    #     sketchybar --bar height=24
+    #     sketchybar --update
+    #   '';
+    # };
 
   services.jankyborders = {
     enable = true;
-    width = 5.0;
+    width = 8.0;
     hidpi = true;
     active_color = "0xFFFFFF";
     inactive_color = "0xCCCCCC";

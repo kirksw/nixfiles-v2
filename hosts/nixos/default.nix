@@ -260,23 +260,6 @@ let user = "kirk";
     };
   };
 
-  # Don't require password for users in `wheel` group for these commands
-  security.sudo = {
-    enable = true;
-    extraRules = [{
-      commands = [
-       {
-         command = "${pkgs.systemd}/bin/reboot";
-         options = ["NOPASSWD"];
-        }
-      ];
-      groups = ["wheel"];
-    }];
-    extraConfig = ''
-      Defaults timestamp_timeout=30
-    '';
-  };
-
   fonts.packages = with pkgs; [
     dejavu_fonts
     feather-font # from overlay
@@ -290,6 +273,8 @@ let user = "kirk";
     gitAndTools.gitFull
     inetutils
   ];
+
+  environment.pathsToLink = ["/share/zsh"];
 
   system.stateVersion = "24.05"; # Don't change this
 

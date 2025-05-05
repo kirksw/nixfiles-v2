@@ -9,36 +9,15 @@
   config = lib.mkIf config.ghostty.enable {
     programs.ghostty = {
       enable = true;
-      # package = inputs.ghostty.packages.${pkgs.system}.default;
-      # package = null;
-      enableBashIntegration = true;
+      package = null; # package = inputs.ghostty.packages.${pkgs.system}.default;
       enableZshIntegration = true;
-      installVimSyntax = true;
+      # NOTE: these can only be used on linux
+      # installVimSyntax = true;
+      # installBatSyntax = true;
       settings = {
         keybind = [
-          # "alt+n=new_window"
-          # "alt+t=new_tab"
-          # "alt+h=new_split:down"
-          # "alt+v=new_split:right"
-          # "alt+one=goto_tab:1"
-          # "alt+two=goto_tab:2"
-          # "alt+three=goto_tab:3"
-          # "alt+four=goto_tab:4"
-          # "alt+five=goto_tab:5"
-          # "alt+six=goto_tab:6"
-          # "ctrl+comma=open_config"
+          "ctrl+comma=open_config"
           # "ctrl+enter=toggle_fullscreen"
-          # "ctrl+shift+q=close_window"
-          # "ctrl+r>h=resize_split:left"
-          # "ctrl+r>l=resize_split:right"
-          # "ctrl+r>j=resize_split:bottom"
-          # "ctrl+r>k=resize_split:top"
-          #"ctrl+h=goto_split:left"
-          #"ctrl+j=goto_split:bottom"
-          #"ctrl+k=goto_split:top"
-          #"ctrl+l=goto_split:right"
-          #"ctrl+page_up=jump_to_prompt:-1"
-          # "ctrl+shift+z toggle_split_zoom"
         ];
         font-size = 14;
         font-family = "Fira-Code-Mono Nerd Font";

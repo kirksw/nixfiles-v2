@@ -15,14 +15,17 @@
   neovim.enable = true;
   developer.enable = true;
   tmux.enable = true;
-  cloud.enable = true;
+  gcloud.enable = true;
   colima.enable = true;
   devops.enable = true;
   wezterm.enable = false;
   youtube.enable = true;
-  gowish.enable = true;
-  ghostty.enable = false; # NOTE: not ready for darwin yet
   homerow.enable = false;
   zellij.enable = false;
-  vscode.enable = false;
+  #vscode.enable = true;
+  lunar.enable = true;
+  ghostty.enable = true; # NOTE: only used for config (install via homebrew)
+
+  # disabled custom modules
+  #gowish.enable = false;
 }

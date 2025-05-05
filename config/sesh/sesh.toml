@@ -1,0 +1,16 @@
+[[session]]
+name = "downloads 📥"
+path = "~/Downloads"
+preview_command = "la"
+
+[[session]]
+name = "nixfiles ⚙️"
+path = "~/nixfiles-v2"
+startup_command = "lv ."
+preview_command = "bat --color=always ~/nixfiles-v2/flake.md"
+
+[[session]]
+name = "scratchpad 🗒️"
+path = "~/git/github.com/kirksw/scratchpad"
+startup_command = "lv ."
+preview_command = "bat --color=always ~/git/github.com/kirksw/scratchpad/README.md"

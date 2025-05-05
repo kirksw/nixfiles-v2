@@ -13,8 +13,12 @@
       tenv
 
       # container/kubernetes
+      awscli2
+      fluxcd
       docker
       kubectl
+      kubelogin
+      kubelogin-oidc
       krew
       kubernetes-helm
       argocd 

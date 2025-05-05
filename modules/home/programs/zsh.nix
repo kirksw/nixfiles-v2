@@ -15,60 +15,69 @@
 
     programs.zsh = {
       enable = true;
-      autosuggestion.enable = true; 
+
+      autocd = true;
+      #dotDir = ".config/zsh";
       enableCompletion = true;
+      autosuggestion.enable = true; 
+      syntaxHighlighting.enable = true; 
+      defaultKeymap = "viins";
+
+      # NOTE: use-this for debugging performance issues 
+      # zprof.enable = true;
+
       plugins = [
         {
           name = "powerlevel10k";
           src = pkgs.zsh-powerlevel10k;
           file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
         }
+        {
+          name = "zshdefer";
+          src = pkgs.zsh-defer;
+          file = "share/zsh-defer/zsh-defer.zsh";
+        }
       ];
 
-      oh-my-zsh = {
-        enable = true;
-        plugins = [
-          "docker"
-          "git"
-          "npm"
-          "history"
-          "node"
-          "rust"
-          "python"
-          "deno"
-          "kubectl"
-        ];
-      };
-
       shellAliases = {
+        la = "ls -la";
         ll = "ls -l";
-        build-switch = "cd ~/nixfiles-v2 && nix run build-switch";
-        flake-update = "cd ~/nixfiles-v2 && nix flake update";
+        nu = "cd ~/nixfiles-v2 && nix flake update";
+        ns = "nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin --impure";
+        gn = "gitnow";
+        awsenv = "export AWS_PROFILE=\$(cat ~/.aws/config | grep profile | awk -F'[][]' '{print $2}' | sed 's/^profile //' | fzf --prompt \"Choose AWS role:\")";
+        k8senv = "kubectl config use-context $(kubectl config get-contexts --no-headers | sed 's/^*//g' | awk '{print $1}' | fzf --prompt \"Choose k8s context: \")";
       };
 
       history.size = 10000;
       history.path = "${config.xdg.dataHome}/zsh/history";
 
-      initContent = ''
-        if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-          . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-          . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-        fi
+      # NOTE: 500: early init, 550: before comp, 1000: general, 1500: last
+      initContent = let
+        zshConfigEarlyInit = lib.mkOrder 500 ''
+          # Early NIX config
+          ## currently empty
+        '';
 
-        [[ ! -f ~/nixfiles-v2/config/zsh/.p10k.zsh ]] || source ~/nixfiles-v2/config/zsh/.p10k.zsh
+        zshConfig = lib.mkOrder 1000 ''
+          # General NIX config
+          if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+            . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+            . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+          fi
 
-        if [[ $(uname -m) == 'arm64' ]]; then
-            eval "$(/opt/homebrew/bin/brew shellenv)"
-        fi
+          if [[ $(uname -m) == 'arm64' ]]; then
+              eval "$(/opt/homebrew/bin/brew shellenv)"
+          fi
 
-        # k8s plugin manager
-        [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
+          # k8s plugin manager
+          [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
 
-        # if idea is installed, add it to the path
-        if [[ -f "/Applications/IntelliJ IDEA.app/Contents/MacOS/idea" ]]; then
-          export PATH="$PATH:/Applications/IntelliJ IDEA.app/Contents/MacOS"
-        fi
-      '';
+          # powerlevel10k
+          [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+        '';
+      in
+        lib.mkMerge [ zshConfigEarlyInit zshConfig ];
     };
 
     programs.zoxide = {
@@ -79,6 +88,10 @@
     programs.fzf = {
       enable = true;
       enableZshIntegration = true;
+    };
+
+    home.file.".p10k.zsh" = {
+        source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/config/zsh/.p10k.zsh";
     };
   };
 }

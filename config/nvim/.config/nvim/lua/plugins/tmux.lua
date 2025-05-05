@@ -9,7 +9,7 @@ return {
     { "<C-Space>", "<cmd>NvimTmuxNavigateNext<cr>", desc = "tmux navigate next" },
   },
   opts = {
-    disable_when_zoomed = true, -- defaults to false
+    disable_when_zoomed = false, -- defaults to false
   },
   config = function(_, opts)
     require("nvim-tmux-navigation").setup(opts)

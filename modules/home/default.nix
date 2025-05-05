@@ -2,7 +2,7 @@
 
 {
   imports = [ 
-    ./programs/cloud.nix
+    ./programs/gcloud.nix
     ./programs/colima.nix
     ./programs/developer.nix
     ./programs/devops.nix
@@ -13,8 +13,9 @@
     ./programs/youtube.nix
     ./programs/zellij.nix
     ./programs/zsh.nix
-    ./programs/gowish.nix
     ./programs/ghostty.nix
     ./services/homerow.nix
+    ./programs/gowish.nix
+    ./programs/lunar.nix
   ];
 }
