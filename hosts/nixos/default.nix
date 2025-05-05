@@ -272,6 +272,9 @@ let user = "kirk";
       ];
       groups = ["wheel"];
     }];
+    extraConfig = ''
+      Defaults timestamp_timeout=30
+    '';
   };
 
   fonts.packages = with pkgs; [

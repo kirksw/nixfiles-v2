@@ -16,25 +16,8 @@ in {
 
   # Setup user, packages, programs
   nix = {
-    # TODO: stable vs unstable
-    # stable mode
-    # package = pkgs.nixFlakes;
-    # future: packages = pkgs.nixVersions.latest;
-    # unstable mode
+    # Note: turn off for determinant systems nix
     enable = false;
-    package = pkgs.nixVersions.git;
-    settings.trusted-users = [ "@admin" "${user}" ];
-
-    # gc = {
-    #   automatic = true;
-    #   interval = { Weekday = 0; Hour = 2; Minute = 0; };
-    #   options = "--delete-older-than 30d";
-    # };
-
-    # Turn this on to make command line easier
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
   };
 
   # Turn off NIX_PATH warnings now that we're using flakes
@@ -150,15 +133,12 @@ in {
     casks = pkgs.callPackage ../../modules/darwin/casks.nix {};
 
     onActivation = {
-      autoUpdate = false;
-      upgrade = false;
-      cleanup = "zap";
+      autoUpdate = true;
+      upgrade = true;
     };
 
     brews = [
       # "ollama"
-      # "oterm"
-      #"infisical@0.24.0"
     ];
 
     # These app IDs are from using the mas CLI app
