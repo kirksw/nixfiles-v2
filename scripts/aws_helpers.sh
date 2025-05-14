@@ -1,6 +1,6 @@
 #!/bin/bash
 
-generate_aws_config() {
+rebuild_aws_config() {
   local SSO_SESSION_NAME=$1
   local SSO_START_URL=$2
   local SSO_REGION=$3
@@ -55,15 +55,61 @@ generate_aws_config() {
       echo "sso_session = $SSO_SESSION_NAME" >>"$TMP_CONFIG"
       echo "sso_account_id = $account_id" >>"$TMP_CONFIG"
       echo "sso_role_name = $role_name" >>"$TMP_CONFIG"
-      echo "region = $SSO_REGION" >>"$TMP_CONFIG"
+      echo "region = eu-west-1" >>"$TMP_CONFIG"
+      echo "output = json" >>"$TMP_CONFIG"
       echo "" >>"$TMP_CONFIG"
 
       echo "✅ Imported profile: $profile_name"
     done
   done
 
+  # TODO: handle in a more dynamic way
+  echo "[profile lw-data-prod-dbt]" >>"$TMP_CONFIG"
+  echo "role_arn = arn:aws:iam::478824949770:role/hubble-rbac/DbtDeveloper" >>"$TMP_CONFIG"
+  echo "source_profile = aws-sso-LunarWay-Production-Data-OktaDataLogin" >>"$TMP_CONFIG"
+  echo "region = eu-west-1" >>"$TMP_CONFIG"
+  echo "output = json" >>"$TMP_CONFIG"
+
+  echo "[profile lw-data-dev-dbt]" >>"$TMP_CONFIG"
+  echo "role_arn = arn:aws:iam::899945594626:role/hubble-rbac/DbtDeveloper" >>"$TMP_CONFIG"
+  echo "source_profile = aws-sso-LunarWay-Development-Data-OktaDataLogin" >>"$TMP_CONFIG"
+  echo "region = eu-west-1" >>"$TMP_CONFIG"
+  echo "output = json" >>"$TMP_CONFIG"
+
   cat "$TMP_CONFIG"
   echo "🔧 Updating AWS config at $CONFIG_FILE..."
   cat "$TMP_CONFIG" >"$CONFIG_FILE"
   echo "✅ All profiles generated and appended to $CONFIG_FILE"
 }
+
+aws_login() {
+  aws sso login --sso-session "$SSO_SESSION_NAME"
+  export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' ~/.aws/sso/cache/*.json | tail -n 1)
+}
+
+assume_aws_role() {
+  aws sts get-caller-identity &>/dev/null
+  EXIT_CODE=$? # captures exit code
+
+  if [[ $EXIT_CODE == 0 ]]; then
+    echo "Current credentials are still valid. Let's just reuse them 🚀"
+    return 0
+  else
+    aws_login
+  fi
+
+  # delete cache?
+  export AWS_PROFILE=$(cat ~/.aws/config | grep profile | awk -F'[][]' '{print $2}' | sed 's/^profile //' | fzf --prompt "Choose AWS role:")
+  # login
+  export AWS_ACCESS_KEY_ID=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.AccessKeyId')
+  export AWS_SECRET_ACCESS_KEY=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.SecretAccessKey')
+  export AWS_SESSION_TOKEN=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.SessionToken')
+
+  # set expiration time variable
+  aws_sessions_expiration=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.Expiration')
+
+  aws sts get-caller-identity &>/dev/null
+}
+
+# rebuild_aws_config lunarway https://d-c3672deb5f.awsapps.com/start eu-north-1
+# jdbc:awsathena://athena.eu-west-1.amazonaws.com:443;profile=aws-sso-LunarWay-Production-Data-OktaAdminLogin

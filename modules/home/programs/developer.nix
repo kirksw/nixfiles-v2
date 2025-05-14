@@ -56,24 +56,24 @@ in
       enableZshIntegration = true;
 
       globalConfig = {
-        #settings = {
-        #  pipx_uvx = true;
-        #};
+        settings = {
+          pipx_uvx = true;
+        };
 
         tools = {
-          python = "3.12";
-          node = "22.7";
-          go = "prefix:1.23";
+          python = "3.13";
+          node = "24";
+          go = "prefix:1.24";
           java = "adoptopenjdk-21";
-          dotnet = "8.0";
+          dotnet = "9";
           perl = "5.40";
-          lua = "5.4";
-          gradle = "8.10";
+          lua = "5";
+          gradle = "8";
           sbt = "1.10";
-          uv = "0.4.29";
-          scala = "2.13";
+          uv = "0.7";
+          scala = "3";
           "cargo:arroyo" = "latest";
-          "cargo:bacon" = "3.4.0";
+          "cargo:bacon" = "latest";
           "cargo:gitnow" = "latest";
         };
       };

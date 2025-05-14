@@ -16,6 +16,7 @@
       mouse = true;
       baseIndex = 1;
 
+      resizeAmount = 5;
       disableConfirmationPrompt = true;
       focusEvents = true;
       escapeTime = 10;
@@ -23,7 +24,7 @@
 
       plugins = with pkgs; [
         tmuxPlugins.vim-tmux-navigator
-        tmuxPlugins.vim-tmux-focus-events
+        #tmuxPlugins.vim-tmux-focus-events
         tmuxPlugins.tmux-powerline
         tmuxPlugins.tmux-floax
         tmuxPlugins.nord
@@ -36,6 +37,12 @@
         bind | split-window -h
         unbind '"'
         bind - split-window -v
+        #
+        # keybinds for pane resizing
+        bind -r j resize-pane -D 5
+        bind -r k resize-pane -U 5
+        bind -r l resize-pane -D 5
+        bind -r h resize-pane -L 5
         bind -r m resize-pane -Z
 
         # copy mode binds
@@ -67,6 +74,9 @@
         # settings for sesh 
         set -ga terminal-overrides ",xterm-256color*:Tc"
         set -g detach-on-destroy off  
+
+        # reload config
+        bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded..."
       '';
     };
     # add sesh for tmux session management
