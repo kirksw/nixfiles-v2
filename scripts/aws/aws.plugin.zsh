@@ -1,5 +1,3 @@
-#!/bin/bash
-
 rebuild_aws_config() {
   local SSO_SESSION_NAME=$1
   local SSO_START_URL=$2
@@ -98,18 +96,13 @@ assume_aws_role() {
     aws_login
   fi
 
-  # delete cache?
   export AWS_PROFILE=$(cat ~/.aws/config | grep profile | awk -F'[][]' '{print $2}' | sed 's/^profile //' | fzf --prompt "Choose AWS role:")
-  # login
   export AWS_ACCESS_KEY_ID=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.AccessKeyId')
   export AWS_SECRET_ACCESS_KEY=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.SecretAccessKey')
   export AWS_SESSION_TOKEN=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.SessionToken')
 
   # set expiration time variable
   aws_sessions_expiration=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.Expiration')
-
   aws sts get-caller-identity &>/dev/null
 }
 
-# rebuild_aws_config lunarway https://d-c3672deb5f.awsapps.com/start eu-north-1
-# jdbc:awsathena://athena.eu-west-1.amazonaws.com:443;profile=aws-sso-LunarWay-Production-Data-OktaAdminLogin

@@ -37,13 +37,18 @@
           src = pkgs.zsh-defer;
           file = "share/zsh-defer/zsh-defer.zsh";
         }
+        {
+          name = "hubble";
+          src = "${config.home.homeDirectory}/nixfiles-v2/scripts/hubble";
+          file = "hubble.plugin.zsh";
+        }
       ];
 
       shellAliases = {
         la = "ls -la";
         ll = "ls -l";
         nu = "cd ~/nixfiles-v2 && nix flake update";
-        ns = "nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin --impure";
+        ns = "sudo nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin --impure";
         gn = "gitnow";
         awsenv = "export AWS_PROFILE=\$(cat ~/.aws/config | grep profile | awk -F'[][]' '{print $2}' | sed 's/^profile //' | fzf --prompt \"Choose AWS role:\")";
         k8senv = "kubectl config use-context $(kubectl config get-contexts --no-headers | sed 's/^*//g' | awk '{print $1}' | fzf --prompt \"Choose k8s context: \")";
@@ -75,6 +80,18 @@
 
           # powerlevel10k
           [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+          # shuttle
+          [[ ! -f $(which shuttle) ]] || source <(shuttle completion zsh)
+
+          # hamctl
+          [[ ! -f $(which hamctl) ]] || source <(hamctl completion zsh)
+
+          # refresh $GITHUB_ACCESS_TOKEN if unset
+          if [[ $GITHUB_ACCESS_TOKEN == "" ]]; then
+            export GITHUB_ACCESS_TOKEN=$(gh auth token);
+          fi
+          :
         '';
       in
         lib.mkMerge [ zshConfigEarlyInit zshConfig ];

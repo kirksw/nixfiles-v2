@@ -10,7 +10,7 @@ in {
   nixpkgs.config.allowUnfree = true;
 
   users.users.kisw = with pkgs; {
-    home = "/Users/kisw";
+    home = "/Users/${user}";
     shell = zsh;
   };
 
@@ -34,7 +34,9 @@ in {
   environment.variables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
-    INFISICAL_API_URL = "https://env.gowish.com/api";
+    HAMCTL_URL="https://release-manager.lunar.tech";
+    HAMCTL_OAUTH_IDP_URL="https://login.lunar.tech/oauth2/ausains2eoZqaXcLD417";
+    HAMCTL_OAUTH_CLIENT_ID="0oaaintlyqqOETKhA417";
   };
 
   fonts.packages = with pkgs; [
@@ -44,22 +46,24 @@ in {
     font-awesome
   ];
 
-  security.pam.services.sudo_local = {
-    enable = true;
-    reattach = true;
-    touchIdAuth = true;
-    watchIdAuth = true;
-  };
+  security = {
+    pam.services.sudo_local = {
+      enable = true;
+      reattach = true;
+      touchIdAuth = true;
+      watchIdAuth = true;
+    };
 
-  security.sudo = {
-    extraConfig = ''
-      Defaults  timestamp_timeout=5
-    '';
-
+    sudo = {
+      extraConfig = ''
+        Defaults  timestamp_timeout=5
+      '';
+    };
   };
 
   system = {
     stateVersion = 4;
+    primaryUser = "${user}";
 
     defaults = {
       NSGlobalDomain = {

@@ -16,7 +16,7 @@
     # };
     # stable mode end
     # unstable mode start
-    nixpkgs-stable.url = "github:nixos/nixpkgs/release-24.11";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/release-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -42,10 +42,6 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
-    homebrew-infisical = {
-      url = "github:infisical/homebrew-get-cli";
-      flake = false;
-    };
     homebrew-nikitabobko = {
       url = "github:nikitabobko/homebrew-tap";
       flake = false;
@@ -55,52 +51,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
-    wezterm.url = "github:wez/wezterm/main?dir=nix";
-    ghostty.url = "github:ghostty-org/ghostty";
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-infisical, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay, wezterm, ghostty } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay } @inputs:
     let
       user = "kisw";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" ];
-      forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
-      devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
-        default = with pkgs; mkShell {
-          nativeBuildInputs = with pkgs; [ bashInteractive git ];
-        };
-      };
-      mkApp = scriptName: system: {
-        type = "app";
-        program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
-          #!/usr/bin/env bash
-          PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-          echo "Running ${scriptName} for ${system}"
-          exec ${self}/apps/${system}/${scriptName}
-        '')}/bin/${scriptName}";
-      };
-      mkLinuxApps = system: {
-        "apply" = mkApp "apply" system;
-        "build-switch" = mkApp "build-switch" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "install" = mkApp "install" system;
-      };
-      mkDarwinApps = system: {
-        "apply" = mkApp "apply" system;
-        "build" = mkApp "build" system;
-        "build-switch" = mkApp "build-switch" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "rollback" = mkApp "rollback" system;
-      };
     in
     {
-      devShells = forAllSystems devShell;
-      apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
-
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system: let
         user = "kisw";
       in
@@ -137,11 +96,8 @@
                   "homebrew/homebrew-core" = homebrew-core;
                   "homebrew/homebrew-cask" = homebrew-cask;
                   "homebrew/homebrew-bundle" = homebrew-bundle;
-                  "infisical/homebrew-get-cli" = homebrew-infisical;
                   "nikitabobko/homebrew-tap" = homebrew-nikitabobko;
                 };
-                #mutableTaps = false;
-                #autoMigrate = true;
               };
             }
           ];

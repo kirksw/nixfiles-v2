@@ -4,6 +4,7 @@
 let 
   name = "Kirk Sweeney";
   email = "kirk.sweeney@outlook.com"; 
+  homeDir = "/Users/${config.home.username}";
 in
 {
   options = {
@@ -20,6 +21,7 @@ in
       jq # cli json processor
       curl # cli http client
       envsubst # cli env var substitution
+      fd # user friendly alternative to find
 
       # languages
       go
@@ -58,6 +60,7 @@ in
       globalConfig = {
         settings = {
           pipx_uvx = true;
+          idiomatic_version_file_enable_tools = [];
         };
 
         tools = {
@@ -98,22 +101,36 @@ in
         rebase.autoStash = true;
       };
 
-      includes = [
-        {
-          condition = "gitdir:~/projects/work/";
-          contents = {
-            user = {
-              name = name;
-              email = "ks@onskeskyen.dk";
-              signingKey = builtins.replaceStrings ["\n"] [""] (builtins.readFile ~/secrets/work.gpg);
-            };
+      # includes = [
+      #   {
+      #     condition = "gitdir:${homeDir}/git/github.com/lunarway";
+      #     contents = {
+      #       user = {
+      #         name = name;
+      #         email = "kisw@lunar.app";
+      #         signingKey = builtins.replaceStrings ["\n"] [""] (builtins.readFile "${homeDir}/git/secrets/work.gpg");
+      #       };
 
-            commit = {
-              gpgSign = true;
-            };
-          };
-        }
-      ];
+      #       commit = {
+      #         gpgSign = true;
+      #       };
+      #     };
+      #   }
+      #   {
+      #     condition = "gitdir:${homeDir}/git/github.com/kirksw";
+      #     contents = {
+      #       user = {
+      #         name = name;
+      #         email = "kirk@cntd.io";
+      #         signingKey = builtins.replaceStrings ["\n"] [""] (builtins.readFile "${homeDir}/git/secrets/work.gpg");
+      #       };
+
+      #       commit = {
+      #         gpgSign = true;
+      #       };
+      #     };
+      #   }
+      # ];
     };
   };
 }

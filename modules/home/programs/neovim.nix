@@ -13,8 +13,6 @@
       viAlias = true;
       vimAlias = true;
       defaultEditor = true;
-      
-      # additional
       vimdiffAlias = true;
       withNodeJs = true;
       withPython3 = true;

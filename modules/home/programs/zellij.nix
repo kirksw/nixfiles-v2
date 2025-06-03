@@ -8,8 +8,12 @@
   config = lib.mkIf config.zellij.enable {
     programs.zellij = {
       enable = true;
-      enableZshIntegration = true;
-      # settings = {}
+      enableZshIntegration = false;
+      attachExistingSession = false;
+      exitShellOnExit = false;
+      settings = {
+
+      };
     };
   };
 }

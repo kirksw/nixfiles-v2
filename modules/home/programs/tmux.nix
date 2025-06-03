@@ -24,14 +24,29 @@
 
       plugins = with pkgs; [
         tmuxPlugins.vim-tmux-navigator
-        #tmuxPlugins.vim-tmux-focus-events
-        tmuxPlugins.tmux-powerline
+        tmuxPlugins.tmux-fzf
+        tmuxPlugins.catppuccin
         tmuxPlugins.tmux-floax
-        tmuxPlugins.nord
         tmuxPlugins.better-mouse-mode
+        tmuxPlugins.battery
+        tmuxPlugins.cpu
+        #tmuxPlugins.vim-tmux-focus-events
+        #tmuxPlugins.nord
       ];
 
       extraConfig = ''
+        # misc
+        set-option -g status-style bg=default
+        set -g @catppuccin_flavor "mocha"
+        set -g @catppuccin_window_status_style "basic"
+
+        # combining tmux and nvim status lines
+        set -g focus-events on
+        set -g status-style bg=default
+        # set -g status-left-length 90
+        # set -g status-right-length 90
+        # set -g status-justify absolute-centre
+
         # pane management binds
         unbind %
         bind | split-window -h
@@ -72,7 +87,9 @@
         bind C-l send-keys 'C-l'
 
         # settings for sesh 
-        set -ga terminal-overrides ",xterm-256color*:Tc"
+        set -g default-terminal "screen-256color"
+        set -ag terminal-overrides ",xterm-256color:RGB"
+        set -g allow-passthrough on
         set -g detach-on-destroy off  
 
         # reload config

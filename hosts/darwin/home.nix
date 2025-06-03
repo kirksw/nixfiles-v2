@@ -10,22 +10,27 @@
     hugo
   ];
 
+  home.sessionVariables = {
+    LANG = "en_US.UTF-8";
+    LC_ALL = "";
+  };
+
   # enabled custom modules
   zsh.enable = true;
   neovim.enable = true;
   developer.enable = true;
   tmux.enable = true;
-  gcloud.enable = true;
   colima.enable = true;
   devops.enable = true;
-  wezterm.enable = false;
   youtube.enable = true;
-  homerow.enable = false;
-  zellij.enable = false;
-  #vscode.enable = true;
+  zellij.enable = true;
   lunar.enable = true;
   ghostty.enable = true; # NOTE: only used for config (install via homebrew)
 
   # disabled custom modules
-  #gowish.enable = false;
+  homerow.enable = false;
+  wezterm.enable = false;
+  gcloud.enable = false;
+  vscode.enable = false;
+  gowish.enable = false;
 }
