@@ -8,14 +8,40 @@
   config = lib.mkIf config.neovim.enable {
     programs.neovim = {
       enable = true;
-      # package = pkgs.neovim;
-      package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
+      package = pkgs.neovim-unwrapped;
+      #package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
       viAlias = true;
       vimAlias = true;
       defaultEditor = true;
       vimdiffAlias = true;
-      withNodeJs = true;
-      withPython3 = true;
+      withRuby = false;
+      withNodeJs = false;
+      withPython3 = false;
+
+      plugins = with pkgs; [
+        vimPlugins.nvim-treesitter.withAllGrammars
+      ];
+
+      extraPackages = with pkgs; [
+        # mason requirements
+        opam
+        ocamlPackages.ocaml-lsp
+        gopls
+        delve
+        gotools
+        gofumpt
+        tree-sitter
+        # langs
+        ocaml
+        go_1_23
+        ruby_3_4
+        nodejs_24
+        lua5_1
+        # utils
+        pngpaste
+        imagemagick
+        mermaid-cli
+      ];
     };
 
     home.shellAliases = {

@@ -3,7 +3,7 @@
 
 let 
   name = "Kirk Sweeney";
-  email = "kirk.sweeney@outlook.com"; 
+  email = "kirk@cntd.io"; 
   homeDir = "/Users/${config.home.username}";
 in
 {
@@ -31,9 +31,6 @@ in
       # doc
       pandoc
 
-      # rest client
-      bruno
-
       # github cli
       gh
 
@@ -41,7 +38,7 @@ in
       devenv
 
       # nix
-      # nil
+      nil
       
       # duckdb
       duckdb
@@ -64,17 +61,10 @@ in
         };
 
         tools = {
-          python = "3.13";
-          node = "24";
-          go = "prefix:1.24";
-          java = "adoptopenjdk-21";
-          dotnet = "9";
-          perl = "5.40";
-          lua = "5";
-          gradle = "8";
-          sbt = "1.10";
           uv = "0.7";
-          scala = "3";
+          python = "3.13";
+          java = "adoptopenjdk-21";
+          scala = "3.7";
           "cargo:arroyo" = "latest";
           "cargo:bacon" = "latest";
           "cargo:gitnow" = "latest";
@@ -88,49 +78,29 @@ in
       ignores = ["*.swp"];
       userName = name;
       userEmail = email;
+      signing = {
+        key = "1AFA8CEF192E7481";
+        signByDefault = true;
+      };
       lfs = {
         enable = true;
       };
       extraConfig = {
         init.defaultBranch = "main";
         core = {
-        editor = "vim";
+          editor = "vim";
           autocrlf = "input";
         };
         pull.rebase = true;
         rebase.autoStash = true;
       };
 
-      # includes = [
-      #   {
-      #     condition = "gitdir:${homeDir}/git/github.com/lunarway";
-      #     contents = {
-      #       user = {
-      #         name = name;
-      #         email = "kisw@lunar.app";
-      #         signingKey = builtins.replaceStrings ["\n"] [""] (builtins.readFile "${homeDir}/git/secrets/work.gpg");
-      #       };
-
-      #       commit = {
-      #         gpgSign = true;
-      #       };
-      #     };
-      #   }
-      #   {
-      #     condition = "gitdir:${homeDir}/git/github.com/kirksw";
-      #     contents = {
-      #       user = {
-      #         name = name;
-      #         email = "kirk@cntd.io";
-      #         signingKey = builtins.replaceStrings ["\n"] [""] (builtins.readFile "${homeDir}/git/secrets/work.gpg");
-      #       };
-
-      #       commit = {
-      #         gpgSign = true;
-      #       };
-      #     };
-      #   }
-      # ];
+      includes = [
+        {
+          condition = "gitdir:${homeDir}/git/github.com/lunarway";
+          path = "~/git/github.com/lunarway/.gitconfig-lunarway";
+        }
+      ];
     };
   };
 }
