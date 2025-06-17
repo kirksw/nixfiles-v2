@@ -41,6 +41,7 @@ in {
 
   fonts.packages = with pkgs; [
     nerd-fonts.fira-code
+    nerd-fonts.fira-mono
     dejavu_fonts
     jetbrains-mono
     font-awesome
@@ -157,6 +158,7 @@ in {
 
     brews = [
       # "ollama"
+      "dagger"
     ];
 
     # These app IDs are from using the mas CLI app

@@ -266,6 +266,22 @@
         "type": "github"
       }
     },
+    "homebrew-dagger": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1748352435,
+        "narHash": "sha256-zGnhPbuyO6oiEkjByH3W84RK9FG8vXfoXh4qsKvua5I=",
+        "owner": "dagger",
+        "repo": "homebrew-tap",
+        "rev": "859de16bf18987a41dd3fe3560016c1f488d1cab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dagger",
+        "repo": "homebrew-tap",
+        "type": "github"
+      }
+    },
     "homebrew-nikitabobko": {
       "flake": false,
       "locked": {
@@ -396,6 +412,7 @@
         "homebrew-bundle": "homebrew-bundle",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
+        "homebrew-dagger": "homebrew-dagger",
         "homebrew-nikitabobko": "homebrew-nikitabobko",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-homebrew": "nix-homebrew",

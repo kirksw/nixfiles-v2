@@ -42,6 +42,9 @@ in
       
       # duckdb
       duckdb
+
+      # misc
+      marp-cli
     ];
 
     # direnv

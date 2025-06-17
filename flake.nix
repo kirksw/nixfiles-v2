@@ -42,6 +42,10 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
+    homebrew-dagger = {
+      url = "github:dagger/homebrew-tap";
+      flake = false;
+    };
     homebrew-nikitabobko = {
       url = "github:nikitabobko/homebrew-tap";
       flake = false;
@@ -53,7 +57,7 @@
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-nikitabobko, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, homebrew-nikitabobko, homebrew-dagger, home-manager, nixpkgs, nixpkgs-stable, disko, neovim-nightly-overlay } @inputs:
     let
       user = "kisw";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -97,6 +101,7 @@
                   "homebrew/homebrew-cask" = homebrew-cask;
                   "homebrew/homebrew-bundle" = homebrew-bundle;
                   "nikitabobko/homebrew-tap" = homebrew-nikitabobko;
+                  "dagger/homebrew-tap" = homebrew-dagger;
                 };
               };
             }

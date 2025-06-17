@@ -11,7 +11,7 @@
       enable = true;
       package = null; # package = inputs.ghostty.packages.${pkgs.system}.default;
       enableZshIntegration = true;
-      clearDefaultKeybinds = true;
+      #clearDefaultKeybinds = true;
       # NOTE: these can only be used on linux
       # installVimSyntax = true;
       # installBatSyntax = true;
@@ -20,9 +20,11 @@
           "ctrl+comma=open_config"
           "ctrl+enter=toggle_fullscreen"
         ];
-        theme = "catppuccin-mocha";
+        theme = "light:rose-pine-dawn,dark:rose-pine";
         font-size = 14;
-        font-family = "Fira-Code-Mono Nerd Font";
+        font-family = "FiraCode Nerd Font Mono";
+        font-thicken = true;
+        font-style = "Regular";
         window-decoration = false;
         window-padding-x = 0;
         window-padding-y = 0;
@@ -31,9 +33,9 @@
         cursor-style-blink = false;
         unfocused-split-opacity = 0.6;
         background-opacity = 0.8;
+        background-blur = true;
         background-blur-radius = 20;
-        window-theme = "dark";
-        font-feature = [ "-liga" "-dlig" "-calt" ];
+        # font-feature = [ "-liga" "-dlig" "-calt" ];
       };
     };
   };
