@@ -5,9 +5,10 @@
   programs.home-manager.enable = true;
 
   home.packages = with pkgs; [
-    # ideally move to packages
     neofetch
     hugo
+    nerd-fonts.fira-code
+    nerd-fonts.fira-mono
   ];
 
   home.sessionVariables = {

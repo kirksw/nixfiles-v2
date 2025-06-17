@@ -260,15 +260,6 @@ let user = "kirk";
     };
   };
 
-  fonts.packages = with pkgs; [
-    dejavu_fonts
-    feather-font # from overlay
-    jetbrains-mono
-    font-awesome
-    noto-fonts
-    noto-fonts-emoji
-  ];
-
   environment.systemPackages = with pkgs; [
     gitAndTools.gitFull
     inetutils

@@ -39,14 +39,6 @@ in {
     HAMCTL_OAUTH_CLIENT_ID="0oaaintlyqqOETKhA417";
   };
 
-  fonts.packages = with pkgs; [
-    nerd-fonts.fira-code
-    nerd-fonts.fira-mono
-    dejavu_fonts
-    jetbrains-mono
-    font-awesome
-  ];
-
   security = {
     pam.services.sudo_local = {
       enable = true;
@@ -258,13 +250,13 @@ in {
     };
   };
 
-    # services.sketchybar = {
-    #   enable = true;
-    #   config = ''
-    #     sketchybar --bar height=24
-    #     sketchybar --update
-    #   '';
-    # };
+  # services.sketchybar = {
+  #   enable = true;
+  #   config = ''
+  #     sketchybar --bar height=24
+  #     sketchybar --update
+  #   '';
+  # };
 
   services.jankyborders = {
     enable = true;

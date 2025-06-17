@@ -100,9 +100,21 @@ in
 
       includes = [
         {
-          condition = "gitdir:${homeDir}/git/github.com/lunarway";
+          condition = "gitdir:${homeDir}/git/github.com/lunarway/**";
           path = "~/git/github.com/lunarway/.gitconfig-lunarway";
         }
+        # example .gitconfig
+        #
+        # [user]
+        # name = <name>
+        # email = <email>
+        # signingkey = <key>
+        #
+        # [core]
+        #   sshCommand = ssh -i ~/.ssh/<private_key>
+        #
+        # [url "git@github.com:<org>/"]
+        #   insteadOf = https://github.com/<org>/
       ];
     };
   };

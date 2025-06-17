@@ -38,9 +38,9 @@
           file = "share/zsh-defer/zsh-defer.zsh";
         }
         {
-          name = "hubble";
-          src = "${config.home.homeDirectory}/nixfiles-v2/scripts/hubble";
-          file = "hubble.plugin.zsh";
+          name = "lunar";
+          src = "${config.home.homeDirectory}/nixfiles-v2/scripts/lunar";
+          file = "lunar.plugin.zsh";
         }
       ];
 
@@ -50,8 +50,9 @@
         nu = "cd ~/nixfiles-v2 && nix flake update";
         ns = "sudo nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin --impure";
         gn = "gitnow";
-        awsenv = "export AWS_PROFILE=\$(cat ~/.aws/config | grep profile | awk -F'[][]' '{print $2}' | sed 's/^profile //' | fzf --prompt \"Choose AWS role:\")";
+        awsenv = "aws_fzf_profile";
         k8senv = "kubectl config use-context $(kubectl config get-contexts --no-headers | sed 's/^*//g' | awk '{print $1}' | fzf --prompt \"Choose k8s context: \")";
+        "docker-compose" = "docker compose";
       };
 
       history.size = 10000;
@@ -61,7 +62,6 @@
       initContent = let
         zshConfigEarlyInit = lib.mkOrder 500 ''
           # Early NIX config
-          ## currently empty
         '';
 
         zshConfig = lib.mkOrder 1000 ''
@@ -91,7 +91,14 @@
           if [[ $GITHUB_ACCESS_TOKEN == "" ]]; then
             export GITHUB_ACCESS_TOKEN=$(gh auth token);
           fi
-          :
+
+          if [[ $GITHUB_TOKEN == "" ]]; then
+            export GITHUB_TOKEN=$(gh auth token);
+          fi
+
+          bindkey -M viins '^I' autosuggest-accept
+          bindkey -M viins '^F' autosuggest-accept-word
+          bindkey -M viins '`' autosuggest-execute
         '';
       in
         lib.mkMerge [ zshConfigEarlyInit zshConfig ];

@@ -1,9 +1,6 @@
 _:
 
 [
-  # Utility Tools
-  "syncthing"
-
   # Entertainment Tools
   "vlc"
 

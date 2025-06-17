@@ -9,7 +9,7 @@
     home.packages = with pkgs; [
       yt-dlp
       # mpv
-      ytui_music
+      # ytui_music
     ];
   };
 }

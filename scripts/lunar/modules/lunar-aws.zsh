@@ -1,3 +1,28 @@
+# lunar: rebuild_aws_config lunarway https://d-c3672deb5f.awsapps.com/start eu-north-1
+
+ensure_tooling() {
+  # Ensure jq is installed
+  if ! command -v jq &>/dev/null; then
+    echo "❌ jq is not installed. Please install jq to proceed."
+    return 1
+  fi
+  
+  # Ensure aws-cli is installed
+  if ! command -v aws &>/dev/null; then
+    echo "❌ aws cli is not installed. Please install aws cli to proceed."
+    return 1
+  fi
+
+  # Ensure aws-cli v2 is installed
+  aws_major=$(aws --version 2>&1 \
+  | sed -nE 's#^aws-cli/([0-9]+)\..*#\1#p')
+
+  if [[ $aws_major -ne 2 ]]; then
+    echo "❌ AWS CLI v2 is required (found v$aws_major)"
+    return 1
+  fi
+}
+
 rebuild_aws_config() {
   local SSO_SESSION_NAME=$1
   local SSO_START_URL=$2
@@ -6,13 +31,8 @@ rebuild_aws_config() {
   local TMP_CONFIG="$CONFIG_FILE.generated"
   local PROFILE_PREFIX="aws-sso"
 
+  ensure_tooling || return 1
   rm "$TMP_CONFIG"
-
-  # Ensure jq is installed
-  if ! command -v jq &>/dev/null; then
-    echo "❌ jq is not installed. Please install jq to proceed."
-    return 1
-  fi
 
   echo "🔐 Logging in to AWS Identity Center (SSO session: $SSO_SESSION_NAME)..."
   aws sso login --sso-session "$SSO_SESSION_NAME"
@@ -80,29 +100,65 @@ rebuild_aws_config() {
   echo "✅ All profiles generated and appended to $CONFIG_FILE"
 }
 
-aws_login() {
-  aws sso login --sso-session "$SSO_SESSION_NAME"
-  export AWS_SESSION_TOKEN=$(jq -r '.Credentials.SessionToken' ~/.aws/sso/cache/*.json | tail -n 1)
-}
+aws_fzf_profile() {
+  local profile
 
-assume_aws_role() {
-  aws sts get-caller-identity &>/dev/null
-  EXIT_CODE=$? # captures exit code
+  ensure_tooling || return 1
 
-  if [[ $EXIT_CODE == 0 ]]; then
-    echo "Current credentials are still valid. Let's just reuse them 🚀"
-    return 0
-  else
-    aws_login
+  profile=$(aws configure list-profiles \
+    | fzf --height 40% --reverse --prompt="AWS Profile> ")
+
+  if [[ -z "$profile" ]]; then
+    echo "❌ No profile selected."
+    return 1
   fi
 
-  export AWS_PROFILE=$(cat ~/.aws/config | grep profile | awk -F'[][]' '{print $2}' | sed 's/^profile //' | fzf --prompt "Choose AWS role:")
-  export AWS_ACCESS_KEY_ID=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.AccessKeyId')
-  export AWS_SECRET_ACCESS_KEY=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.SecretAccessKey')
-  export AWS_SESSION_TOKEN=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.SessionToken')
+  export AWS_PROFILE=$profile
+  echo "→ AWS_PROFILE set to '$AWS_PROFILE'"
 
-  # set expiration time variable
-  aws_sessions_expiration=$(cat ~/.aws/cli/cache/$cache_file | jq -r '.Credentials.Expiration')
-  aws sts get-caller-identity &>/dev/null
+  if is_aws_sso_valid; then
+    echo "✅ SSO token is still valid"
+  else
+    echo "❌ SSO token expired (or not found)"
+    if aws sso login --profile "$AWS_PROFILE"; then
+      echo "✅ aws sso login successful for profile '$AWS_PROFILE'"
+    else
+      echo "❌ aws sso login failed for profile '$AWS_PROFILE'"
+      return 1
+    fi
+  fi
 }
 
+# Unfortunately if we just run `aws sso login` it will open browser and refresh tokens all the time.
+is_aws_sso_valid() {
+  local cache_file exp now_sec exp_sec
+
+  ensure_tooling || return 1
+
+  cache_file=$(ls -1t ~/.aws/sso/cache/*.json 2>/dev/null | head -n1) \
+    || return 1
+
+  exp=$(jq -r '.expiresAt // .Credentials.Expiration' "$cache_file") \
+    || return 1
+
+  exp_sec=$(date -d "$exp" '+%s' 2>/dev/null) \
+    || return 1
+
+  now_sec=$(date '+%s')
+
+  (( now_sec < exp_sec ))
+}
+
+sso_valid_time() {
+  local file expires expires_secs now_secs rem
+
+  ensure_tooling || return 1
+
+  file=$(ls -1t ~/.aws/sso/cache/*.json 2>/dev/null | head -n1) || return 1
+  expires=$(jq -r '.expiresAt // .Credentials.Expiration' "$file") || return 1
+  expires_secs=$(date -d "$expires" +%s) || return 1
+  now_secs=$(date +%s) || return 1
+  rem=$((expires_secs - now_secs)) || return 1
+
+  printf '%02d:%02d:%02d\n' $((rem/3600)) $((rem%3600/60)) $((rem%60))
+}
