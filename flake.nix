@@ -74,28 +74,16 @@
           inherit system;
           specialArgs = { inherit inputs user; };
           modules = [
-            ./hosts/darwin
             home-manager.darwinModules.home-manager
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${user} = import ./hosts/darwin/home.nix;
-                sharedModules = [
-                  ./modules/shared
-                ];
-                # we pass inputs into home-manager so that we can utilize the overlays
-                extraSpecialArgs = {
-                  inherit inputs;
-                  pkgs-stable = import nixpkgs-stable {
-                    inherit system;
-                    config.allowUnfree = true;
-                  };
-                };
-              };
-            }
             nix-homebrew.darwinModules.nix-homebrew
+            ./hosts/darwin
             ./modules/darwin/homebrew.nix
+            (import ./modules/homemanager.nix {
+              inherit user;
+              hostModule = ./hosts/darwin/home.nix;
+              inputs      = inputs;
+              nixpkgsStable = inputs.nixpkgs-stable;
+            })
           ];
         }
       );
@@ -107,16 +95,12 @@
           modules = [
             disko.nixosModules.disko
             ./hosts/nixos
-            home-manager.nixosModules.home-manager {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${user} = import ./hosts/nixos/home.nix;
-                home-manager.sharedModules = [
-                    import ./modules/shared
-                ];
-              };
-            }
+            (import ./modules/homemanager.nix {
+              inherit user;
+              hostModule = ./hosts/nixos/home.nix;
+              inputs      = inputs;
+              nixpkgsStable = inputs.nixpkgs-stable;
+            })
           ];
         }
       );
