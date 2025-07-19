@@ -9,7 +9,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     darwin = {
-      url = "github:lnl7/nix-darwin";
+      url = "github:nix-darwin/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {
@@ -51,6 +51,7 @@
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" ];
       supportedSystems = linuxSystems ++ darwinSystems;
+      nixfiles = ./.;
     in flake-utils.lib.eachDefaultSystem (system: {
       apps = let
         mkApp = scriptName: system: {
@@ -72,14 +73,14 @@
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
         darwin.lib.darwinSystem {
           inherit system;
-          specialArgs = { inherit inputs user; };
+          specialArgs = { inherit inputs user nixfiles; };
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             ./hosts/darwin
             ./modules/darwin/homebrew.nix
             (import ./modules/homemanager.nix {
-              inherit user;
+              inherit user nixfiles;
               hostModule = ./hosts/darwin/home.nix;
               inputs      = inputs;
               nixpkgsStable = inputs.nixpkgs-stable;

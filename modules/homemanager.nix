@@ -1,4 +1,4 @@
-{ user, hostModule, inputs, nixpkgsStable }:
+{ user, hostModule, inputs, nixpkgsStable, nixfiles }:
 
 { config, pkgs, system, ... }:
 
@@ -22,5 +22,6 @@ in {
   home-manager.extraSpecialArgs = {
     inherit inputs;
     inherit pkgsStable;
+    inherit nixfiles;
   };
 }

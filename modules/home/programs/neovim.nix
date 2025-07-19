@@ -31,11 +31,13 @@
         gotools
         gofumpt
         tree-sitter
+        nixfmt
+        nil
         # langs
         ocaml
         go_1_23
         ruby_3_4
-        nodejs_24
+        nodejs_20
         lua5_1
         # utils
         pngpaste

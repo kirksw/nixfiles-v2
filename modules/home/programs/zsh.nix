@@ -1,8 +1,5 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, config, nixfiles, ... }:
 
-let
-  repoRoot = ../../..;
-in
 {
   options = {
     zsh.enable = lib.mkEnableOption "enables zsh";
@@ -41,7 +38,7 @@ in
         }
         {
           name = "lunar";
-          src = "${repoRoot}/scripts/lunar";
+          src = "${nixfiles}/scripts/lunar";
           file = "lunar.plugin.zsh";
         }
       ];
@@ -116,6 +113,6 @@ in
       enableZshIntegration = true;
     };
 
-    home.file.".p10k.zsh".source = "${repoRoot}/config/zsh/p10k.zsh";
+    home.file.".p10k.zsh".source = "${nixfiles}/config/zsh/.p10k.zsh";
   };
 }

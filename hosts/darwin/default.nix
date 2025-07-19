@@ -18,6 +18,11 @@ in {
   nix = {
     # Note: turn off for determinant systems nix
     enable = false;
+    settings.extraOptions = ''
+      trusted-users = root kisw
+      extra-platforms = aarch64-linux x86_64-linux
+      builders = ssh://kisw@linux-builder
+    '';
   };
 
   linux-builder.enable = builder-enable;
