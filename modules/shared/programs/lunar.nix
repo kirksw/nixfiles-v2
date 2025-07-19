@@ -9,8 +9,8 @@
     home.packages = with pkgs; [
       kubeseal
       awscli2
-      hamctl
-      shuttle
+      #hamctl
+      #shuttle
       #fuzzyclone
     ];
   };

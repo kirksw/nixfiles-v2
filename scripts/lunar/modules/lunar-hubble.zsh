@@ -1,18 +1,24 @@
-function hubble() {
-  local AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
-  local AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
-  local AWS_SESSION_TOKEN=$(aws configure get aws_session_token)
-  local USER_EMAIL=$(aws sts get-caller-identity | jq -r '.UserId' | cut -d':' -f 2)
-  local IMAGE=hubble-cli
-
-  # NOTE: mount current dir to allow copy (this bad mang)
-  docker run --rm -it \
-    --entrypoint "/scripts/entrypoint.sh" \
-    -e "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" \
-    -e "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" \
-    -e "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" \
-    -e "PROFILE=$PROFILE" \
-    -e USER_EMAIL=$USER_EMAIL \
-    --mount type=bind,source="$(pwd)",target=/app,readonly \
-    $IMAGE "$@"
-}
+# function hubble() {
+#   local USER_EMAIL=$(aws sts get-caller-identity | jq -r '.UserId' | cut -d':' -f 2)
+#   local IMAGE=quay.io/lunarway/hubble-cli
+# 
+#   if ! command -v docker &> /dev/null; then
+#     echo "Docker is not installed. Please install Docker to use this command."
+#     return 1
+#   fi
+# 
+#   if [ -z "$USER_EMAIL" ]; then
+#     echo "Could not retrieve AWS user email. Please ensure you have the AWS CLI configured."
+#     return 1
+#   fi
+# 
+#   docker run --rm -it \
+#     --entrypoint "/scripts/entrypoint.sh" \
+#     -e AWS_PROFILE="${AWS_PROFILE:-default}" \
+#     -e USER_EMAIL=$USER_EMAIL \
+#     -v ~/.aws:/root/.aws:ro \
+#     $IMAGE "$@"
+# 
+#   # Note: sometimes you need to mount the current directory to access local files.
+#   #--mount type=bind,source="$(pwd)",target=/app,readonly
+# }

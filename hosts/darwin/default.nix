@@ -1,15 +1,15 @@
-{ pkgs, ... }:
+{ pkgs, user, ... }:
 
 let
-  user = "kisw";
+  builder-enable = true;
 in {
   imports = [
-    ../../modules/shared
+    ../../modules/darwin/linux-builder.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
 
-  users.users.kisw = with pkgs; {
+  users.users.${user}= with pkgs; {
     home = "/Users/${user}";
     shell = zsh;
   };
@@ -20,11 +20,10 @@ in {
     enable = false;
   };
 
+  linux-builder.enable = builder-enable;
+
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
-
-  # Load configuration that is shared across systems
-  environment.systemPackages = with pkgs; (import ../../modules/shared/packages.nix { inherit pkgs; });
 
   environment.shells = with pkgs; [
     zsh

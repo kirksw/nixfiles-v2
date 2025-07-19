@@ -33,5 +33,4 @@
   wezterm.enable = false;
   gcloud.enable = false;
   vscode.enable = false;
-  gowish.enable = false;
 }

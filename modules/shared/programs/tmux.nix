@@ -1,5 +1,8 @@
 { pkgs, lib, config, ... }:
 
+let
+  repoRoot = ../../..;
+in
 {
   options = {
     tmux.enable = lib.mkEnableOption "enables tmux";
@@ -107,12 +110,10 @@
       k = "sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --height 50 --prompt='⚡'";
     };
 
-    home.file.".config/sesh/sesh.toml" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/config/sesh/sesh.toml";
-    };
-  
+    home.file.".config/sesh/sesh.toml".source = "${repoRoot}/config/sesh/sesh.toml";
     home.file.".config/sesh/scripts/startup.sh" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/config/sesh/scripts/startup.sh";
+      source = "${repoRoot}/config/sesh/scripts/startup.sh";
+      executable = true;
     };
   };
 }

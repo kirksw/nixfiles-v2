@@ -1,6 +1,8 @@
-
 { pkgs, lib, config, ... }:
 
+let
+  repoRoot = ../../..;
+in
 {
   options = {
     zsh.enable = lib.mkEnableOption "enables zsh";
@@ -39,7 +41,7 @@
         }
         {
           name = "lunar";
-          src = "${config.home.homeDirectory}/nixfiles-v2/scripts/lunar";
+          src = "${repoRoot}/scripts/lunar";
           file = "lunar.plugin.zsh";
         }
       ];
@@ -48,7 +50,7 @@
         la = "ls -la";
         ll = "ls -l";
         nu = "cd ~/nixfiles-v2 && nix flake update";
-        ns = "sudo nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin --impure";
+        #ns = "sudo nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin --impure";
         gn = "gitnow";
         awsenv = "aws_fzf_profile";
         k8senv = "kubectl config use-context $(kubectl config get-contexts --no-headers | sed 's/^*//g' | awk '{print $1}' | fzf --prompt \"Choose k8s context: \")";
@@ -96,9 +98,9 @@
             export GITHUB_TOKEN=$(gh auth token);
           fi
 
-          bindkey -M viins '^I' autosuggest-accept
-          bindkey -M viins '^F' autosuggest-accept-word
-          bindkey -M viins '`' autosuggest-execute
+          if [[ -z $SSH_AUTH_SOCK ]] || ! kill -0 $SSH_AGENT_PID 2>/dev/null; then
+            eval "$(ssh-agent -s)" >/dev/null
+          fi
         '';
       in
         lib.mkMerge [ zshConfigEarlyInit zshConfig ];
@@ -114,8 +116,6 @@
       enableZshIntegration = true;
     };
 
-    home.file.".p10k.zsh" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/config/zsh/.p10k.zsh";
-    };
+    home.file.".p10k.zsh".source = "${repoRoot}/config/zsh/p10k.zsh";
   };
 }

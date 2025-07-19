@@ -8,8 +8,6 @@ self: super: with super; {
       sha256 = "sha256-76AaSUTBXQmIZQnpxrR25QrJSEtkOUouZCohCw2YN7M=";
     };
 
-    dontUnpack = true;
-
     installPhase = ''
       mkdir -p $out/bin
       install -Dm755 ${src} $out/bin/${pname}
