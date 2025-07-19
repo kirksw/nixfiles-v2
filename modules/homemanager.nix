@@ -16,7 +16,7 @@ in {
   };
 
   home-manager.sharedModules = [
-    ./shared     # adjust if you want to pull this via inputs instead
+    ./home
   ];
 
   home-manager.extraSpecialArgs = {
