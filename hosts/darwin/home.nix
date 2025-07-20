@@ -1,4 +1,9 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 
 {
   home.stateVersion = "24.05";
@@ -27,6 +32,7 @@
   zellij.enable = true;
   lunar.enable = true;
   ghostty.enable = true; # NOTE: only used for config (install via homebrew)
+  qemu.enable = true;
 
   # disabled custom modules
   homerow.enable = false;

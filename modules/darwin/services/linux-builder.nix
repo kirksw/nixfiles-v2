@@ -1,11 +1,15 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
 let
   cfg = config.linux-builder;
 in
-
 {
   options.linux-builder = {
     enable = mkEnableOption "Linux builder";
@@ -14,11 +18,13 @@ in
       type = types.package;
       default = pkgs.darwin.linux-builder;
       defaultText = "pkgs.darwin.linux-builder";
-      apply = pkg: pkg.override (old: {
-        # the linux-builder package requires `modules` as an argument, so it's
-        # always non-null.
-        modules = old.modules ++ [ cfg.config ];
-      });
+      apply =
+        pkg:
+        pkg.override (old: {
+          # the linux-builder package requires `modules` as an argument, so it's
+          # always non-null.
+          modules = old.modules ++ [ cfg.config ];
+        });
       description = ''
         This option specifies the Linux builder to use.
       '';
@@ -42,7 +48,7 @@ in
 
     mandatoryFeatures = mkOption {
       type = types.listOf types.str;
-      default = [];
+      default = [ ];
       defaultText = literalExpression ''[]'';
       example = literalExpression ''[ "big-parallel" ]'';
       description = ''
@@ -106,7 +112,11 @@ in
 
     supportedFeatures = mkOption {
       type = types.listOf types.str;
-      default = [ "kvm" "benchmark" "big-parallel" ];
+      default = [
+        "kvm"
+        "benchmark"
+        "big-parallel"
+      ];
       defaultText = literalExpression ''[ "kvm" "benchmark" "big-parallel" ]'';
       example = literalExpression ''[ "kvm" "big-parallel" ]'';
       description = ''
@@ -136,7 +146,6 @@ in
         This sets the corresponding `nix.buildMachines.*.systems` option.
       '';
     };
-
 
     workingDirectory = mkOption {
       type = types.str;
@@ -202,15 +211,22 @@ in
           IdentityFile /etc/nix/builder_ed25519
       '';
 
-      nix.distributedBuilds = true;
-
-      nix.buildMachines = [{
-        hostName = "linux-builder";
-        sshUser = "builder";
-        sshKey = "/etc/nix/builder_ed25519";
-        publicHostKey = "c3NoLWVkMjU1MTkgQUFBQUMzTnphQzFsWkRJMU5URTVBQUFBSUpCV2N4Yi9CbGFxdDFhdU90RStGOFFVV3JVb3RpQzVxQkorVXVFV2RWQ2Igcm9vdEBuaXhvcwo=";
-        inherit (cfg) mandatoryFeatures maxJobs protocol speedFactor supportedFeatures systems;
-      }];
+      nix.buildMachines = [
+        {
+          hostName = "localhost:31022";
+          sshUser = "builder";
+          sshKey = "/etc/nix/builder_ed25519";
+          publicHostKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKnTC8NZJsiyW7FuTupHqgiiVyC9Bw7hHvjEBO9w1/tZ";
+          inherit (cfg)
+            mandatoryFeatures
+            maxJobs
+            protocol
+            speedFactor
+            supportedFeatures
+            systems
+            ;
+        }
+      ];
 
       nix.settings.builders-use-substitutes = true;
     })

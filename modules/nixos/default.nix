@@ -19,6 +19,4 @@ let
 in
 {
   imports = map import filtered;
-
-  module.baseline.enable = true;
 }

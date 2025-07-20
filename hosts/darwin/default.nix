@@ -2,30 +2,45 @@
 
 let
   builder-enable = true;
-in {
+  buildersConf = pkgs.writeText "builders.conf" ''
+    ssh-ng://builder@linux-builder aarch64-linux /etc/nix/builder_ed25519 4 1 big-parallel
+    ssh-ng://root@minisrv.tail54de03.ts.net x86_64-linux /etc/nix/builder_ed25519 4 1 big-parallel
+  '';
+in
+{
   imports = [
-    ../../modules/darwin/linux-builder.nix
+    ../../modules/darwin
+    ../../modules/darwin/determinate.nix
+    ../../modules/darwin/homebrew.nix
   ];
 
   nixpkgs.config.allowUnfree = true;
 
-  users.users.${user}= with pkgs; {
+  users.users.${user} = with pkgs; {
     home = "/Users/${user}";
     shell = zsh;
   };
 
-  # Setup user, packages, programs
   nix = {
     # Note: turn off for determinant systems nix
     enable = false;
-    settings.extraOptions = ''
-      trusted-users = root kisw
-      extra-platforms = aarch64-linux x86_64-linux
-      builders = ssh://kisw@linux-builder
-    '';
+  };
+
+  determinate-nix.customSettings = {
+    lazy-trees = true;
+    extra-trusted-users = [
+      "kisw"
+    ];
+    extra-platforms = [
+      "aarch64-linux"
+      "x86_64-linux"
+    ];
+    builders = "@${buildersConf}";
+    builders-use-substitutes = true;
   };
 
   linux-builder.enable = builder-enable;
+  tailscale.enable = true;
 
   # Turn off NIX_PATH warnings now that we're using flakes
   system.checks.verifyNixPath = false;
@@ -38,9 +53,6 @@ in {
   environment.variables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
-    HAMCTL_URL="https://release-manager.lunar.tech";
-    HAMCTL_OAUTH_IDP_URL="https://login.lunar.tech/oauth2/ausains2eoZqaXcLD417";
-    HAMCTL_OAUTH_CLIENT_ID="0oaaintlyqqOETKhA417";
   };
 
   security = {
@@ -109,30 +121,7 @@ in {
 
     keyboard = {
       enableKeyMapping = true;
-
       remapCapsLockToEscape = true;
-      
-      # userKeyMapping = [
-      #   # remapCapsLockToEscape
-      #   {
-      #     HIDKeyboardModifierMappingDst = 30064771113;
-      #     HIDKeyboardModifierMappingSrc = 30064771129;
-      #   }
-      #   # nonUS.remapTilde
-      #   {
-      #     HIDKeyboardModifierMappingDst = 30064771125;
-      #     HIDKeyboardModifierMappingSrc = 30064771172;
-      #   }
-      #   # remapLeftControlToCommand
-      #   # {
-      #   #   HIDKeyboardModifierMappingSrc = 30064771299;
-      #   #   HIDKeyboardModifierMappingDst = 30064771298;
-      #   # }
-      #   # {
-      #   #   HIDKeyboardModifierMappingSrc = 30064771298;
-      #   #   HIDKeyboardModifierMappingDst = 30064771299;
-      #   # }
-      # ];
     };
   };
 
@@ -145,7 +134,7 @@ in {
     };
 
     brewPrefix = "/opt/homebrew/bin"; # needed for arm64
-    casks = pkgs.callPackage ../../modules/darwin/casks.nix {};
+    casks = pkgs.callPackage ../../modules/darwin/casks.nix { };
 
     onActivation = {
       autoUpdate = true;
@@ -168,7 +157,7 @@ in {
     # you may receive an error message "Redownload Unavailable with This Apple ID".
     # This message is safe to ignore. (https://github.com/dustinlyons/nixos-config/issues/83)
     masApps = {
-      "xcode"     = 497799835;
+      "xcode" = 497799835;
     };
   };
 
@@ -181,7 +170,7 @@ in {
       accordion-padding = 50;
       default-root-container-layout = "tiles";
       default-root-container-orientation = "auto";
-      on-focused-monitor-changed = ["move-mouse monitor-lazy-center"];
+      on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
       automatically-unhide-macos-hidden-apps = true;
 
       key-mapping = {
@@ -241,15 +230,39 @@ in {
         alt-s = "exec-and-forget open -a /Applications/Slack.app";
       };
       mode.service.binding = {
-        esc = ["reload-config" "mode main"];
-        r = ["flatten-workspace-tree" "mode main"];
-        f = ["layout floating tiling" "mode main"];
-        backspace = ["close-all-windows-but-current" "mode main"];
+        esc = [
+          "reload-config"
+          "mode main"
+        ];
+        r = [
+          "flatten-workspace-tree"
+          "mode main"
+        ];
+        f = [
+          "layout floating tiling"
+          "mode main"
+        ];
+        backspace = [
+          "close-all-windows-but-current"
+          "mode main"
+        ];
 
-        alt-shift-h = ["join-with left" "mode main"];
-        alt-shift-j = ["join-with down" "mode main"];
-        alt-shift-k = ["join-with up" "mode main"];
-        alt-shift-l = ["join-with right" "mode main"];
+        alt-shift-h = [
+          "join-with left"
+          "mode main"
+        ];
+        alt-shift-j = [
+          "join-with down"
+          "mode main"
+        ];
+        alt-shift-k = [
+          "join-with up"
+          "mode main"
+        ];
+        alt-shift-l = [
+          "join-with right"
+          "mode main"
+        ];
       };
     };
   };
