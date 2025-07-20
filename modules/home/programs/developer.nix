@@ -1,9 +1,13 @@
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
-{ pkgs, lib, config, ... }:
-
-let 
+let
   name = "Kirk Sweeney";
-  email = "kirk@cntd.io"; 
+  email = "kirk@cntd.io";
   homeDir = "/Users/${config.home.username}";
 in
 {
@@ -39,7 +43,7 @@ in
 
       # nix
       nil
-      
+
       # duckdb
       duckdb
 
@@ -60,7 +64,7 @@ in
       globalConfig = {
         settings = {
           pipx_uvx = true;
-          idiomatic_version_file_enable_tools = [];
+          idiomatic_version_file_enable_tools = [ ];
         };
 
         tools = {
@@ -78,7 +82,7 @@ in
     # every programmers best friend
     programs.git = {
       enable = true;
-      ignores = ["*.swp"];
+      ignores = [ "*.swp" ];
       userName = name;
       userEmail = email;
       signing = {
@@ -119,4 +123,3 @@ in
     };
   };
 }
-

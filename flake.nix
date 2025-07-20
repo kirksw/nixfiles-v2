@@ -27,19 +27,15 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     };
-    homebrew-dagger = {
-      url = "github:dagger/homebrew-tap";
-      flake = false;
-    };
-    homebrew-nikitabobko = {
-      url = "github:nikitabobko/homebrew-tap";
-      flake = false;
-    };
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
     disko = {
       url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    dagger = {
+      url = "github:dagger/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
@@ -53,14 +49,13 @@
       homebrew-bundle,
       homebrew-core,
       homebrew-cask,
-      homebrew-nikitabobko,
-      homebrew-dagger,
       home-manager,
       nixpkgs,
       nixpkgs-stable,
       disko,
       neovim-nightly-overlay,
       flake-utils,
+      dagger,
     }:
     let
       user = "kisw";

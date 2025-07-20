@@ -1,45 +1,88 @@
 { pkgs, user, ... }:
-
-let
-  builder-enable = true;
-  buildersConf = pkgs.writeText "builders.conf" ''
-    ssh-ng://builder@linux-builder aarch64-linux /etc/nix/builder_ed25519 4 1 big-parallel
-    ssh-ng://root@minisrv.tail54de03.ts.net x86_64-linux /etc/nix/builder_ed25519 4 1 big-parallel
-  '';
-in
 {
   imports = [
+    ../../modules/shared
     ../../modules/darwin
-    ../../modules/darwin/determinate.nix
     ../../modules/darwin/homebrew.nix
   ];
 
-  nixpkgs.config.allowUnfree = true;
+  dagger.enable = true;
+
+  nixpkgs = {
+    config.allowUnfree = true;
+  };
 
   users.users.${user} = with pkgs; {
     home = "/Users/${user}";
     shell = zsh;
   };
 
+  ids.gids.nixbld = 350;
+
   nix = {
     # Note: turn off for determinant systems nix
-    enable = false;
+    settings = {
+      trusted-users = [
+        "@admin"
+        "${user}"
+      ];
+      substituters = [
+        "https://nix-community.cachix.org"
+        "https://cache.nixos.org"
+      ];
+      trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+      builders-use-substitutes = true;
+    };
+    optimise = {
+      automatic = true;
+      interval = {
+        Weekday = 4;
+        Hour = 2;
+        Minute = 0;
+      };
+    };
+    gc = {
+      automatic = true;
+      interval = {
+        Weekday = 0;
+        Hour = 2;
+        Minute = 0;
+      };
+      options = "--delete-older-than 30d";
+    };
+    extraOptions = ''
+      experimental-features = nix-command flakes
+      extra-platforms = x86_64-darwin aarch64-darwin
+    '';
+    linux-builder = {
+      enable = true;
+      ephemeral = true;
+      maxJobs = 4;
+      config = {
+        virtualisation = {
+          darwin-builder = {
+            diskSize = 40 * 1024;
+            memorySize = 8 * 1024;
+          };
+          cores = 6;
+        };
+      };
+    };
+    distributedBuilds = true;
   };
 
-  determinate-nix.customSettings = {
-    lazy-trees = true;
-    extra-trusted-users = [
-      "kisw"
-    ];
-    extra-platforms = [
-      "aarch64-linux"
-      "x86_64-linux"
-    ];
-    builders = "@${buildersConf}";
-    builders-use-substitutes = true;
-  };
+  # determinate-nix.customSettings = {
+  #   lazy-trees = true;
+  #   extra-trusted-users = [
+  #     "kisw"
 
-  linux-builder.enable = builder-enable;
+  #     "x86_64-linux"
+  #   ];
+  #   builders = "@${buildersConf}";
+  #   builders-use-substitutes = true;
+  # };
+
+  # linux-builder.enable = builder-enable;
   tailscale.enable = true;
 
   # Turn off NIX_PATH warnings now that we're using flakes
@@ -71,7 +114,7 @@ in
   };
 
   system = {
-    stateVersion = 4;
+    stateVersion = 6;
     primaryUser = "${user}";
 
     defaults = {
@@ -139,11 +182,12 @@ in
     onActivation = {
       autoUpdate = true;
       upgrade = true;
+      cleanup = "zap";
     };
 
     brews = [
       # "ollama"
-      "dagger"
+      # "dagger"
     ];
 
     # These app IDs are from using the mas CLI app

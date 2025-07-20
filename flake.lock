@@ -17,6 +17,26 @@
         "type": "github"
       }
     },
+    "dagger": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1752879761,
+        "narHash": "sha256-WZ/u0YG0vNBXc57kl33ZyZ98baj0EUfH+6EvKMoUDu0=",
+        "owner": "dagger",
+        "repo": "nix",
+        "rev": "81b99dbe1176d4b9842604ec8d64e4ee803dd851",
+        "type": "github"
+      },
+      "original": {
+        "owner": "dagger",
+        "repo": "nix",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -284,38 +304,6 @@
         "type": "github"
       }
     },
-    "homebrew-dagger": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1752879769,
-        "narHash": "sha256-2jKKEVjuKc15GpGs5Vzn2pjLdfxcsM51rOzS7ArXjkE=",
-        "owner": "dagger",
-        "repo": "homebrew-tap",
-        "rev": "991c850d4b6d2b9e43d0fa01932f7151b7b18faa",
-        "type": "github"
-      },
-      "original": {
-        "owner": "dagger",
-        "repo": "homebrew-tap",
-        "type": "github"
-      }
-    },
-    "homebrew-nikitabobko": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1752749701,
-        "narHash": "sha256-qQ16IUZjJvTjfNP8mnCJ1jA7pcVVFaf3bNj6bI3/tug=",
-        "owner": "nikitabobko",
-        "repo": "homebrew-tap",
-        "rev": "316446272f7e215beff894e3fdaeca447a1e7faa",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nikitabobko",
-        "repo": "homebrew-tap",
-        "type": "github"
-      }
-    },
     "neovim-nightly-overlay": {
       "inputs": {
         "flake-compat": "flake-compat",
@@ -424,6 +412,7 @@
     },
     "root": {
       "inputs": {
+        "dagger": "dagger",
         "darwin": "darwin",
         "disko": "disko",
         "flake-utils": "flake-utils",
@@ -431,8 +420,6 @@
         "homebrew-bundle": "homebrew-bundle",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
-        "homebrew-dagger": "homebrew-dagger",
-        "homebrew-nikitabobko": "homebrew-nikitabobko",
         "neovim-nightly-overlay": "neovim-nightly-overlay",
         "nix-homebrew": "nix-homebrew",
         "nixpkgs": "nixpkgs_2",
