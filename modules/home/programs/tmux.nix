@@ -73,21 +73,27 @@
 
         # session management binds
         bind-key "T" run-shell "sesh connect \"$(
-          sesh list | fzf-tmux -p 55%,60% \
-            --no-sort --border-label ' sesh ' --prompt '⚡  ' \
-            --header '  ^a all ^t tmux ^c configs ^g gitnow ^x zoxide ^d tmux kill ^f find' \
+          sesh list --icons | fzf-tmux -p 80%,70% \
+            --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
+            --header '  ^a all ^t tmux ^g github ^c configs ^x zoxide ^d tmux kill ^f find' \
             --bind 'tab:down,btab:up' \
-            --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list)' \
-            --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t)' \
-            --bind 'ctrl-c:change-prompt(⚙️  )+reload(sesh list -c)' \
-            --bind 'ctrl-g:change-prompt(🔀  )+reload(sesh list --github)' \
-            --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z)' \
+            --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
+            --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
+            --bind 'ctrl-g:change-prompt(🐙  )+reload(sesh list -g --icons)' \
+            --bind 'ctrl-c:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
+            --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
             --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
-            --bind 'ctrl-d:execute(tmux kill-session -t {})+change-prompt(⚡  )+reload(sesh list)'
+            --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
+            --preview-window 'right:55%' \
+            --preview 'sesh preview {}'
         )\""
 
         bind-key "K" display-popup -E -w 40% "sesh connect \"$(
           sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --height 50 --prompt='⚡'
+        )\""
+
+        bind-key "G" display-popup -E -w 40% "sesh connect \"$(
+          sesh list -g | gum filter --limit 1 --placeholder 'Pick a repo' --height 50 --prompt='⚡'
         )\""
 
         # clear screen
@@ -105,7 +111,7 @@
     };
     # add sesh for tmux session management
     home.packages = with pkgs; [
-      sesh
+      #sesh
     ];
 
     home.shellAliases = {

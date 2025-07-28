@@ -4,7 +4,7 @@
   nix-homebrew = {
     inherit user;
     enable = true;
-    mutableTaps = false;
+    mutableTaps = true;
     # taps = {
     #   "homebrew/core" = inputs.homebrew-core;
     #   "homebrew/cask" = inputs.homebrew-cask;
