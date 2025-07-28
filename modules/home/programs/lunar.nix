@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   options = {
@@ -7,8 +12,14 @@
 
   config = lib.mkIf config.lunar.enable {
     home.packages = with pkgs; [
+      # general tooling
       kubeseal
       awscli2
+
+      # ai
+      codex
+
+      # internal tooling
       #hamctl
       #shuttle
       #fuzzyclone

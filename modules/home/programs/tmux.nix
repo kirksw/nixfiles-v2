@@ -1,4 +1,10 @@
-{ pkgs, lib, config, nixfiles, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  nixfiles,
+  ...
+}:
 
 {
   options = {
@@ -74,12 +80,12 @@
             --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list)' \
             --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t)' \
             --bind 'ctrl-c:change-prompt(⚙️  )+reload(sesh list -c)' \
-            --bind 'ctrl-g:change-prompt(🔀  )+reload(gitnow)' \
+            --bind 'ctrl-g:change-prompt(🔀  )+reload(sesh list --github)' \
             --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z)' \
             --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
             --bind 'ctrl-d:execute(tmux kill-session -t {})+change-prompt(⚡  )+reload(sesh list)'
         )\""
-        
+
         bind-key "K" display-popup -E -w 40% "sesh connect \"$(
           sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --height 50 --prompt='⚡'
         )\""
@@ -114,4 +120,3 @@
     };
   };
 }
-

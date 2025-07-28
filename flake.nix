@@ -13,19 +13,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {
-      url = "github:zhaofengli-wip/nix-homebrew";
-    };
-    homebrew-bundle = {
-      url = "github:homebrew/homebrew-bundle";
-      flake = false;
-    };
-    homebrew-core = {
-      url = "github:homebrew/homebrew-core";
-      flake = false;
-    };
-    homebrew-cask = {
-      url = "github:homebrew/homebrew-cask";
-      flake = false;
+      url = "github:zhaofengli/nix-homebrew";
     };
     flake-utils = {
       url = "github:numtide/flake-utils";
@@ -38,7 +26,6 @@
       url = "github:dagger/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    neovim-nightly-overlay.url = "github:nix-community/neovim-nightly-overlay";
   };
 
   outputs =
@@ -46,14 +33,10 @@
       self,
       darwin,
       nix-homebrew,
-      homebrew-bundle,
-      homebrew-core,
-      homebrew-cask,
       home-manager,
       nixpkgs,
       nixpkgs-stable,
       disko,
-      neovim-nightly-overlay,
       flake-utils,
       dagger,
     }:

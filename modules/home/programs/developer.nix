@@ -72,6 +72,7 @@ in
           python = "3.13";
           java = "adoptopenjdk-21";
           scala = "3.7";
+          node = "latest";
           "cargo:arroyo" = "latest";
           "cargo:bacon" = "latest";
           "cargo:gitnow" = "latest";

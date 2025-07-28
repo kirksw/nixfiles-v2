@@ -120,10 +120,10 @@ aws_fzf_profile() {
     echo "✅ SSO token is still valid"
   else
     echo "❌ SSO token expired (or not found)"
-    if aws sso login --profile "$AWS_PROFILE"; then
-      echo "✅ aws sso login successful for profile '$AWS_PROFILE'"
+    if aws sso login --sso-session lunarway; then
+      echo "✅ aws sso login successful"
     else
-      echo "❌ aws sso login failed for profile '$AWS_PROFILE'"
+      echo "❌ aws sso login failed"
       return 1
     fi
   fi

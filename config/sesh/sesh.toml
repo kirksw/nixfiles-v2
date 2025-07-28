@@ -14,3 +14,17 @@ name = "scratchpad 🗒️"
 path = "~/git/github.com/kirksw/scratchpad"
 startup_command = "lv ."
 preview_command = "bat --color=always ~/git/github.com/kirksw/scratchpad/README.md"
+
+[github]
+organization = "lunarway"
+cache_timeout = 600
+clone_dir = "~/lunarway"
+use_ssh = true
+
+sort_order = [
+  "tmux",       # show first
+  "config",
+  "github",     # show GitHub repos after configs
+  "tmuxinator",
+  "zoxide",     # show last
+]

@@ -26,11 +26,11 @@
         "@admin"
         "${user}"
       ];
-      substituters = [
-        "https://nix-community.cachix.org"
-        "https://cache.nixos.org"
-      ];
-      trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+      # substituters = [
+      #   "https://nix-community.cachix.org"
+      #   "https://cache.nixos.org"
+      # ];
+      # trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
       builders-use-substitutes = true;
     };
     optimise = {
