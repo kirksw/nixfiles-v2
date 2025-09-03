@@ -88,11 +88,11 @@
             --preview 'sesh preview {}'
         )\""
 
-        bind-key "K" display-popup -E -w 40% "sesh connect \"$(
+        bind-key "K" display-popup -E -w 80% "sesh connect \"$(
           sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --height 50 --prompt='⚡'
         )\""
 
-        bind-key "G" display-popup -E -w 40% "sesh connect \"$(
+        bind-key "G" display-popup -E -w 80% "sesh connect \"$(
           sesh list -g | gum filter --limit 1 --placeholder 'Pick a repo' --height 50 --prompt='⚡'
         )\""
 

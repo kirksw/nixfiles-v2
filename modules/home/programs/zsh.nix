@@ -1,4 +1,10 @@
-{ pkgs, lib, config, nixfiles, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  nixfiles,
+  ...
+}:
 
 {
   options = {
@@ -18,11 +24,11 @@
       autocd = true;
       #dotDir = ".config/zsh";
       enableCompletion = true;
-      autosuggestion.enable = true; 
-      syntaxHighlighting.enable = true; 
+      autosuggestion.enable = true;
+      syntaxHighlighting.enable = true;
       defaultKeymap = "viins";
 
-      # NOTE: use-this for debugging performance issues 
+      # NOTE: use-this for debugging performance issues
       # zprof.enable = true;
 
       plugins = [
@@ -58,49 +64,55 @@
       history.path = "${config.xdg.dataHome}/zsh/history";
 
       # NOTE: 500: early init, 550: before comp, 1000: general, 1500: last
-      initContent = let
-        zshConfigEarlyInit = lib.mkOrder 500 ''
-          # Early NIX config
-        '';
+      initContent =
+        let
+          zshConfigEarlyInit = lib.mkOrder 500 ''
+            # Early NIX config
+          '';
 
-        zshConfig = lib.mkOrder 1000 ''
-          # General NIX config
-          if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-            . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-            . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-          fi
+          zshConfig = lib.mkOrder 1000 ''
+            # General NIX config
+            if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+              . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+              . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+            fi
 
-          if [[ $(uname -m) == 'arm64' ]]; then
-              eval "$(/opt/homebrew/bin/brew shellenv)"
-          fi
+            if [[ $(uname -m) == 'arm64' ]]; then
+                eval "$(/opt/homebrew/bin/brew shellenv)"
+            fi
 
-          # k8s plugin manager
-          [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
+            # k8s plugin manager
+            [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
 
-          # powerlevel10k
-          [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+            # powerlevel10k
+            [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-          # shuttle
-          [[ ! -f $(which shuttle) ]] || source <(shuttle completion zsh)
+            # shuttle
+            [[ ! -f $(which shuttle) ]] || source <(shuttle completion zsh)
 
-          # hamctl
-          [[ ! -f $(which hamctl) ]] || source <(hamctl completion zsh)
+            # hamctl
+            [[ ! -f $(which hamctl) ]] || source <(hamctl completion zsh)
 
-          # refresh $GITHUB_ACCESS_TOKEN if unset
-          if [[ $GITHUB_ACCESS_TOKEN == "" ]]; then
-            export GITHUB_ACCESS_TOKEN=$(gh auth token);
-          fi
+            # refresh $GITHUB_ACCESS_TOKEN if unset
+            if [[ $GITHUB_ACCESS_TOKEN == "" ]]; then
+              export GITHUB_ACCESS_TOKEN=$(gh auth token);
+            fi
 
-          if [[ $GITHUB_TOKEN == "" ]]; then
-            export GITHUB_TOKEN=$(gh auth token);
-          fi
+            if [[ $GITHUB_TOKEN == "" ]]; then
+              export GITHUB_TOKEN=$(gh auth token);
+            fi
 
-          if [[ -z $SSH_AUTH_SOCK ]] || ! kill -0 $SSH_AGENT_PID 2>/dev/null; then
-            eval "$(ssh-agent -s)" >/dev/null
-          fi
-        '';
-      in
-        lib.mkMerge [ zshConfigEarlyInit zshConfig ];
+            if [[ -z $SSH_AUTH_SOCK ]] || ! kill -0 $SSH_AGENT_PID 2>/dev/null; then
+              eval "$(ssh-agent -s)" >/dev/null
+            fi
+
+            export PATH="$HOME/.local/bin:$PATH"
+          '';
+        in
+        lib.mkMerge [
+          zshConfigEarlyInit
+          zshConfig
+        ];
     };
 
     programs.zoxide = {

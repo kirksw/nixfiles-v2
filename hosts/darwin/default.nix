@@ -7,6 +7,7 @@
   ];
 
   dagger.enable = true;
+  lunar-tools.enable = true;
 
   nixpkgs = {
     config.allowUnfree = true;
@@ -266,12 +267,12 @@
         alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
         alt-shift-semicolon = "mode service";
 
-        alt-a = "exec-and-forget open -a /Applications/Arc.app";
-        alt-w = "exec-and-forget open -a /etc/profiles/per-user/kisw/bin/wezterm";
-        alt-z = "exec-and-forget open -a /Applications/Zed.app";
-        alt-i = "exec-and-forget open -a '/Applications/IntelliJ IDEA.app'";
-        alt-d = "exec-and-forget open -a /Applications/DataGrip.app";
+        # alt-a = "exec-and-forget open -a /Applications/Arc.app";
+        # alt-z = "exec-and-forget open -a /Applications/Zed.app";
+        # alt-i = "exec-and-forget open -a '/Applications/IntelliJ IDEA.app'";
+        # alt-d = "exec-and-forget open -a /Applications/DataGrip.app";
         alt-s = "exec-and-forget open -a /Applications/Slack.app";
+        alt-g = "exec-and-forget open -a /opt/homebrew/bin/ghostty";
       };
       mode.service.binding = {
         esc = [

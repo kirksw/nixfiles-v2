@@ -35,6 +35,7 @@
   qemu.enable = true;
 
   # disabled custom modules
+  communication.enable = false;
   homerow.enable = false;
   wezterm.enable = false;
   gcloud.enable = false;

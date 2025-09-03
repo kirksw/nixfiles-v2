@@ -60,7 +60,6 @@ in
     programs.mise = {
       enable = true;
       enableZshIntegration = true;
-
       globalConfig = {
         settings = {
           pipx_uvx = true;
@@ -75,7 +74,6 @@ in
           node = "latest";
           "cargo:arroyo" = "latest";
           "cargo:bacon" = "latest";
-          "cargo:gitnow" = "latest";
         };
       };
     };

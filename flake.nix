@@ -26,6 +26,10 @@
       url = "github:dagger/nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    lunar-tools = {
+      url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/zsh-plugin";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -39,6 +43,7 @@
       disko,
       flake-utils,
       dagger,
+      lunar-tools,
     }:
     let
       user = "kisw";
@@ -47,7 +52,6 @@
         "aarch64-linux"
       ];
       darwinSystems = [ "aarch64-darwin" ];
-      supportedSystems = linuxSystems ++ darwinSystems;
       nixfiles = ./.;
     in
     flake-utils.lib.eachDefaultSystem (system: {
