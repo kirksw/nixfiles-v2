@@ -1,4 +1,5 @@
 { pkgs, user, ... }:
+
 {
   imports = [
     ../../modules/shared
@@ -6,7 +7,6 @@
     ../../modules/darwin/homebrew.nix
   ];
 
-  dagger.enable = true;
   lunar-tools.enable = true;
 
   nixpkgs = {
@@ -23,17 +23,23 @@
   nix = {
     # Note: turn off for determinant systems nix
     settings = {
+      max-jobs = "auto";
+      cores = 0; # Use all cores
       trusted-users = [
         "@admin"
         "${user}"
       ];
-      # substituters = [
-      #   "https://nix-community.cachix.org"
-      #   "https://cache.nixos.org"
-      # ];
-      # trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+      substituters = [
+        "https://cache.nixos.org"
+        "https://nix-community.cachix.org"
+      ];
+      trusted-public-keys = [
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
       builders-use-substitutes = true;
     };
+
     optimise = {
       automatic = true;
       interval = {
@@ -42,6 +48,7 @@
         Minute = 0;
       };
     };
+
     gc = {
       automatic = true;
       interval = {
@@ -51,10 +58,12 @@
       };
       options = "--delete-older-than 30d";
     };
+
     extraOptions = ''
       experimental-features = nix-command flakes
       extra-platforms = x86_64-darwin aarch64-darwin
     '';
+
     linux-builder = {
       enable = true;
       ephemeral = true;
@@ -69,6 +78,7 @@
         };
       };
     };
+
     distributedBuilds = true;
   };
 
@@ -83,7 +93,6 @@
   #   builders-use-substitutes = true;
   # };
 
-  # linux-builder.enable = builder-enable;
   tailscale.enable = true;
 
   # Turn off NIX_PATH warnings now that we're using flakes

@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   lib,
   config,
@@ -44,7 +45,7 @@
         }
         {
           name = "lunar";
-          src = "${nixfiles}/scripts/lunar";
+          src = "${inputs.lunar-zsh-plugin}/share/zsh/plugins/lunar-zsh-plugin/";
           file = "lunar.plugin.zsh";
         }
       ];
@@ -126,5 +127,7 @@
     };
 
     home.file.".p10k.zsh".source = "${nixfiles}/config/zsh/.p10k.zsh";
+    home.file.".kube/config".source = "${inputs.lunar-zsh-plugin}/.kube/config";
+    home.file.".aws/config".source = "${inputs.lunar-zsh-plugin}/.aws/config";
   };
 }

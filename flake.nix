@@ -22,10 +22,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    dagger = {
-      url = "github:dagger/nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     lunar-tools = {
       url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/zsh-plugin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,7 +38,6 @@
       nixpkgs-stable,
       disko,
       flake-utils,
-      dagger,
       lunar-tools,
     }:
     let
