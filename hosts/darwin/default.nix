@@ -9,9 +9,7 @@
 
   lunar-tools.enable = true;
 
-  nixpkgs = {
-    config.allowUnfree = true;
-  };
+  nixpkgs.config.allowUnfree = true;
 
   users.users.${user} = with pkgs; {
     home = "/Users/${user}";

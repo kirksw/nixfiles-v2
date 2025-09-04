@@ -45,7 +45,9 @@
         }
         {
           name = "lunar";
-          src = "${inputs.lunar-tools.lunar-zsh-plugin}/share/zsh/plugins/lunar-zsh-plugin/";
+          src = "${
+            inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
+          }/share/zsh/plugins/lunar-zsh-plugin/";
           file = "lunar.plugin.zsh";
         }
       ];
@@ -127,7 +129,11 @@
     };
 
     home.file.".p10k.zsh".source = "${nixfiles}/config/zsh/.p10k.zsh";
-    home.file.".kube/config".source = "${inputs.lunar-tools.lunar-zsh-plugin}/.kube/config";
-    home.file.".aws/config".source = "${inputs.lunar-tools.lunar-zsh-plugin}/.aws/config";
+    home.file.".kube/config".source = "${
+      inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
+    }/.kube/config";
+    home.file.".aws/config".source = "${
+      inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
+    }/.aws/config";
   };
 }
