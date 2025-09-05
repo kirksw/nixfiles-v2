@@ -23,7 +23,6 @@
       enable = true;
 
       autocd = true;
-      #dotDir = ".config/zsh";
       enableCompletion = true;
       autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
@@ -56,11 +55,13 @@
         la = "ls -la";
         ll = "ls -l";
         nu = "cd ~/nixfiles-v2 && nix flake update";
-        #ns = "sudo nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin --impure";
+        ns = "sudo nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin";
         gn = "gitnow";
         awsenv = "aws_fzf_profile";
         k8senv = "kubectl config use-context $(kubectl config get-contexts --no-headers | sed 's/^*//g' | awk '{print $1}' | fzf --prompt \"Choose k8s context: \")";
         "docker-compose" = "docker compose";
+        hubble = "aws_wrapper hubble";
+        k9s = "aws_wrapper k9s";
       };
 
       history.size = 10000;
@@ -90,11 +91,12 @@
             # powerlevel10k
             [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-            # shuttle
-            [[ ! -f $(which shuttle) ]] || source <(shuttle completion zsh)
-
-            # hamctl
-            [[ ! -f $(which hamctl) ]] || source <(hamctl completion zsh)
+            ## shuttle
+            #[[ ! -f $(which shuttle) ]] || source <(shuttle completion zsh)
+            ## hamctl
+            #[[ ! -f $(which hamctl) ]] || source <(hamctl completion zsh)
+            ## gitnow
+            #[[ ! -f $(which gitnow) ]] || source <(gitnow init zsh)
 
             # refresh $GITHUB_ACCESS_TOKEN if unset
             if [[ $GITHUB_ACCESS_TOKEN == "" ]]; then
@@ -129,11 +131,11 @@
     };
 
     home.file.".p10k.zsh".source = "${nixfiles}/config/zsh/.p10k.zsh";
-    home.file.".kube/config".source = "${
-      inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
-    }/.kube/config";
     home.file.".aws/config".source = "${
       inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
     }/.aws/config";
+    # home.file.".kube/config".source = "${
+    #   inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
+    # }/.kube/config";
   };
 }

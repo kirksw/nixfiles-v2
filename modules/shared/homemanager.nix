@@ -4,6 +4,7 @@
   inputs,
   nixpkgsStable,
   nixfiles,
+  ...
 }:
 
 {
@@ -23,6 +24,7 @@ in
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
+    backupFileExtension = "bak";
 
     users = {
       "${user}" = import hostModule;

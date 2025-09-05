@@ -1,4 +1,5 @@
 {
+  inputs,
   pkgs,
   lib,
   config,
@@ -20,9 +21,13 @@
       codex
 
       # internal tooling
-      #hamctl
-      #shuttle
-      #fuzzyclone
+      inputs.lunar-tools.packages.${pkgs.system}.shuttle
+      inputs.lunar-tools.packages.${pkgs.system}.hamctl
+      inputs.lunar-tools.packages.${pkgs.system}.hubble
+      inputs.lunar-tools.packages.${pkgs.system}.sesh
+      inputs.lunar-tools.packages.${pkgs.system}.dagger
+      inputs.lunar-tools.packages.${pkgs.system}.fuzzy-clone
+      inputs.lunar-tools.packages.${pkgs.system}.gitnow
     ];
   };
 }

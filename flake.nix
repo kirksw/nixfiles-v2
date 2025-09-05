@@ -24,7 +24,6 @@
     };
     lunar-tools = {
       url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/zsh-plugin";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
