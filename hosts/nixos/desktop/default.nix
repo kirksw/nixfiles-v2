@@ -1,7 +1,11 @@
-{ config, inputs, pkgs, ... }:
+{
+  pkgs,
+  ...
+}:
 
-let user = "kirk";
-    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
+let
+  user = "kirk";
+in
 {
   imports = [
   ];
@@ -15,7 +19,14 @@ let user = "kirk";
       };
       efi.canTouchEfiVariables = true;
     };
-    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+    initrd.availableKernelModules = [
+      "xhci_pci"
+      "ahci"
+      "nvme"
+      "usbhid"
+      "usb_storage"
+      "sd_mod"
+    ];
     # Uncomment for AMD GPU
     # initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
@@ -42,7 +53,7 @@ let user = "kirk";
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-   };
+  };
 
   # Manages keys and such
   programs = {
@@ -55,7 +66,7 @@ let user = "kirk";
     zsh.enable = true;
   };
 
-  services = { 
+  services = {
     xserver = {
       enable = true;
 
@@ -98,24 +109,6 @@ let user = "kirk";
     # Let's be able to SSH into this machine
     openssh.enable = true;
 
-    # Sync state between machines
-    syncthing = {
-      enable = true;
-      openDefaultPorts = true;
-      dataDir = "/home/${user}/.local/share/syncthing";
-      configDir = "/home/${user}/.config/syncthing";
-      user = "${user}";
-      group = "users";
-      guiAddress = "127.0.0.1:8384";
-      overrideFolders = true;
-      overrideDevices = true;
-
-      settings = {
-        devices = {};
-        options.globalAnnounceEnabled = false; # Only sync on LAN
-      };
-    };
-
     # Enable CUPS to print documents
     # printing.enable = true;
     # printing.drivers = [ pkgs.brlaser ]; # Brother printer driver
@@ -149,8 +142,8 @@ let user = "kirk";
           "class_g = 'i3lock'"
         ];
         round-borders = 3;
-        round-borders-exclude = [];
-        round-borders-rule = [];
+        round-borders-exclude = [ ];
+        round-borders-rule = [ ];
         shadow = true;
         shadow-radius = 8;
         shadow-opacity = 0.4;
@@ -201,12 +194,29 @@ let user = "kirk";
         log-level = "info";
 
         wintypes = {
-          normal = { fade = true; shadow = false; };
-          tooltip = { fade = true; shadow = false; opacity = 0.75; focus = true; full-shadow = false; };
-          dock = { shadow = false; };
-          dnd = { shadow = false; };
-          popup_menu = { opacity = 1.0; };
-          dropdown_menu = { opacity = 1.0; };
+          normal = {
+            fade = true;
+            shadow = false;
+          };
+          tooltip = {
+            fade = true;
+            shadow = false;
+            opacity = 0.75;
+            focus = true;
+            full-shadow = false;
+          };
+          dock = {
+            shadow = false;
+          };
+          dnd = {
+            shadow = false;
+          };
+          popup_menu = {
+            opacity = 1.0;
+          };
+          dropdown_menu = {
+            opacity = 1.0;
+          };
         };
       };
     };
@@ -231,7 +241,6 @@ let user = "kirk";
     ledger.enable = true;
   };
 
-
   # Add docker daemon
   virtualisation = {
     docker = {
@@ -240,7 +249,6 @@ let user = "kirk";
     };
   };
 
-  # It's me, it's you, it's everyone
   users.users = {
     ${user} = {
       isNormalUser = true;
@@ -249,12 +257,12 @@ let user = "kirk";
         "docker"
       ];
       shell = pkgs.zsh;
-      openssh.authorizedKeys.keys = keys;
+      #openssh.authorizedKeys.keys = keys;
     };
 
-    root = {
-      openssh.authorizedKeys.keys = keys;
-    };
+    #root = {
+    #  openssh.authorizedKeys.keys = keys;
+    #};
   };
 
   environment.systemPackages = with pkgs; [
@@ -262,8 +270,7 @@ let user = "kirk";
     inetutils
   ];
 
-  environment.pathsToLink = ["/share/zsh"];
+  environment.pathsToLink = [ "/share/zsh" ];
 
   system.stateVersion = "24.05"; # Don't change this
-
 }

@@ -1,6 +1,6 @@
 {
   user,
-  hostModule,
+  homeModule,
   inputs,
   nixpkgsStable,
   nixfiles,
@@ -27,7 +27,7 @@ in
     backupFileExtension = "bak";
 
     users = {
-      "${user}" = import hostModule;
+      "${user}" = import homeModule;
     };
 
     sharedModules = [

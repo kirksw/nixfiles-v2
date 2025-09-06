@@ -76,12 +76,13 @@
           inherit system;
           specialArgs = { inherit inputs user nixfiles; };
           modules = [
+            { nixpkgs.overlays = [ lunar-tools.overlays.default ]; }
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
-            ./hosts/darwin
+            ./hosts/darwin/work
             (import ./modules/shared/homemanager.nix {
               inherit user nixfiles;
-              hostModule = ./hosts/darwin/home.nix;
+              homeModule = ./hosts/darwin/work/home.nix;
               inputs = inputs;
               nixpkgsStable = inputs.nixpkgs-stable;
             })
@@ -96,10 +97,10 @@
           specialArgs = inputs;
           modules = [
             disko.nixosModules.disko
-            ./hosts/nixos
-            (import ./modules/homemanager.nix {
+            ./hosts/nixos/desktop
+            (import ./modules/shared/homemanager.nix {
               inherit user;
-              hostModule = ./hosts/nixos/home.nix;
+              homeModule = ./hosts/nixos/desktop/home.nix;
               inputs = inputs;
               nixpkgsStable = inputs.nixpkgs-stable;
             })

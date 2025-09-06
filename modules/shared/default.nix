@@ -6,6 +6,7 @@ let
   excluded = [
     (toString ./default.nix)
     (toString ./template.nix)
+    (toString ./homemanager.nix)
   ];
 
   isSubdir =
