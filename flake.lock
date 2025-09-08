@@ -337,6 +337,25 @@
         "lunar-tools"
       ]
     },
+    "helix": {
+      "inputs": {
+        "nixpkgs": "nixpkgs",
+        "rust-overlay": "rust-overlay"
+      },
+      "locked": {
+        "lastModified": 1757082973,
+        "narHash": "sha256-mnzEsFAJkw26fvE0SE1jrzdAZrwDDleTTgNL7huXABI=",
+        "owner": "helix-editor",
+        "repo": "helix",
+        "rev": "d0218f7e78bc0c3af4b0995ab8bda66b9c542cf3",
+        "type": "github"
+      },
+      "original": {
+        "owner": "helix-editor",
+        "repo": "helix",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -390,16 +409,16 @@
         "hamctl": "hamctl",
         "hubble": "hubble",
         "lunar-zsh-plugin": "lunar-zsh-plugin",
-        "nixpkgs": "nixpkgs",
+        "nixpkgs": "nixpkgs_2",
         "sesh": "sesh",
         "shuttle": "shuttle"
       },
       "locked": {
-        "lastModified": 1757323147,
-        "narHash": "sha256-uHbQQ+ws7W73hZ5G2ZbxUuYGNOX6BYLu8WEHKnZXJJA=",
+        "lastModified": 1757329223,
+        "narHash": "sha256-sLTPgXSIoLGw0NGbledmqV/L+OrtdpnqMUChfszvnok=",
         "ref": "feat/zsh-plugin",
-        "rev": "0fc59036c92e618e24cc276627c5c6fe84217060",
-        "revCount": 31,
+        "rev": "1151ea4efc763ae942f380d858dfceae90327637",
+        "revCount": 32,
         "type": "git",
         "url": "ssh://git@github.com/lunarway/lw-nix"
       },
@@ -449,16 +468,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1756999638,
-        "narHash": "sha256-R9wNXA8KT71zo/GeMdVgB3KoHj11h4eHa7woTLXMQVw=",
+        "lastModified": 1740560979,
+        "narHash": "sha256-Vr3Qi346M+8CjedtbyUevIGDZW8LcA1fTG0ugPY/Hic=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "e7b7aee12245de9127b3af86ae049cccd490d7cb",
+        "rev": "5135c59491985879812717f4c9fea69604e7f26f",
         "type": "github"
       },
       "original": {
         "owner": "nixos",
-        "ref": "release-25.05",
+        "ref": "nixos-unstable",
         "repo": "nixpkgs",
         "type": "github"
       }
@@ -480,6 +499,22 @@
       }
     },
     "nixpkgs_2": {
+      "locked": {
+        "lastModified": 1756999638,
+        "narHash": "sha256-R9wNXA8KT71zo/GeMdVgB3KoHj11h4eHa7woTLXMQVw=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "e7b7aee12245de9127b3af86ae049cccd490d7cb",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "release-25.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_3": {
       "locked": {
         "lastModified": 1756819007,
         "narHash": "sha256-12V64nKG/O/guxSYnr5/nq1EfqwJCdD2+cIGmhz3nrE=",
@@ -539,11 +574,33 @@
         "darwin": "darwin",
         "disko": "disko",
         "flake-utils": "flake-utils",
+        "helix": "helix",
         "home-manager": "home-manager",
         "lunar-tools": "lunar-tools",
         "nix-homebrew": "nix-homebrew",
-        "nixpkgs": "nixpkgs_2",
+        "nixpkgs": "nixpkgs_3",
         "nixpkgs-stable": "nixpkgs-stable"
+      }
+    },
+    "rust-overlay": {
+      "inputs": {
+        "nixpkgs": [
+          "helix",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1740623427,
+        "narHash": "sha256-3SdPQrZoa4odlScFDUHd4CUPQ/R1gtH4Mq9u8CBiK8M=",
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "rev": "d342e8b5fd88421ff982f383c853f0fc78a847ab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "oxalica",
+        "repo": "rust-overlay",
+        "type": "github"
       }
     },
     "sesh": {
