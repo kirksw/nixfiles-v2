@@ -44,9 +44,7 @@
         }
         {
           name = "lunar";
-          src = "${
-            inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
-          }/share/zsh/plugins/lunar-zsh-plugin/";
+          src = "${pkgs.lunar-zsh-plugin}/share/zsh/plugins/lunar-zsh-plugin/";
           file = "lunar.plugin.zsh";
         }
       ];
@@ -58,10 +56,11 @@
         ns = "sudo nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin";
         gn = "gitnow";
         awsenv = "aws_fzf_profile";
-        k8senv = "kubectl config use-context $(kubectl config get-contexts --no-headers | sed 's/^*//g' | awk '{print $1}' | fzf --prompt \"Choose k8s context: \")";
+        k8senv = "k8s_fzf_context";
         "docker-compose" = "docker compose";
         hubble = "aws_wrapper hubble";
-        k9s = "aws_wrapper k9s";
+        k9s = "k8s_wrapper k9s";
+        kubectl = "k8s_wrapper kubectl";
       };
 
       history.size = 10000;
