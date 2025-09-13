@@ -6,7 +6,7 @@
 
 {
   options = {
-    jankyborders.enable = lib.mkEnableOption "enables sketchybar";
+    jankyborders.enable = lib.mkEnableOption "enables jankyborders";
   };
 
   config = lib.mkIf config.jankyborders.enable {

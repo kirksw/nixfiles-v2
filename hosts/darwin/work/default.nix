@@ -136,7 +136,6 @@
         InitialKeyRepeat = 15;
 
         # Automatically hide and show the menu bar
-        # TODO: remove after sketchybar
         _HIHideMenuBar = true;
 
         "com.apple.mouse.tapBehavior" = 1;
