@@ -18,8 +18,10 @@
       awscli2
 
       # internal tooling
-      shuttle
-      hamctl
+      inputs.lunar-tools.packages.${pkgs.system}.hamctl
+      inputs.lunar-tools.packages.${pkgs.system}.shuttle
+      #shuttle
+      #hamctl
       hubble
       sesh
       dagger

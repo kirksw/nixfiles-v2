@@ -1,4 +1,9 @@
-{ pkgs, user, ... }:
+{
+  pkgs,
+  user,
+  self,
+  ...
+}:
 
 {
   imports = [
@@ -28,6 +33,7 @@
   environment.variables = {
     EDITOR = "nvim";
     VISUAL = "nvim";
+    SOPS_AGE_KEY_FILE = "$HOME/.config/age/keys.txt";
   };
 
   ids.gids.nixbld = 350;

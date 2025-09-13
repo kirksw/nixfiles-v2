@@ -1,5 +1,11 @@
-
-{ inputs, pkgs, pkgs-stable, lib, config, ... }:
+{
+  inputs,
+  pkgs,
+  pkgs-stable,
+  lib,
+  config,
+  ...
+}:
 
 {
   options = {

@@ -25,7 +25,10 @@
     lunar-tools = {
       url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/zsh-plugin";
     };
-    helix.url = "github:helix-editor/helix";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -39,80 +42,83 @@
       disko,
       flake-utils,
       lunar-tools,
-      helix,
+      sops-nix,
     }:
     let
-      user = "kisw";
-      linuxSystems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-      darwinSystems = [ "aarch64-darwin" ];
-      nixfiles = ./.;
+      mylibs = import ./lib {
+        lib = nixpkgs.lib;
+        inherit inputs self;
+      };
+
+      darwinSystems = {
+        "lunar" = {
+          system = "aarch64-darwin";
+          user = "kisw";
+          hostModule = ./hosts/darwin/work;
+          homeModule = ./hosts/darwin/work/home.nix;
+          nixDirectory = "/Users/kisw/nixfiles-v2";
+          git = {
+            fallback = "personal"; # applies to all other directories
+            profiles = {
+              lunar = {
+                sshKey = "default";
+                dirs = [
+                  "~/git/github.com/lunarway/**"
+                ];
+              };
+              personal = {
+                sshKey = "default";
+                dirs = [
+                  "~/git/github.com/kirksw/**"
+                  "~/git/github.com/cntd-io/**"
+                  "~/nixfiles-v2/**"
+                ];
+              };
+            };
+          };
+          ssh = {
+            keys = [
+              "default"
+            ];
+          };
+          overlays = [ lunar-tools.overlays.default ];
+          enableHomebrew = true;
+          enableLunar = true;
+        };
+      };
+
+      nixosSystems = {
+        "home-desktop" = {
+          system = "x86_64-linux";
+          user = "kirksw";
+          nixDirectory = "/Home/kirksw/nixfiles-v2";
+          ssh = {
+            keys = [
+              "default"
+            ];
+          };
+          git = {
+            default = "personal";
+            profiles = [
+              "personal"
+            ];
+          };
+          hostModule = ./hosts/nixos/desktop;
+          homeModule = ./hosts/nixos/desktop/home.nix;
+        };
+      };
     in
     flake-utils.lib.eachDefaultSystem (system: {
-      apps =
-        let
-          mkApp = scriptName: system: {
-            type = "app";
-            program = "${
-              (nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
-                #!${nixpkgs.legacyPackages.${system}.runtimeShell}
-                PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-                echo "Running ${scriptName} for ${system}"
-                exec ${self}/apps/${system}/${scriptName}
-              '')
-            }/bin/${scriptName}";
-          };
-        in
-        {
-          build = mkApp "build" system;
-          switch = mkApp "switch" system;
-          rollback = mkApp "rollback" system;
-        };
+      apps = {
+        build = mylibs.app.mkApp "build" system;
+        switch = mylibs.app.mkApp "switch" system;
+        rollback = mylibs.app.mkApp "rollback" system;
+      };
     })
     // {
-      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (
-        system:
-        darwin.lib.darwinSystem {
-          inherit system;
-          specialArgs = { inherit inputs user nixfiles; };
-          modules = [
-            {
-              nixpkgs.overlays = [
-                lunar-tools.overlays.default
-                helix.overlays.default
-              ];
-            }
-            home-manager.darwinModules.home-manager
-            nix-homebrew.darwinModules.nix-homebrew
-            ./hosts/darwin/work
-            (import ./modules/shared/homemanager.nix {
-              inherit user nixfiles;
-              homeModule = ./hosts/darwin/work/home.nix;
-              inputs = inputs;
-              nixpkgsStable = inputs.nixpkgs-stable;
-            })
-          ];
-        }
-      );
-
-      nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (
-        system:
-        nixpkgs.lib.nixosSystem {
-          inherit system;
-          specialArgs = inputs;
-          modules = [
-            disko.nixosModules.disko
-            ./hosts/nixos/desktop
-            (import ./modules/shared/homemanager.nix {
-              inherit user;
-              homeModule = ./hosts/nixos/desktop/home.nix;
-              inputs = inputs;
-              nixpkgsStable = inputs.nixpkgs-stable;
-            })
-          ];
-        }
-      );
+      darwinConfigurations = builtins.mapAttrs mylibs.darwin.mkDarwinSystem darwinSystems;
+    }
+    // {
+      nixosConfigurations = builtins.mapAttrs mylibs.nixos.mkNixosSystem nixosSystems;
     };
 }

@@ -1,5 +1,6 @@
 {
   pkgs,
+  self,
   ...
 }:
 
@@ -8,6 +9,7 @@ let
 in
 {
   imports = [
+    ../../../modules/shared
   ];
 
   # Use the systemd-boot EFI boot loader.

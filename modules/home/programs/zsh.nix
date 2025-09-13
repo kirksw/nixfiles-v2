@@ -3,7 +3,8 @@
   pkgs,
   lib,
   config,
-  nixfiles,
+  self,
+  nixDirectory,
   ...
 }:
 
@@ -52,8 +53,8 @@
       shellAliases = {
         la = "ls -la";
         ll = "ls -l";
-        nu = "cd ~/nixfiles-v2 && nix flake update";
-        ns = "sudo nix run nix-darwin -- switch --flake ~/nixfiles-v2#aarch64-darwin";
+        nu = "pushd ${nixDirectory} && nix flake update && popd";
+        ns = "pushd ${nixDirectory} && sudo darwin-rebuild --flake .#aarch64-darwin && popd";
         gn = "gitnow";
         awsenv = "aws_fzf_profile";
         k8senv = "k8s_fzf_context";
@@ -129,7 +130,7 @@
       enableZshIntegration = true;
     };
 
-    home.file.".p10k.zsh".source = "${nixfiles}/config/zsh/.p10k.zsh";
+    home.file.".p10k.zsh".source = "${self}/config/zsh/.p10k.zsh";
     home.file.".aws/config".source = "${
       inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
     }/.aws/config";

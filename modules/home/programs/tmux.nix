@@ -2,7 +2,7 @@
   pkgs,
   lib,
   config,
-  nixfiles,
+  self,
   ...
 }:
 
@@ -119,9 +119,9 @@
       k = "sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --height 50 --prompt='⚡'";
     };
 
-    home.file.".config/sesh/sesh.toml".source = "${nixfiles}/config/sesh/sesh.toml";
+    home.file.".config/sesh/sesh.toml".source = "${self}/config/sesh/sesh.toml";
     home.file.".config/sesh/scripts/startup.sh" = {
-      source = "${nixfiles}/config/sesh/scripts/startup.sh";
+      source = "${self}/config/sesh/scripts/startup.sh";
       executable = true;
     };
   };

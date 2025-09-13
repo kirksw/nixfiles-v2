@@ -1,4 +1,6 @@
 {
+  self,
+  user,
   pkgs,
   ...
 }:
@@ -20,6 +22,7 @@
   };
 
   # enabled custom modules
+  sops.enable = true;
   zsh.enable = true;
   neovim.enable = true;
   developer.enable = true;

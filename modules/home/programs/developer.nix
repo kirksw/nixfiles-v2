@@ -2,13 +2,48 @@
   pkgs,
   lib,
   config,
+  git,
   ...
 }:
 
 let
-  name = "Kirk Sweeney";
-  email = "kirk@cntd.io";
-  homeDir = "/Users/${config.home.username}";
+  fallbackProfileName = git.fallback;
+  profileNames = builtins.attrNames git.profiles;
+  keyOf = profile: (git.profiles.${profile}.sshKey or "default");
+  dirsOf =
+    profile:
+    let
+      d = git.profiles.${profile}.dirs or [ "${config.home.homeDirectory}/git/github.com/${profile}" ];
+    in
+    if builtins.isList d then d else [ d ];
+
+  ensureGlob = dir: if lib.hasSuffix "/**" dir then dir else "${dir}/**";
+
+  generateSshMatchblocks =
+    profileNames:
+    builtins.listToAttrs (
+      builtins.map (profileName: {
+        name = "github.com-${profileName}";
+        value = {
+          hostname = "github.com";
+          user = "git";
+          identityFile = "${config.sops.secrets."ssh/${keyOf profileName}/private".path}";
+          identitiesOnly = true;
+          forwardAgent = true;
+          addKeysToAgent = "yes";
+        };
+      }) profileNames
+    );
+
+  generateGitIncludes =
+    profileNames:
+    builtins.concatMap (
+      profileName:
+      builtins.map (dir: {
+        condition = "gitdir:${ensureGlob dir}";
+        path = "${config.sops.templates."gitprofile-${profileName}".path}";
+      }) (dirsOf profileName)
+    ) profileNames;
 in
 {
   options = {
@@ -78,47 +113,47 @@ in
       };
     };
 
+    # SSH configuration using git profiles
+    programs.ssh = {
+      enable = true;
+      enableDefaultConfig = false;
+
+      matchBlocks = generateSshMatchblocks profileNames // {
+        "*" = {
+          hostname = "github.com";
+          user = "git";
+          identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
+          identitiesOnly = true;
+          forwardAgent = true;
+          addKeysToAgent = "yes";
+        };
+      };
+    };
+
     # every programmers best friend
     programs.git = {
       enable = true;
       ignores = [ "*.swp" ];
-      userName = name;
-      userEmail = email;
-      signing = {
-        key = "1AFA8CEF192E7481";
-        signByDefault = true;
-      };
-      lfs = {
-        enable = true;
-      };
+      includes = [
+        { path = config.sops.templates."gitprofile-${fallbackProfileName}".path; }
+      ]
+      ++ generateGitIncludes profileNames;
+
       extraConfig = {
         init.defaultBranch = "main";
+        gpg.format = "ssh";
         core = {
           editor = "vim";
           autocrlf = "input";
         };
         pull.rebase = true;
+        push = {
+          default = "current";
+          autoSetupRemote = true;
+        };
         rebase.autoStash = true;
+        branch.sort = "-committerdate";
       };
-
-      includes = [
-        {
-          condition = "gitdir:${homeDir}/git/github.com/lunarway/**";
-          path = "~/git/github.com/lunarway/.gitconfig-lunarway";
-        }
-        # example .gitconfig
-        #
-        # [user]
-        # name = <name>
-        # email = <email>
-        # signingkey = <key>
-        #
-        # [core]
-        #   sshCommand = ssh -i ~/.ssh/<private_key>
-        #
-        # [url "git@github.com:<org>/"]
-        #   insteadOf = https://github.com/<org>/
-      ];
     };
   };
 }
