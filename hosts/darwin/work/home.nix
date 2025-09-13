@@ -22,6 +22,7 @@
   };
 
   # enabled custom modules
+  sketchybar.enable = true;
   sops.enable = true;
   zsh.enable = true;
   neovim.enable = true;

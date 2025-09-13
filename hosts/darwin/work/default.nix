@@ -15,7 +15,6 @@
   aerospace.enable = true;
   tailscale.enable = true;
   jankyborders.enable = true;
-  sketchybar.enable = true;
 
   # specific host config
   nixpkgs.config.allowUnfree = true;
