@@ -84,6 +84,9 @@ in
 
       # misc
       marp-cli
+
+      # used to notify of theme changes
+      dark-mode-notify
     ];
 
     # direnv

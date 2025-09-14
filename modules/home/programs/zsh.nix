@@ -1,9 +1,9 @@
 {
+  self,
   inputs,
   pkgs,
   lib,
   config,
-  self,
   nixDirectory,
   ...
 }:
@@ -127,21 +127,17 @@
 
     programs.starship = {
       enable = true;
-
-      settings = {
-        add_newline = false;
-
-        character = {
-          success_symbol = "[➜](bold green)";
-          error_symbol = "[➜](bold red)";
-        };
-      };
+      enableZshIntegration = true;
     };
 
-    #home.file.".p10k.zsh".source = "${self}/config/zsh/.p10k.zsh";
     home.file.".aws/config".source = "${
       inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
     }/.aws/config";
+    xdg.configFile = {
+      "starship.toml" = {
+        source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/starship/rose-pine.toml";
+      };
+    };
     # home.file.".kube/config".source = "${
     #   inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
     # }/.kube/config";
