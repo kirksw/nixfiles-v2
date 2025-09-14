@@ -1,4 +1,10 @@
-{ inputs, pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  nixDirectory,
+  ...
+}:
 
 {
   options = {
@@ -9,7 +15,6 @@
     programs.neovim = {
       enable = true;
       package = pkgs.neovim-unwrapped;
-      #package = inputs.neovim-nightly-overlay.packages.${pkgs.system}.default;
       viAlias = true;
       vimAlias = true;
       defaultEditor = true;
@@ -52,10 +57,9 @@
 
     xdg.configFile = {
       "nvim" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/nixfiles-v2/config/nvim/.config/nvim";
+        source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/nvim/";
         recursive = true;
       };
     };
   };
 }
-

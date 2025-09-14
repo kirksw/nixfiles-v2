@@ -34,11 +34,6 @@
 
       plugins = [
         {
-          name = "powerlevel10k";
-          src = pkgs.zsh-powerlevel10k;
-          file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
-        }
-        {
           name = "zshdefer";
           src = pkgs.zsh-defer;
           file = "share/zsh-defer/zsh-defer.zsh";
@@ -89,7 +84,7 @@
             [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
 
             # powerlevel10k
-            [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+            #[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
             ## shuttle
             #[[ ! -f $(which shuttle) ]] || source <(shuttle completion zsh)
@@ -130,7 +125,20 @@
       enableZshIntegration = true;
     };
 
-    home.file.".p10k.zsh".source = "${self}/config/zsh/.p10k.zsh";
+    programs.starship = {
+      enable = true;
+
+      settings = {
+        add_newline = false;
+
+        character = {
+          success_symbol = "[➜](bold green)";
+          error_symbol = "[➜](bold red)";
+        };
+      };
+    };
+
+    #home.file.".p10k.zsh".source = "${self}/config/zsh/.p10k.zsh";
     home.file.".aws/config".source = "${
       inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
     }/.aws/config";

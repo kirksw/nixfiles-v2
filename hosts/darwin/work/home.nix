@@ -14,6 +14,7 @@
     hugo
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
+    sketchybar-app-font
   ];
 
   home.sessionVariables = {
@@ -22,7 +23,7 @@
   };
 
   # enabled custom modules
-  sketchybar.enable = true;
+  #sketchybar.enable = true;
   sops.enable = true;
   zsh.enable = true;
   neovim.enable = true;

@@ -128,14 +128,11 @@
         ApplePressAndHoldEnabled = false;
         NSWindowShouldDragOnGesture = true;
 
-        # 120, 90, 60, 30, 12, 6, 2
-        KeyRepeat = 2;
+        KeyRepeat = 1;
+        InitialKeyRepeat = 15; # ~0,25 s
 
-        # 120, 94, 68, 35, 25, 15
-        InitialKeyRepeat = 15;
-
-        # Automatically hide and show the menu bar
-        _HIHideMenuBar = true;
+        # Automatically hide and show the menu bar if using sketchybar
+        _HIHideMenuBar = false;
 
         "com.apple.mouse.tapBehavior" = 1;
         "com.apple.sound.beep.volume" = 0.0;
