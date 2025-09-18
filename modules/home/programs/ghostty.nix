@@ -1,7 +1,4 @@
 {
-  inputs,
-  pkgs,
-  pkgs-stable,
   lib,
   config,
   ...
@@ -23,17 +20,20 @@
       # installBatSyntax = true;
       settings = {
         keybind = [
-          "ctrl+comma=open_config"
-          "ctrl+enter=toggle_fullscreen"
+          "unconsumed:ctrl+enter=toggle_fullscreen"
+          "cmd+ctrl+r=reload_config"
+          "global:cmd+ctrl+o=toggle_quick_terminal"
         ];
-        theme = "light:rose-pine-dawn,dark:rose-pine";
+        theme = "light:Rose Pine Dawn,dark:Rose Pine";
         font-size = 14;
         font-family = "FiraCode Nerd Font Mono";
         font-thicken = true;
         font-style = "Regular";
-        window-decoration = false;
-        window-padding-x = 0;
-        window-padding-y = 0;
+        macos-titlebar-style = "hidden";
+        #window-decoration = false;
+        window-padding-x = 10;
+        window-padding-y = 10;
+        window-padding-balance = true;
         confirm-close-surface = false;
         cursor-style = "block";
         cursor-style-blink = false;
@@ -41,7 +41,14 @@
         background-opacity = 0.8;
         background-blur = true;
         background-blur-radius = 20;
-        # font-feature = [ "-liga" "-dlig" "-calt" ];
+        quick-terminal-position = "center";
+        quick-terminal-animation-duration = 0;
+        quick-terminal-autohide = false;
+        font-feature = [
+          "-liga"
+          "-dlig"
+          "-calt"
+        ];
       };
     };
   };

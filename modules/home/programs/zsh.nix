@@ -83,16 +83,6 @@
             # k8s plugin manager
             [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
 
-            # powerlevel10k
-            #[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-            ## shuttle
-            #[[ ! -f $(which shuttle) ]] || source <(shuttle completion zsh)
-            ## hamctl
-            #[[ ! -f $(which hamctl) ]] || source <(hamctl completion zsh)
-            ## gitnow
-            #[[ ! -f $(which gitnow) ]] || source <(gitnow init zsh)
-
             # refresh $GITHUB_ACCESS_TOKEN if unset
             if [[ $GITHUB_ACCESS_TOKEN == "" ]]; then
               export GITHUB_ACCESS_TOKEN=$(gh auth token);

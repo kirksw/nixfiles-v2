@@ -6,4 +6,5 @@ _:
   "arc"
   "typora"
   "ghostty"
+  "cyberduck"
 ]

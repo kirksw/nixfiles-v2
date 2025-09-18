@@ -80,7 +80,7 @@
           # alt-i = "exec-and-forget open -a '/Applications/IntelliJ IDEA.app'";
           # alt-d = "exec-and-forget open -a /Applications/DataGrip.app";
           alt-s = "exec-and-forget open -a /Applications/Slack.app";
-          alt-g = "exec-and-forget open -a /opt/homebrew/bin/ghostty";
+          alt-g = "exec-and-forget open -a ghostty --args +new-window";
         };
         mode.service.binding = {
           esc = [
@@ -99,7 +99,6 @@
             "close-all-windows-but-current"
             "mode main"
           ];
-
           alt-shift-h = [
             "join-with left"
             "mode main"
