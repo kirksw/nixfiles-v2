@@ -32,29 +32,15 @@
 
         xserver = {
             xkb.layout = "gb";
-            windowManager = {
-                awesome = {
-                    enable = true;
-                };
-                i3 = {
-                    enable = true;
-                    package = pkgs.i3-gaps;
-                };
-                berry.enable = true;
-                herbstluftwm.enable = true;
+            desktopManager.gnome = {
+                enable = true;
+            };
+
+            displayManager.gdm = {
+                enable = true;
+                wayland = true;
             };
         };
 
-        displayManager.gdm = {
-            enable = true;
-            wayland = true;
-        };
     };
-
-    programs.sway = {
-        enable = true;
-        wrapperFeatures.gtk = true;
-    };
-
-    programs.slock.enable = true;
 }
