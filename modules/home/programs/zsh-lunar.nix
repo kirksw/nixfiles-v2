@@ -13,7 +13,7 @@
     zsh-lunar.enable = lib.mkEnableOption "enables lunar zsh";
   };
 
-  config = lib.mkIf config.zsh.enable {
+  config = lib.mkIf config.zsh-lunar.enable {
     home.packages = with pkgs; [
       jq
       yq

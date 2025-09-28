@@ -2,40 +2,30 @@
   lib,
   inputs,
   self,
-  overlays ? [ ],
 }:
 
 let
-  inherit (inputs)
-    nixpkgs
-    sops-nix
-    disko
-    home-manager
-    ;
+  inherit (inputs);
   homeManagerHelpers = import ./homemanager.nix {
-    inherit lib inputs self;
-    gitProfiles = import ./git-profiles.nix {
-      inherit
-        lib
-        inputs
-        overlays
-        ;
-    };
+    inherit
+      lib
+      inputs
+      self
+      ;
   };
 
   mkNixosSystem =
     hostname: config:
-    nixpkgs.lib.nixosSystem {
+    lib.nixosSystem {
       system = config.system;
       specialArgs = {
         inherit inputs self;
       }
       // config;
       modules = [
-        disko.nixosModules.disko
-        { nixpkgs.overlays = overlays; }
-        sops-nix.darwinModules.sops
-        home-manager.nixosModules.home-manager
+        { nixpkgs.overlays = (config.overlays or [ ]); }
+        inputs.sops-nix.nixosModules.sops
+        inputs.home-manager.nixosModules.home-manager
         config.hostModule
         (homeManagerHelpers.mkHomeManagerModule config)
       ];

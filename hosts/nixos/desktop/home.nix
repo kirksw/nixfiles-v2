@@ -5,6 +5,17 @@
 }:
 
 {
+  home.stateVersion = "24.05";
+  programs.home-manager.enable = true;
+
+  home.packages = with pkgs; [
+    neofetch
+    hugo
+    nerd-fonts.fira-code
+    nerd-fonts.fira-mono
+    sketchybar-app-font
+  ];
+
   # enable home modules here
   sops.enable = true;
   zsh.enable = true;

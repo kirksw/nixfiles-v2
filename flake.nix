@@ -18,10 +18,6 @@
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -36,7 +32,6 @@
       home-manager,
       nixpkgs,
       nixpkgs-stable,
-      disko,
       flake-utils,
       sops-nix,
     }:
@@ -108,8 +103,8 @@
               "default"
             ];
           };
-          overlays = [];
-          enableHomebrew = true;
+          enableLunar = false;
+          enableHomebrew = false;
         };
       };
     in
