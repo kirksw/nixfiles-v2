@@ -76,7 +76,6 @@
       options = "--delete-older-than 30d";
     };
     package = pkgs.nixVersions.stable;
-    registry.nixpkgs.flake = pkgs;
     extraOptions = ''
       keep-outputs = true
       keep-derivations = true
