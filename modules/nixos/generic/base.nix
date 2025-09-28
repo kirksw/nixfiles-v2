@@ -30,16 +30,15 @@
     services = {
         libinput.enable = true;
 
+        desktopManager.gnome = {
+            enable = true;
+        };
+        displayManager.gdm = {
+            enable = true;
+        };
+
         xserver = {
             xkb.layout = "gb";
-            desktopManager.gnome = {
-                enable = true;
-            };
-
-            displayManager.gdm = {
-                enable = true;
-                wayland = true;
-            };
         };
 
     };
