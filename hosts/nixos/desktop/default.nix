@@ -15,6 +15,8 @@
   module.nvidia.enable = true;
 
   # baseline
+  programs.zsh.enable = true;
+
   users.users.${user} = {
     isNormalUser = true;
     extraGroups = [ "wheel" "video" "audio" "camera" "networkmanager" "kvm" "libvirtd" "plex" ];
@@ -74,7 +76,7 @@
       options = "--delete-older-than 30d";
     };
     package = pkgs.nixVersions.stable;
-    registry.nixpkgs.flake = inputs.nixpkgs;
+    registry.nixpkgs.flake = pkgs;
     extraOptions = ''
       keep-outputs = true
       keep-derivations = true
