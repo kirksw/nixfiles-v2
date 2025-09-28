@@ -59,6 +59,7 @@
       wget
       curl
       git
+      wezterm
     ];
   };
 
@@ -98,14 +99,5 @@
 
         efi.canTouchEfiVariables = true;
     };
-  };
-
-  # $ nix search wget
-  environment = {
-    systemPackages = with pkgs; [
-        wget
-        htop
-        wezterm
-    ];
   };
 }
