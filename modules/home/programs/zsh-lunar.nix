@@ -10,7 +10,7 @@
 
 {
   options = {
-    zsh.enable = lib.mkEnableOption "enables zsh";
+    zsh-lunar.enable = lib.mkEnableOption "enables lunar zsh";
   };
 
   config = lib.mkIf config.zsh.enable {
@@ -38,13 +38,18 @@
           src = pkgs.zsh-defer;
           file = "share/zsh-defer/zsh-defer.zsh";
         }
+        {
+          name = "lunar";
+          src = "${pkgs.lunar-zsh-plugin}/share/zsh/plugins/lunar-zsh-plugin/";
+          file = "lunar.plugin.zsh";
+        }
       ];
 
       shellAliases = {
         la = "ls -la";
         ll = "ls -l";
         nu = "pushd ${nixDirectory} && nix flake update && popd";
-        ns = "pushd ${nixDirectory} && sudo darwin-rebuild --flake .#86_64-linux && popd";
+        ns = "pushd ${nixDirectory} && sudo darwin-rebuild --flake .#aarch64-darwin && popd";
         gn = "gitnow";
         awsenv = "aws_fzf_profile";
         k8senv = "k8s_fzf_context";
@@ -69,6 +74,10 @@
             if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
               . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
               . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+            fi
+
+            if [[ $(uname -m) == 'arm64' ]]; then
+                eval "$(/opt/homebrew/bin/brew shellenv)"
             fi
 
             # k8s plugin manager
@@ -111,10 +120,16 @@
       enableZshIntegration = true;
     };
 
+    home.file.".aws/config".source = "${
+      inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
+    }/.aws/config";
     xdg.configFile = {
       "starship.toml" = {
         source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/starship/rose-pine.toml";
       };
     };
+    # home.file.".kube/config".source = "${
+    #   inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
+    # }/.kube/config";
   };
 }

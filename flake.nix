@@ -22,9 +22,6 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    lunar-tools = {
-      url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/zsh-plugin";
-    };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -41,7 +38,6 @@
       nixpkgs-stable,
       disko,
       flake-utils,
-      lunar-tools,
       sops-nix,
     }:
     let
@@ -81,7 +77,7 @@
               "default"
             ];
           };
-          overlays = [ lunar-tools.overlays.default ];
+          overlays = [];
           enableHomebrew = true;
           enableLunar = true;
         };
@@ -90,21 +86,30 @@
       nixosSystems = {
         "home-desktop" = {
           system = "x86_64-linux";
-          user = "kirksw";
+          user = "kirk";
+          hostModule = ./hosts/nixos/desktop;
+          homeModule = ./hosts/nixos/desktop/home.nix;
           nixDirectory = "/Home/kirksw/nixfiles-v2";
+          git = {
+            fallback = "personal"; # applies to all other directories
+            profiles = {
+              personal = {
+                sshKey = "default";
+                dirs = [
+                  "~/git/github.com/kirksw/**"
+                  "~/git/github.com/cntd-io/**"
+                  "~/nixfiles-v2/**"
+                ];
+              };
+            };
+          };
           ssh = {
             keys = [
               "default"
             ];
           };
-          git = {
-            default = "personal";
-            profiles = [
-              "personal"
-            ];
-          };
-          hostModule = ./hosts/nixos/desktop;
-          homeModule = ./hosts/nixos/desktop/home.nix;
+          overlays = [];
+          enableHomebrew = true;
         };
       };
     in

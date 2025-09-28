@@ -7,16 +7,12 @@
 
   config = lib.mkIf config.colima.enable {
     home.packages = with pkgs; [
-      # pkgs.lima.override {
-      #   withAdditionalGuestAgents = true;
-      # }
-      # for linux we enable docker directly
       (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin
         colima
+        lima-additional-guestagents
       )
       minikube
       lazydocker
-      lima-additional-guestagents
     ];
   };
 }
