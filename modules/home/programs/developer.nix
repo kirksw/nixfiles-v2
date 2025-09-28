@@ -86,7 +86,8 @@ in
       marp-cli
 
       # used to notify of theme changes
-      dark-mode-notify
+      # TODO: mac only
+      # dark-mode-notify
     ];
 
     # direnv
