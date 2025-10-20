@@ -4,6 +4,7 @@
   pkgs,
   lib,
   config,
+  enableLunar,
   nixDirectory,
   ...
 }:
@@ -51,12 +52,11 @@
         nu = "pushd ${nixDirectory} && nix flake update && popd";
         ns = "pushd ${nixDirectory} && sudo darwin-rebuild --flake .#aarch64-darwin && popd";
         gn = "gitnow";
-        awsenv = "aws_fzf_profile";
-        k8senv = "k8s_fzf_context";
         "docker-compose" = "docker compose";
         hubble = "aws_wrapper hubble";
         k9s = "k8s_wrapper k9s";
-        kubectl = "k8s_wrapper kubectl";
+        schema = "async-schema-tooling";
+        ast = "async-schema-tooling";
       };
 
       history.size = 10000;
@@ -79,9 +79,6 @@
             if [[ $(uname -m) == 'arm64' ]]; then
                 eval "$(/opt/homebrew/bin/brew shellenv)"
             fi
-
-            # k8s plugin manager
-            [[ -f $(which krew) ]] || export PATH="$HOME/.krew/bin:$PATH"
 
             # refresh $GITHUB_ACCESS_TOKEN if unset
             if [[ $GITHUB_ACCESS_TOKEN == "" ]]; then
@@ -120,9 +117,7 @@
       enableZshIntegration = true;
     };
 
-    home.file.".aws/config".source = "${
-      inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
-    }/.aws/config";
+    home.file.".aws/config".source = "${pkgs.lunar-zsh-plugin}/.aws/config";
     xdg.configFile = {
       "starship.toml" = {
         source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/starship/rose-pine.toml";

@@ -6,12 +6,7 @@ let
   excluded = [
     (toString ./default.nix)
     (toString ./template.nix)
-    (toString ./homemanager.nix)
-    (toString ./git-profiles.nix)
   ];
-  
-  # Include git-profiles-sops module explicitly
-  gitProfilesSopsFile = ./git-profiles-sops.nix;
 
   isSubdir =
     f:

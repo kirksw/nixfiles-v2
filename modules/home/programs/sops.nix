@@ -52,7 +52,6 @@ let
             sopsFile = "${secretsDir}/git/${profileName}.yaml";
             key = "${property}";
             mode = "0400";
-            #path = "%r/git/${profileName}/${property}";
           };
         }) properties
       ) profileNames
@@ -84,26 +83,6 @@ let
         };
       }) profileNames
     );
-
-  # generateGitSshTemplates =
-  #   profileNames:
-  #   builtins.listToAttrs (
-  #     builtins.map (profileName: {
-  #       name = "ssh-host-${profileName}";
-  #       value = {
-  #         mode = "0400";
-  #         content = ''
-  #           host github.com-${config.sops.placeholder."git/${profileName}/org"}
-  #             hostname github.com
-  #             user git
-  #             identityFile ${config.sops.secrets."ssh/${keyOf profileName}/private".path}
-  #             identitiesOnly yes
-  #             AddKeysToAgent yes
-  #             UseKeychain yes
-  #         '';
-  #       };
-  #     }) profileNames
-  #   );
 in
 {
   options = {
@@ -112,7 +91,6 @@ in
 
   config = lib.mkIf config.sops.enable {
     sops = {
-      #defaultsopsfile = "${self}/secrets/secrets.yaml";
       defaultSopsFormat = "yaml";
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
@@ -123,9 +101,16 @@ in
         }
         // generateSshSecrets {
           keys = ssh.keys;
+        }
+        // {
+          "k8s/homelab" = {
+            sopsFile = "${self}/secrets/k8s/homelab.yaml";
+            key = "config";
+            mode = "0400";
+          };
         };
 
-      templates = generateGitTemplates profileNames; # // generateGitSshTemplates profileNames;
+      templates = generateGitTemplates profileNames;
     };
   };
 }

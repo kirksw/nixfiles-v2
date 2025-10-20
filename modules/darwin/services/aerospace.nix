@@ -80,7 +80,7 @@
           # alt-i = "exec-and-forget open -a '/Applications/IntelliJ IDEA.app'";
           # alt-d = "exec-and-forget open -a /Applications/DataGrip.app";
           alt-s = "exec-and-forget open -a /Applications/Slack.app";
-          alt-g = "exec-and-forget open -a ghostty --args +new-window";
+          alt-g = "exec-and-forget open -na ghostty";
         };
         mode.service.binding = {
           esc = [

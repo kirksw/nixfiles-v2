@@ -1,5 +1,10 @@
-
-{ pkgs, lib, config, ... }:
+{
+  inputs,
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   options = {
@@ -17,12 +22,20 @@
       fluxcd
       docker
       kubectl
-      kubelogin
+      kubectl-slice
       kubelogin-oidc
       krew
       kubernetes-helm
-      argocd 
+      argocd
       k9s
     ];
+
+    home.sessionPath = [
+      "${config.home.homeDirectory}/.krew/bin"
+    ];
+
+    home.sessionVariables.KUBECONFIG = "${config.sops.secrets."k8s/homelab".path}:${
+      inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
+    }/.kube/config";
   };
 }

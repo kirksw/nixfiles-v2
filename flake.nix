@@ -2,7 +2,8 @@
   description = "Starter Configuration for MacOS and NixOS";
 
   inputs = {
-    nixpkgs-stable.url = "github:nixos/nixpkgs/release-25.05";
+    #nixpkgs-edge.url = "github:nixos/nixpkgs/release-25.05";
+    #nixpkgs-stable.url = "github:nixos/nixpkgs/release-25.05";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -23,12 +24,16 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     lunar-tools = {
-      url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/zsh-plugin";
+      url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/add-rds-access";
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    #dagger = {
+    #  url = "github:dagger/nix";
+    #  inputs.nixpkgs.follows = "nixpkgs";
+    #};
   };
 
   outputs =
@@ -38,11 +43,11 @@
       nix-homebrew,
       home-manager,
       nixpkgs,
-      nixpkgs-stable,
       disko,
       flake-utils,
       lunar-tools,
       sops-nix,
+    #dagger,
     }:
     let
       mylibs = import ./lib {
@@ -81,7 +86,10 @@
               "default"
             ];
           };
-          overlays = [ lunar-tools.overlays.default ];
+          overlays = [
+            lunar-tools.overlays.default
+            #dagger.overlays.default
+          ];
           enableHomebrew = true;
           enableLunar = true;
         };

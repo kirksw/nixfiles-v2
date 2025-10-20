@@ -40,7 +40,7 @@
         nil
         # langs
         ocaml
-        go_1_23
+        go_1_25
         ruby_3_4
         nodejs_20
         lua5_1

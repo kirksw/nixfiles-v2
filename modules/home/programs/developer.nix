@@ -136,7 +136,7 @@ in
       ]
       ++ generateGitIncludes profileNames;
 
-      extraConfig = {
+      settings = {
         init.defaultBranch = "main";
         gpg.format = "ssh";
         core = {

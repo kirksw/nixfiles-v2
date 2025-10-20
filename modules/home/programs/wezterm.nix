@@ -1,5 +1,8 @@
-
-{ inputs, pkgs, pkgs-stable, lib, config, ... }:
+{
+  lib,
+  config,
+  ...
+}:
 
 {
   options = {
@@ -9,7 +12,6 @@
   config = lib.mkIf config.wezterm.enable {
     programs.wezterm = {
       enable = true;
-      package = inputs.wezterm.packages.${pkgs-stable.system}.default;
 
       extraConfig = ''
         local wezterm = require("wezterm")

@@ -31,6 +31,7 @@
         font-style = "Regular";
         macos-titlebar-style = "hidden";
         #window-decoration = false;
+        quit-after-last-window-closed = true;
         window-padding-x = 10;
         window-padding-y = 10;
         window-padding-balance = true;

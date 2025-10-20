@@ -18,15 +18,21 @@
       awscli2
 
       # internal tooling
-      inputs.lunar-tools.packages.${pkgs.system}.hamctl
-      inputs.lunar-tools.packages.${pkgs.system}.shuttle
-      #shuttle
-      #hamctl
+      shuttle
+      hamctl
       hubble
       sesh
       dagger
       fuzzy-clone
       gitnow
+      async-schema-tooling
+      lunarctl
+      cursor-cli
+      amp-cli
     ];
+
+    home.sessionVariables = {
+      GOPRIVATE = "go.lunarway.com,github.com/lunarway";
+    };
   };
 }
