@@ -34,13 +34,13 @@
   youtube.enable = true;
   zellij.enable = true;
   lunar.enable = true;
-  ghostty.enable = true; # NOTE: only used for config (install via homebrew)
+  ghostty.enable = true;
+  wezterm.enable = true;
   qemu.enable = true;
 
   # disabled custom modules
   communication.enable = false;
   homerow.enable = false;
-  wezterm.enable = false;
   gcloud.enable = false;
   vscode.enable = false;
 }

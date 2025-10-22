@@ -123,8 +123,5 @@
         source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/starship/rose-pine.toml";
       };
     };
-    # home.file.".kube/config".source = "${
-    #   inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
-    # }/.kube/config";
   };
 }

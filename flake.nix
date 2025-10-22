@@ -30,10 +30,9 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    #dagger = {
-    #  url = "github:dagger/nix";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    wezterm = {
+      url = "github:wezterm/wezterm?dir=nix";
+    };
   };
 
   outputs =
@@ -47,7 +46,7 @@
       flake-utils,
       lunar-tools,
       sops-nix,
-    #dagger,
+      wezterm,
     }:
     let
       mylibs = import ./lib {
@@ -88,7 +87,6 @@
           };
           overlays = [
             lunar-tools.overlays.default
-            #dagger.overlays.default
           ];
           enableHomebrew = true;
           enableLunar = true;

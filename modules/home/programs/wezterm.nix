@@ -1,4 +1,6 @@
 {
+  inputs,
+  pkgs,
   lib,
   config,
   ...
@@ -12,30 +14,37 @@
   config = lib.mkIf config.wezterm.enable {
     programs.wezterm = {
       enable = true;
+      package = inputs.wezterm.packages.${pkgs.system}.default;
 
       extraConfig = ''
         local wezterm = require("wezterm")
         local action = wezterm.action
 
         return {
+          animation_fps = 120,
+          dpi = 144.0,
+          max_fps = 120,
+          front_end = "WebGpu",
+          webgpu_power_preference = "HighPerformance",
           window_decorations = "RESIZE",
-
-          font = wezterm.font("Fira Code"),
-          font_size = 16.0,
-
-          color_scheme = "Batman",
-
+          font = wezterm.font("FiraCode Nerd Font Mono"),
+          font_size = 14.0,
+          color_scheme = "Rosé Pine (Gogh)",
+          window_background_opacity = 0.85,
+          macos_window_background_blur = 20,
+          window_content_alignment = {
+            horizontal = 'Center',
+            vertical = 'Center',
+          },
           enable_scroll_bar = false,
           window_padding = {
-            left = 0,
-            right = 0,
-            top = 0,
-            bottom = 0,
+            left = '1cell',
+            right = '1cell',
+            top = '0.5cell',
+            bottom = '0.5cell',
           },
-
           launch_menu = {},
           hide_tab_bar_if_only_one_tab = true,
-
           -- Note: use "xxd -psd" to find hex codes for keys
           keys = {
             {

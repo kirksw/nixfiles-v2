@@ -61,6 +61,7 @@ in
       curl # cli http client
       envsubst # cli env var substitution
       fd # user friendly alternative to find
+      neovide
 
       # languages
       go
@@ -115,16 +116,25 @@ in
       enable = true;
       enableDefaultConfig = false;
 
-      matchBlocks = generateSshMatchblocks profileNames // {
-        "*" = {
-          hostname = "github.com";
-          user = "git";
-          identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
-          identitiesOnly = true;
-          forwardAgent = true;
-          addKeysToAgent = "yes";
-        };
-      };
+      matchBlocks = generateSshMatchblocks profileNames;
+      #// {
+      #  "*.ts.net" = {
+      #    hostname = "github.com";
+      #    user = "git";
+      #    identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
+      #    identitiesOnly = true;
+      #    forwardAgent = true;
+      #    addKeysToAgent = "yes";
+      #  };
+      #  "*" = {
+      #    hostname = "github.com";
+      #    user = "git";
+      #    identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
+      #    identitiesOnly = true;
+      #    forwardAgent = true;
+      #    addKeysToAgent = "yes";
+      #  };
+      #};
     };
 
     # every programmers best friend

@@ -14,7 +14,6 @@
   config = lib.mkIf config.devops.enable {
     home.packages = with pkgs; [
       # IaC
-      # terraform
       tenv
 
       # container/kubernetes
