@@ -44,6 +44,27 @@
           src = "${pkgs.lunar-zsh-plugin}/share/zsh/plugins/lunar-zsh-plugin/";
           file = "lunar.plugin.zsh";
         }
+        # NOTE: temporary
+        {
+          name = "lw-zsh-aws";
+          src = "${self}/scripts/lw-zsh/aws/";
+          file = "aws.zsh";
+        }
+        {
+          name = "lw-k8s-login";
+          src = "${self}/scripts/lw-zsh/k8s-login/";
+          file = "k8s-login.zsh";
+        }
+        {
+          name = "lw-db";
+          src = "${self}/scripts/lw-zsh/lw-db/";
+          file = "lw-db.zsh";
+        }
+        {
+          name = "admin_db";
+          src = "${self}/scripts/lw-zsh/admin_db/";
+          file = "admin_db.zsh";
+        }
       ];
 
       shellAliases = {
@@ -55,6 +76,7 @@
         "docker-compose" = "docker compose";
         hubble = "aws_wrapper hubble";
         k9s = "k8s_wrapper k9s";
+        kubectl = "k8s_wrapper kubectl";
         schema = "async-schema-tooling";
         ast = "async-schema-tooling";
       };
@@ -116,6 +138,9 @@
       enable = true;
       enableZshIntegration = true;
     };
+
+    # TODO: remove once replacement tooling 100%
+    home.file.".zplug/repos/lunarway/lw-zsh/".source = "${self}/scripts/lw-zsh/";
 
     home.file.".aws/config".source = "${pkgs.lunar-zsh-plugin}/.aws/config";
     xdg.configFile = {

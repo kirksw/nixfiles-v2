@@ -67,6 +67,8 @@ in
       go
       rustup
       coursier
+      nodejs_24
+      python312
 
       # doc
       pandoc
@@ -117,8 +119,9 @@ in
       enableDefaultConfig = false;
 
       matchBlocks = generateSshMatchblocks profileNames;
-      #// {
-      #  "*.ts.net" = {
+      # // {
+      # TODO: figure out this stuff
+      # "*.ts.net" = {
       #    hostname = "github.com";
       #    user = "git";
       #    identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
@@ -126,15 +129,15 @@ in
       #    forwardAgent = true;
       #    addKeysToAgent = "yes";
       #  };
-      #  "*" = {
-      #    hostname = "github.com";
-      #    user = "git";
-      #    identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
-      #    identitiesOnly = true;
-      #    forwardAgent = true;
-      #    addKeysToAgent = "yes";
-      #  };
-      #};
+      # "*" = {
+      #   hostname = "github.com";
+      #   user = "git";
+      #   identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
+      #   identitiesOnly = true;
+      #   forwardAgent = true;
+      #   addKeysToAgent = "yes";
+      # };
+      # };
     };
 
     # every programmers best friend

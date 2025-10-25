@@ -14,13 +14,6 @@ let
     ;
   homeManagerHelpers = import ./homemanager.nix {
     inherit lib inputs self;
-    gitProfiles = import ./git-profiles.nix {
-      inherit
-        lib
-        inputs
-        overlays
-        ;
-    };
   };
 
   mkNixosSystem =

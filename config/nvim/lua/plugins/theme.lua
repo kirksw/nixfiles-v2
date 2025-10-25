@@ -40,20 +40,4 @@ return {
       return opts
     end,
   },
-  --{
-  --  "nvim-lualine/lualine.nvim",
-  --  opts = function(_, opts)
-  --    -- Use rose-pine theme and make it transparent
-  --    local rp = require("lualine.themes.rose-pine")
-  --    for _, mode in pairs(rp) do
-  --      for _, sect in pairs(mode) do
-  --        sect.bg = "none"
-  --      end
-  --    end
-  --    opts.options = opts.options or {}
-  --    opts.options.theme = rp
-  --    opts.options.globalstatus = true
-  --    return opts
-  --  end,
-  --},
 }

@@ -22,7 +22,6 @@
 
         return {
           animation_fps = 120,
-          dpi = 144.0,
           max_fps = 120,
           front_end = "WebGpu",
           webgpu_power_preference = "HighPerformance",

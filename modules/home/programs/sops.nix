@@ -64,12 +64,13 @@ let
         name = "gitprofile-${profileName}";
         value = {
           mode = "0400";
-          #path = "%r/git/${profileName}/gitconfig";
           content = ''
             [user]
                 name = ${config.sops.placeholder."git/${profileName}/name"}
                 email = ${config.sops.placeholder."git/${profileName}/email"}
 
+            [core]
+                sshCommand = "ssh -i ${config.sops.secrets."ssh/${keyOf profileName}/private".path}"
             [gpg]
                 format = ssh
             [commit]
