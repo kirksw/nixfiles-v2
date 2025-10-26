@@ -33,6 +33,7 @@
     wezterm = {
       url = "github:wezterm/wezterm?dir=nix";
     };
+    deploy-rs.url = "github:serokell/deploy-rs";
   };
 
   outputs =
@@ -47,10 +48,11 @@
       lunar-tools,
       sops-nix,
       wezterm,
+      deploy-rs,
     }:
     let
       mylibs = import ./lib {
-        lib = nixpkgs.lib;
+        inherit (nixpkgs) lib;
         inherit inputs self;
       };
 
@@ -62,7 +64,7 @@
           homeModule = ./hosts/darwin/work/home.nix;
           nixDirectory = "/Users/kisw/nixfiles-v2";
           git = {
-            fallback = "personal"; # applies to all other directories
+            fallback = "personal";
             profiles = {
               lunar = {
                 sshKey = "default";
@@ -94,23 +96,29 @@
       };
 
       nixosSystems = {
-        "home-desktop" = {
+        #"home-desktop" = {
+        #  system = "x86_64-linux";
+        #  user = "kirksw";
+        #  nixDirectory = "/Home/kirksw/nixfiles-v2";
+        #  ssh = {
+        #    keys = [
+        #      "default"
+        #    ];
+        #  };
+        #  git = {
+        #    default = "personal";
+        #    profiles = [
+        #      "personal"
+        #    ];
+        #  };
+        #  hostModule = ./hosts/nixos/desktop;
+        #  homeModule = ./hosts/nixos/desktop/home.nix;
+        #};
+        "nixos-ry6a" = {
           system = "x86_64-linux";
-          user = "kirksw";
-          nixDirectory = "/Home/kirksw/nixfiles-v2";
-          ssh = {
-            keys = [
-              "default"
-            ];
-          };
-          git = {
-            default = "personal";
-            profiles = [
-              "personal"
-            ];
-          };
-          hostModule = ./hosts/nixos/desktop;
-          homeModule = ./hosts/nixos/desktop/home.nix;
+          user = "k8s";
+          hostModule = ./hosts/nixos/ry6a;
+          homeModule = null;
         };
       };
     in
@@ -126,5 +134,23 @@
     }
     // {
       nixosConfigurations = builtins.mapAttrs mylibs.nixos.mkNixosSystem nixosSystems;
+    }
+    // {
+      deploy = {
+        nodes.nixos-ry6a = {
+          hostname = "nixos-ry6a";
+          sshUser = "root";
+
+          remoteBuild = true;
+          factConnection = true;
+
+          profiles.system = {
+            user = "root";
+            path = deploy-rs.lib.x86_64-linux.activate.nixos self.nixosConfigurations.nixos-ry6a;
+          };
+        };
+      };
+
+      checks = builtins.mapAttrs (system: deployLib: deployLib.deployChecks self.deploy) deploy-rs.lib;
     };
 }

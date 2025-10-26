@@ -78,8 +78,11 @@ let
             [user]
                 signingKey = ${config.sops.secrets."ssh/${keyOf profileName}/public".path}
 
-            [url "github-${config.sops.placeholder."git/${profileName}/org"}"]
+            # Route org-specific GitHub URLs to the SSH Host alias created as "github.com-${profileName}"
+            [url "github.com-${profileName}/"]
                 insteadOf = https://github.com/${config.sops.placeholder."git/${profileName}/org"}/
+                insteadOf = ssh://git@github.com/${config.sops.placeholder."git/${profileName}/org"}/
+                insteadOf = git@github.com:${config.sops.placeholder."git/${profileName}/org"}/
           '';
         };
       }) profileNames

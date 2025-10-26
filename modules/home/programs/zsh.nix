@@ -139,7 +139,7 @@
       enableZshIntegration = true;
     };
 
-    # TODO: remove once replacement tooling 100%
+    # NOTE: legacy shim for old lw-zsh plugins; remove when replacement tooling reaches full parity
     home.file.".zplug/repos/lunarway/lw-zsh/".source = "${self}/scripts/lw-zsh/";
 
     home.file.".aws/config".source = "${pkgs.lunar-zsh-plugin}/.aws/config";

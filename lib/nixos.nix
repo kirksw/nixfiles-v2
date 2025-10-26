@@ -19,17 +19,19 @@ let
   mkNixosSystem =
     hostname: config:
     nixpkgs.lib.nixosSystem {
-      system = config.system;
+      inherit (config) system;
       specialArgs = {
         inherit inputs self;
       }
       // config;
       modules = [
         disko.nixosModules.disko
-        { nixpkgs.overlays = overlays; }
-        sops-nix.darwinModules.sops
-        home-manager.nixosModules.home-manager
+        sops-nix.nixosModules.sops
         config.hostModule
+        { nixpkgs.overlays = overlays; }
+      ]
+      ++ lib.optionals (config.enableHomeManager or false) [
+        home-manager.nixosModules.home-manager
         (homeManagerHelpers.mkHomeManagerModule config)
       ];
     };

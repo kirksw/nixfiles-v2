@@ -1,0 +1,131 @@
+# Edit this configuration file to define what should be installed on
+# your system.  Help is available in the configuration.nix(5) man page
+# and in the NixOS manual (accessible by running ‘nixos-help’).
+
+{
+  self,
+  config,
+  pkgs,
+  ...
+}:
+
+{
+  imports = [
+    ./hardware-configuration.nix
+    ../../../modules/shared
+    ../../../modules/nixos
+  ];
+
+  # Bootloader.
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+  networking.hostName = "nixos-ry6a";
+  networking.networkmanager.enable = true;
+
+  # Set your time zone.
+  time.timeZone = "Europe/Copenhagen";
+
+  # Select internationalisation properties.
+  i18n.defaultLocale = "en_DK.UTF-8";
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "da_DK.UTF-8";
+    LC_IDENTIFICATION = "da_DK.UTF-8";
+    LC_MEASUREMENT = "da_DK.UTF-8";
+    LC_MONETARY = "da_DK.UTF-8";
+    LC_NAME = "da_DK.UTF-8";
+    LC_NUMERIC = "da_DK.UTF-8";
+    LC_PAPER = "da_DK.UTF-8";
+    LC_TELEPHONE = "da_DK.UTF-8";
+    LC_TIME = "da_DK.UTF-8";
+  };
+
+  # Configure console keymap
+  console.keyMap = "uk";
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.k8s = {
+    isNormalUser = true;
+    description = "k8s";
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
+    # packages = with pkgs; [ ];
+  };
+
+  # Nix settings
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
+
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+
+  # List packages installed in system profile. To search, run:
+  # $ nix search wget
+  environment.systemPackages = with pkgs; [
+    neovim
+    neofetch
+    htop
+    kubectl
+  ];
+
+  # List services that you want to enable:
+
+  # Enable the OpenSSH daemon.
+  services.openssh.enable = true;
+
+  # Open ports in the firewall.
+  networking.firewall.enable = true;
+  #networking.firewall.allowedTCPPorts = [ 6443 ];
+  #networking.firewall.allowedUDPPorts = [ 8472 ];
+  #networking.firewall.allowedTCPPortRanges = [
+  #  {
+  #    from = 30000;
+  #    to = 32767;
+  #  }
+  #];
+
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. It‘s perfectly fine and recommended to leave
+  # this value at the release version of the first install of this system.
+  # Before changing this value read the documentation for this option
+  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+  system.stateVersion = "25.05"; # Did you read the comment?
+
+  # we use tailscale for managing ssh access
+  services.tailscale.enable = true;
+  networking.nameservers = [
+    "100.100.100.100"
+    "8.8.8.8"
+    "1.1.1.1"
+  ];
+  networking.search = [ "tail54de03.ts.net" ];
+
+  # secrets
+  sops = {
+    defaultSopsFormat = "yaml";
+    age.keyFile = "/root/.config/sops/age/keys.txt";
+
+    secrets = {
+      "k8s/node/secret" = {
+        sopsFile = "${self}/secrets/k8s/node.yaml";
+        key = "secret";
+        mode = "0400";
+      };
+    };
+  };
+
+  # custom modules
+  my.k3s = {
+    enable = true;
+    role = "server";
+    nodeName = "nixos-ry6a";
+    clusterInit = true;
+    tokenFile = config.sops.secrets."k8s/node/secret".path;
+  };
+}

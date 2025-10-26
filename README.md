@@ -4,11 +4,10 @@
 
 This is a nix configuration primarily for macOS, but it can also be used on Linux.
 
-## TODO
+## Roadmap (nice-to-have)
 
-- [ ] add overlay example (neovim-nightly)
-- [ ] reimplement darwin dock setup
-- [ ] correctly setup config for nixos host
+- Reimplement macOS Dock setup via nix-darwin module
+- Validate and document a Linux host example build
 
 ## Getting started
 
@@ -30,6 +29,12 @@ There are a couple of aliases to make your life easier:
 If you want to add a package you can simply add it to the flake, and run `ns` to apply it.
 
 If you want to update the versions of packages, you can run `nu` to update the nix channels, and then run `ns` to apply the changes.
+
+## Deploying config changes to remotes
+
+Typically with remote machines like k3s nodes, you just want to orchestrate changes from a dev machine or CI.
+
+`sudo nixos-rebuild switch --flake .#HOSTNAME --target-host user@REMOTE --build-host user@REMOTE --use-remote-sudo`
 
 ## Don't like this?
 

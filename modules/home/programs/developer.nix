@@ -119,25 +119,6 @@ in
       enableDefaultConfig = false;
 
       matchBlocks = generateSshMatchblocks profileNames;
-      # // {
-      # TODO: figure out this stuff
-      # "*.ts.net" = {
-      #    hostname = "github.com";
-      #    user = "git";
-      #    identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
-      #    identitiesOnly = true;
-      #    forwardAgent = true;
-      #    addKeysToAgent = "yes";
-      #  };
-      # "*" = {
-      #   hostname = "github.com";
-      #   user = "git";
-      #   identityFile = config.sops.secrets."ssh/${keyOf fallbackProfileName}/private".path;
-      #   identitiesOnly = true;
-      #   forwardAgent = true;
-      #   addKeysToAgent = "yes";
-      # };
-      # };
     };
 
     # every programmers best friend
