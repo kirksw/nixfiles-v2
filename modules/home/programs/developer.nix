@@ -9,7 +9,6 @@
 let
   fallbackProfileName = git.fallback;
   profileNames = builtins.attrNames git.profiles;
-  keyOf = profile: (git.profiles.${profile}.sshKey or "default");
   dirsOf =
     profile:
     let
@@ -27,7 +26,7 @@ let
         value = {
           hostname = "github.com";
           user = "git";
-          identityFile = "${config.sops.secrets."ssh/${keyOf profileName}/private".path}";
+          identityFile = "${config.sops.secrets."ssh/${profileName}/private".path}";
           identitiesOnly = true;
           forwardAgent = true;
           addKeysToAgent = "yes";

@@ -9,7 +9,6 @@
 
 let
   profileNames = builtins.attrNames git.profiles;
-  keyOf = profile: (git.profiles.${profile}.sshKey or "default");
 
   generateSshSecrets =
     {
@@ -39,7 +38,6 @@ let
       properties ? [
         "name"
         "email"
-        "sshKey"
         "org"
       ],
     }:
@@ -68,16 +66,12 @@ let
             [user]
                 name = ${config.sops.placeholder."git/${profileName}/name"}
                 email = ${config.sops.placeholder."git/${profileName}/email"}
-            [core]
-                sshCommand = ssh -i ${
-                  config.sops.secrets."ssh/${keyOf profileName}/private".path
-                } -o IdentitiesOnly=yes
             [gpg]
                 format = ssh
             [commit]
                 gpgsign = true
             [user]
-                signingKey = ${config.sops.secrets."ssh/${keyOf profileName}/public".path}
+                signingKey = ${config.sops.secrets."ssh/${profileName}/public".path}
             [url "github.com-${profileName}"]
                 insteadOf = https://github.com/${config.sops.placeholder."git/${profileName}/org"}/
           '';

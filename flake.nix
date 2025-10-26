@@ -67,13 +67,11 @@
             fallback = "kirksw"; # set to null to disable
             profiles = {
               lunarway = {
-                sshKey = "kirksw";
                 dirs = [
                   "~/git/github.com/lunarway/**"
                 ];
               };
               kirksw = {
-                sshKey = "lunarway";
                 dirs = [
                   "~/git/github.com/kirksw/**"
                   "~/git/github.com/cntd-io/**"
@@ -83,6 +81,7 @@
             };
           };
           ssh = {
+            # NOTE: git profile expects matching sshs key name
             keys = [
               "kirksw"
               "lunarway"
