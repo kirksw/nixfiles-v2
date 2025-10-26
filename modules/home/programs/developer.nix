@@ -125,10 +125,14 @@ in
     programs.git = {
       enable = true;
       ignores = [ "*.swp" ];
-      includes = [
-        { path = config.sops.templates."gitprofile-${fallbackProfileName}".path; }
-      ]
-      ++ generateGitIncludes profileNames;
+      includes =
+        (
+          if fallbackProfileName != null && fallbackProfileName != "" then
+            [ { path = config.sops.templates."gitprofile-${fallbackProfileName}".path; } ]
+          else
+            [ ]
+        )
+        ++ generateGitIncludes profileNames;
 
       settings = {
         init.defaultBranch = "main";
@@ -136,6 +140,9 @@ in
         core = {
           editor = "vim";
           autocrlf = "input";
+        };
+        user = {
+          useConfigOnly = true;
         };
         pull.rebase = true;
         push = {

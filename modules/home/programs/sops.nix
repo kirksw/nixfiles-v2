@@ -68,22 +68,20 @@ let
             [user]
                 name = ${config.sops.placeholder."git/${profileName}/name"}
                 email = ${config.sops.placeholder."git/${profileName}/email"}
-
             [core]
-                sshCommand = "ssh -i ${config.sops.secrets."ssh/${keyOf profileName}/private".path}"
+                sshCommand = ssh -i ${
+                  config.sops.secrets."ssh/${keyOf profileName}/private".path
+                } -o IdentitiesOnly=yes
             [gpg]
                 format = ssh
             [commit]
                 gpgsign = true
             [user]
                 signingKey = ${config.sops.secrets."ssh/${keyOf profileName}/public".path}
-
-            # Route org-specific GitHub URLs to the SSH Host alias created as "github.com-${profileName}"
-            [url "github.com-${profileName}/"]
+            [url "github.com-${profileName}"]
                 insteadOf = https://github.com/${config.sops.placeholder."git/${profileName}/org"}/
-                insteadOf = ssh://git@github.com/${config.sops.placeholder."git/${profileName}/org"}/
-                insteadOf = git@github.com:${config.sops.placeholder."git/${profileName}/org"}/
           '';
+
         };
       }) profileNames
     );

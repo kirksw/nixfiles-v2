@@ -61,19 +61,19 @@
           system = "aarch64-darwin";
           user = "kisw";
           hostModule = ./hosts/darwin/work;
-          homeModule = ./hosts/darwin/work/home.nix;
+          homeModule = ./hosts/darwin/work/home.nix; # set to null to disable hm
           nixDirectory = "/Users/kisw/nixfiles-v2";
           git = {
-            fallback = "personal";
+            fallback = "kirksw"; # set to null to disable
             profiles = {
-              lunar = {
-                sshKey = "default";
+              lunarway = {
+                sshKey = "kirksw";
                 dirs = [
                   "~/git/github.com/lunarway/**"
                 ];
               };
-              personal = {
-                sshKey = "default";
+              kirksw = {
+                sshKey = "lunarway";
                 dirs = [
                   "~/git/github.com/kirksw/**"
                   "~/git/github.com/cntd-io/**"
@@ -84,6 +84,8 @@
           };
           ssh = {
             keys = [
+              "kirksw"
+              "lunarway"
               "default"
             ];
           };
