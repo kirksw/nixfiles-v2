@@ -61,32 +61,21 @@ in
       envsubst # cli env var substitution
       fd # user friendly alternative to find
       neovide
-
+      nil # nix
       # languages
       go
       rustup
       coursier
       nodejs_24
       python312
-
       # doc
       pandoc
-
       # github cli
       gh
-
       # devenv
       devenv
-
-      # nix
-      nil
-
       # duckdb
       duckdb
-
-      # misc
-      marp-cli
-
       # used to notify of theme changes
       dark-mode-notify
     ];
@@ -123,6 +112,7 @@ in
     # every programmers best friend
     programs.git = {
       enable = true;
+      package = pkgs.gitFull;
       ignores = [ "*.swp" ];
       includes =
         (
