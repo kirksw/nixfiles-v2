@@ -43,7 +43,6 @@
 
         set -g @rose_pine_host 'on'
         set -g @rose_pine_hostname_short 'on'
-        #set -g @rose_pine_date_time 'yy-mm-dd HH:MM'
         set -g @rose_pine_user 'on'
         set -g @rose_pine_directory 'on' # Turn on the current folder component in the status bar
         set -g @rose_pine_bar_bg_disable 'on' # Disables background color, for transparent terminal emulators
@@ -104,7 +103,7 @@
 
         # session management binds
         bind-key "T" run-shell "sesh connect \"$(
-          sesh list --icons | fzf-tmux -p 80%,70% \
+          sesh list --icons | fzf-tmux -p 90%,80% \
             --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
             --header '  ^a all ^t tmux ^g github ^c configs ^x zoxide ^d tmux kill ^f find' \
             --bind 'tab:down,btab:up' \
@@ -115,17 +114,19 @@
             --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
             --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
             --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
-            --preview-window 'right:55%' \
+            --preview-window 'right:75%:wrap' \
             --preview 'sesh preview {}'
         )\""
 
-        bind-key "K" display-popup -E -w 80% "sesh connect \"$(
+        bind-key "K" display-popup -E -w 90% "sesh connect \"$(
           sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --height 50 --prompt='⚡'
         )\""
 
-        bind-key "G" display-popup -E -w 80% "sesh connect \"$(
+        bind-key "G" display-popup -E -w 90% "sesh connect \"$(
           sesh list -g | gum filter --limit 1 --placeholder 'Pick a repo' --height 50 --prompt='⚡'
         )\""
+
+        bind-key "R" display-popup -E -w 90% "yazi"
 
         # clear screen
         bind C-l send-keys 'C-l'

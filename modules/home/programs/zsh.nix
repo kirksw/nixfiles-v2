@@ -4,11 +4,14 @@
   pkgs,
   lib,
   config,
-  enableLunar,
   nixDirectory,
   ...
 }:
 
+let
+  lunarLegacy = inputs.lunar-tools.packages.${pkgs.system}.lunar-legacy-files;
+  lunarLegacyRoot = "${lunarLegacy}/share/lunar-legacy/lw-zsh";
+in
 {
   options = {
     zsh.enable = lib.mkEnableOption "enables zsh";
@@ -20,6 +23,19 @@
       yq
       gum
     ];
+
+    programs.yazi = {
+      enable = true;
+      package = pkgs.yazi;
+
+      #extraPackages = with pkgs; [
+      #  glow
+      #  ouch
+      #  duckdb
+      #];
+
+      enableZshIntegration = true;
+    };
 
     programs.zsh = {
       enable = true;
@@ -45,26 +61,26 @@
           file = "lunar.plugin.zsh";
         }
         # NOTE: temporary
-        {
-          name = "lw-zsh-aws";
-          src = "${self}/scripts/lw-zsh/aws/";
-          file = "aws.zsh";
-        }
-        {
-          name = "lw-k8s-login";
-          src = "${self}/scripts/lw-zsh/k8s-login/";
-          file = "k8s-login.zsh";
-        }
-        {
-          name = "lw-db";
-          src = "${self}/scripts/lw-zsh/lw-db/";
-          file = "lw-db.zsh";
-        }
-        {
-          name = "admin_db";
-          src = "${self}/scripts/lw-zsh/admin_db/";
-          file = "admin_db.zsh";
-        }
+        #{
+        #  name = "lw-zsh-aws";
+        #  src = "${lunarLegacyRoot}/aws/";
+        #  file = "aws.zsh";
+        #}
+        #{
+        #  name = "lw-k8s-login";
+        #  src = "${lunarLegacyRoot}/k8s-login/";
+        #  file = "k8s-login.zsh";
+        #}
+        #{
+        #  name = "lw-db";
+        #  src = "${lunarLegacyRoot}/lw-db/";
+        #  file = "lw-db.zsh";
+        #}
+        #{
+        #  name = "admin_db";
+        #  src = "${lunarLegacyRoot}/admin_db/";
+        #  file = "admin_db.zsh";
+        #}
       ];
 
       shellAliases = {
@@ -140,7 +156,7 @@
     };
 
     # NOTE: legacy shim for old lw-zsh plugins; remove when replacement tooling reaches full parity
-    home.file.".zplug/repos/lunarway/lw-zsh/".source = "${self}/scripts/lw-zsh/";
+    home.file.".zplug/repos/lunarway/lw-zsh/".source = "${lunarLegacy}/share/lunar-legacy/lw-zsh";
 
     home.file.".aws/config".source = "${pkgs.lunar-zsh-plugin}/.aws/config";
     xdg.configFile = {

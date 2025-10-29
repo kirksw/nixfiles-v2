@@ -34,6 +34,7 @@
       url = "github:wezterm/wezterm?dir=nix";
     };
     deploy-rs.url = "github:serokell/deploy-rs";
+    yazi.url = "github:sxyazi/yazi";
   };
 
   outputs =
@@ -49,6 +50,7 @@
       sops-nix,
       wezterm,
       deploy-rs,
+      yazi,
     }:
     let
       mylibs = import ./lib {
@@ -90,6 +92,7 @@
           };
           overlays = [
             lunar-tools.overlays.default
+            yazi.overlays.default
           ];
           enableHomebrew = true;
           enableLunar = true;
@@ -117,7 +120,7 @@
         #};
         "nixos-ry6a" = {
           system = "x86_64-linux";
-          user = "k8s";
+          user = "root";
           hostModule = ./hosts/nixos/ry6a;
           homeModule = null;
         };

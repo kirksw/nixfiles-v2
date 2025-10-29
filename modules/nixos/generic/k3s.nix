@@ -84,10 +84,10 @@ in
 
     # Firewall defaults depending on role
     networking.firewall = {
-      allowedUDPPorts = lib.mkMerge [
+      allowedUDPPorts = [
         8472
       ];
-      allowedTCPPorts = lib.mkMerge [
+      allowedTCPPorts = [
         6443
         2379
         2380

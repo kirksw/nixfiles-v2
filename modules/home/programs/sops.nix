@@ -72,8 +72,10 @@ let
                 gpgsign = true
             [user]
                 signingKey = ${config.sops.secrets."ssh/${profileName}/public".path}
-            [url "github.com-${profileName}"]
-                insteadOf = https://github.com/${config.sops.placeholder."git/${profileName}/org"}/
+            [url "ssh://git@github.com-${profileName}:${profileName}/"]
+                insteadOf = https://github.com/${profileName}/
+                insteadOf = ssh://git@github.com/${profileName}/
+                insteadOf = git@github.com/${profileName}/
           '';
 
         };

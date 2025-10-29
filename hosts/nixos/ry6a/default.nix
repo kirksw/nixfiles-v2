@@ -45,21 +45,38 @@
   console.keyMap = "uk";
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.k8s = {
-    isNormalUser = true;
-    description = "k8s";
-    extraGroups = [
-      "networkmanager"
-      "wheel"
-    ];
-    # packages = with pkgs; [ ];
+  users.users = {
+    k8s = {
+      isNormalUser = true;
+      description = "k8s";
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+      ];
+      # packages = with pkgs; [ ];
+    };
+    kisw = {
+      isNormalUser = true;
+      description = "my user";
+      extraGroups = [
+        "networkmanager"
+        "wheel"
+      ];
+    };
   };
 
   # Nix settings
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+    trusted-users = [
+      "root"
+      "k8s"
+      "kisw"
+    ];
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -74,6 +91,15 @@
   ];
 
   # List services that you want to enable:
+
+  # Enable vvirtualisation
+  programs.virt-manager.enable = true;
+  users.groups.libvirtd.members = [
+    "root"
+    "k8s"
+  ];
+  virtualisation.libvirtd.enable = true;
+  virtualisation.spiceUSBRedirection.enable = true;
 
   # Enable the OpenSSH daemon.
   services.openssh.enable = true;

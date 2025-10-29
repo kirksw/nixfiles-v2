@@ -31,6 +31,7 @@
           color_scheme = "Rosé Pine (Gogh)",
           window_background_opacity = 0.85,
           macos_window_background_blur = 20,
+          window_close_confirmation = 'NeverPrompt',
           window_content_alignment = {
             horizontal = 'Center',
             vertical = 'Center',

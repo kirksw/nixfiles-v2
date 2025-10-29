@@ -6,6 +6,10 @@
   ...
 }:
 
+let
+  kube1 = config.sops.secrets."k8s/homelab".path;
+  kube2 = "${inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin}/.kube/config";
+in
 {
   options = {
     devops.enable = lib.mkEnableOption "enables devops tooling";
@@ -20,6 +24,8 @@
       awscli2
       fluxcd
       docker
+      kustomize
+      kubeconform
       kubectl
       kubectl-slice
       kubelogin-oidc
@@ -33,8 +39,17 @@
       "${config.home.homeDirectory}/.krew/bin"
     ];
 
-    home.sessionVariables.KUBECONFIG = "${config.sops.secrets."k8s/homelab".path}:${
-      inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin
-    }/.kube/config";
+    home.sessionVariables = {
+      KUBECONFIG = builtins.concatStringsSep ":" [
+        kube1
+        kube2
+      ];
+      DOG = "xyz";
+    };
+
+    home.file.".myfile".text = ''
+      ${kube1}
+      ${kube2}
+    '';
   };
 }
