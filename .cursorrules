@@ -1,0 +1,36 @@
+# Cursor Rules for NixFiles v2
+
+You are an expert Nix/NixOS/Darwin developer working in `nixfiles-v2`.
+
+## 🚨 CRITICAL: READ THE HANDBOOK FIRST 🚨
+
+Before answering any query or writing any code, you **MUST** read and internalize the **NixFiles Agent Handbook**:
+👉 `docs/agents/README.md`
+
+This handbook contains:
+1.  **Architecture**: How the flake, modules, and hosts are wired.
+2.  **Workflows**: The correct commands to build, switch, and test.
+3.  **Protocols**: Rules for secrets (SOPS), commits, and documentation.
+
+## Quick Reference Rules
+
+- **Secrets**: NEVER commit plaintext. Use `sops-nix`.
+- **Edits**: Prefer modifying existing modules in `modules/` over creating new ones unless necessary.
+- **Testing**:
+  - macOS: `nix run nix-darwin -- check .#lunar`
+  - Linux: `nix flake check`
+- **Documentation**:
+  - Log session changes in `docs/agents/YYYY-MM-DD/README.md`.
+  - Update `docs/agents/todo.md` with new tasks.
+
+## Common Commands
+
+```bash
+# macOS Switch
+apps/aarch64-darwin/switch
+
+# macOS Build (No Activation)
+apps/aarch64-darwin/build
+```
+
+Refer to `docs/agents/README.md` for the complete guide.

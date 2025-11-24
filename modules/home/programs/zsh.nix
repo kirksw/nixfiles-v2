@@ -10,7 +10,7 @@
 
 let
   lunarLegacy = inputs.lunar-tools.packages.${pkgs.system}.lunar-legacy-files;
-  lunarLegacyRoot = "${lunarLegacy}/share/lunar-legacy/lw-zsh";
+  lunarLegacyRoot = "${lunarLegacy}/.zplug/repos/lunarway/lw-zsh";
 in
 {
   options = {
@@ -127,10 +127,6 @@ in
               export GITHUB_TOKEN=$(gh auth token);
             fi
 
-            if [[ -z $SSH_AUTH_SOCK ]] || ! kill -0 $SSH_AGENT_PID 2>/dev/null; then
-              eval "$(ssh-agent -s)" >/dev/null
-            fi
-
             export PATH="$HOME/.local/bin:$PATH"
           '';
         in
@@ -156,7 +152,7 @@ in
     };
 
     # NOTE: legacy shim for old lw-zsh plugins; remove when replacement tooling reaches full parity
-    home.file.".zplug/repos/lunarway/lw-zsh/".source = "${lunarLegacy}/share/lunar-legacy/lw-zsh";
+    home.file.".zplug/repos/lunarway/lw-zsh/".source = "${lunarLegacyRoot}";
 
     home.file.".aws/config".source = "${pkgs.lunar-zsh-plugin}/.aws/config";
     xdg.configFile = {

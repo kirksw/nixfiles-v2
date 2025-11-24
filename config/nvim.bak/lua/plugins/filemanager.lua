@@ -12,9 +12,6 @@ return {
         width_preview = 75,
       },
     },
-    keys = {
-      { "<leader>fm", "<cmd>lua MiniFiles.open()<cr>", desc = "mini.files explorer" },
-    },
   },
   {
     "folke/snacks.nvim",

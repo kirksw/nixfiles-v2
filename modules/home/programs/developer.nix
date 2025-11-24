@@ -3,6 +3,7 @@
   lib,
   config,
   git,
+  ssh,
   ...
 }:
 
@@ -64,6 +65,7 @@ in
       nil # nix
       # languages
       go
+      zig
       rustup
       coursier
       nodejs_24
@@ -142,5 +144,14 @@ in
         branch.sort = "-committerdate";
       };
     };
+
+    programs.zsh.initContent = lib.mkAfter ''
+      # Load SOPS SSH keys into agent
+      ${lib.concatMapStringsSep "\n" (key: ''
+        if [[ -f "${config.sops.secrets."ssh/${key}/private".path}" ]]; then
+           ssh-add "${config.sops.secrets."ssh/${key}/private".path}" >/dev/null 2>&1 || true
+        fi
+      '') ssh.keys}
+    '';
   };
 }
