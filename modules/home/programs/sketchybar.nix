@@ -16,7 +16,7 @@
       enable = true;
 
       extraPackages = with pkgs; [
-        jq
+        sketchybar-app-font
       ];
 
       #config = {

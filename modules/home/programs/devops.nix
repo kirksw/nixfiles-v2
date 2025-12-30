@@ -8,7 +8,7 @@
 
 let
   kube1 = config.sops.secrets."k8s/homelab".path;
-  kube2 = "${inputs.lunar-tools.packages.${pkgs.system}.lunar-zsh-plugin}/.kube/config";
+  kube2 = "${inputs.lunar-tools.packages.${pkgs.stdenv.hostPlatform.system}.lunar-zsh-plugin}/.kube/config";
   writableKubeconfig = "${config.home.homeDirectory}/.kube/config";
   mergeScript = pkgs.writeShellScript "merge-kubeconfig" ''
     # Ensure .kube directory exists
@@ -64,7 +64,7 @@ in
 
     # Add merge script to zsh initialization (runs on shell start, but script checks if merge is needed)
     # Home Manager will merge this with other initExtra content
-    programs.zsh.initExtra = ''
+    programs.zsh.initContent = ''
       # Merge kubeconfig files if needed (only updates when source configs change)
       ${mergeScript} >/dev/null 2>&1
       # Ensure KUBECONFIG points to writable file (sessionVariables should handle this, but explicit for clarity)

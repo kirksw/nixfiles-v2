@@ -22,7 +22,7 @@ let
   generateSshMatchblocks =
     profileNames:
     builtins.listToAttrs (
-      builtins.map (profileName: {
+      map (profileName: {
         name = "github.com-${profileName}";
         value = {
           hostname = "github.com";
@@ -39,7 +39,7 @@ let
     profileNames:
     builtins.concatMap (
       profileName:
-      builtins.map (dir: {
+      map (dir: {
         condition = "gitdir:${ensureGlob dir}";
         path = "${config.sops.templates."gitprofile-${profileName}".path}";
       }) (dirsOf profileName)
@@ -63,6 +63,7 @@ in
       fd # user friendly alternative to find
       neovide
       nil # nix
+      nixd
       # languages
       go
       zig

@@ -133,9 +133,10 @@
 
         # settings for sesh 
         set -g default-terminal "screen-256color"
-        set -ag terminal-overrides ",xterm-256color:RGB"
+        set -as terminal-overrides ",xterm*:extkeys:Tc"
         set -g allow-passthrough on
-        set -g detach-on-destroy off  
+        set -g extended-keys on
+        set -g detach-on-destroy off
 
         # reload config
         bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded..."

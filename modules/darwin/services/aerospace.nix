@@ -1,4 +1,5 @@
 {
+  self,
   lib,
   config,
   ...
@@ -21,7 +22,6 @@
         default-root-container-orientation = "auto";
         on-focused-monitor-changed = [ "move-mouse monitor-lazy-center" ];
         automatically-unhide-macos-hidden-apps = true;
-
         key-mapping = {
           preset = "qwerty";
         };
@@ -75,12 +75,9 @@
           alt-shift-tab = "move-workspace-to-monitor --wrap-around next";
           alt-shift-semicolon = "mode service";
 
-          # alt-a = "exec-and-forget open -a /Applications/Arc.app";
-          # alt-z = "exec-and-forget open -a /Applications/Zed.app";
-          # alt-i = "exec-and-forget open -a '/Applications/IntelliJ IDEA.app'";
-          # alt-d = "exec-and-forget open -a /Applications/DataGrip.app";
-          alt-s = "exec-and-forget open -a /Applications/Slack.app";
-          alt-g = "exec-and-forget open -na ghostty";
+          alt-shift-s = "exec-and-forget open -a /Applications/Slack.app";
+          alt-shift-g = "exec-and-forget open -na ghostty";
+          alt-shift-a = "exec-and-forget ${self}/config/aerospace/raycast-ai.sh";
         };
         mode.service.binding = {
           esc = [

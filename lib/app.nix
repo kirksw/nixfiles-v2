@@ -5,18 +5,16 @@
 }:
 
 let
-  inherit (inputs) nixpkgs self;
+  inherit (inputs) pkgs self;
 
   mkApp = scriptName: system: {
     type = "app";
-    program = "${
-      (nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
-        #!${nixpkgs.legacyPackages.${system}.runtimeShell}
-        PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-        echo "Running ${scriptName} for ${system}"
-        exec ${self}/apps/${system}/${scriptName}
-      '')
-    }/bin/${scriptName}";
+    program = "${(pkgs.writeScriptBin scriptName ''
+      #!${pkgs.runtimeShell}
+      PATH=${pkgs.git}/bin:$PATH
+      echo "Running ${scriptName} for ${system}"
+      exec ${self}/apps/${system}/${scriptName}
+    '')}/bin/${scriptName}";
   };
 in
 {

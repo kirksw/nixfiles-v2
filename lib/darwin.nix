@@ -17,13 +17,15 @@ let
   mkDarwinSystem =
     hostname: config:
     darwin.lib.darwinSystem {
-      system = config.system;
       specialArgs = {
         inherit inputs self;
       }
       // config;
       modules = [
-        { nixpkgs.overlays = (config.overlays or [ ]); }
+        {
+          nixpkgs.hostPlatform = config.system;
+          nixpkgs.overlays = (config.overlays or [ ]);
+        }
         inputs.sops-nix.darwinModules.sops
         inputs.home-manager.darwinModules.home-manager
         config.hostModule

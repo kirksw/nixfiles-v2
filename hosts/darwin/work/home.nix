@@ -11,10 +11,8 @@
 
   home.packages = with pkgs; [
     neofetch
-    hugo
     nerd-fonts.fira-code
     nerd-fonts.fira-mono
-    sketchybar-app-font
   ];
 
   home.sessionVariables = {
@@ -37,6 +35,7 @@
   ghostty.enable = true;
   wezterm.enable = true;
   qemu.enable = true;
+  aidev.enable = true;
 
   # disabled custom modules
   communication.enable = false;
