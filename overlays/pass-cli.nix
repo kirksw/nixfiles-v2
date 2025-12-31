@@ -11,13 +11,24 @@ final: prev: {
       sha256 = "sha256-B+hmxagP5Ls+Jc8DZN8Y9fvdrTq+HkMICUzMVsd8aU4=";
     };
 
+    nativeBuildInputs = [ prev.makeWrapper ];
+
     dontUnpack = true;
     dontBuild = true;
 
     installPhase = ''
       mkdir -p $out/bin
-      cp $src $out/bin/pass-cli
-      chmod +x $out/bin/pass-cli
+      cp $src $out/bin/$pname
+      chmod +x $out/bin/$pname
+
+      # add dependencies
+      wrapProgram $out/bin/$pname \
+        --prefix PATH : ${
+          prev.lib.makeBinPath [
+            prev.jq
+            prev.curl
+          ]
+        }
     '';
   };
 }
