@@ -83,15 +83,10 @@ in
       dark-mode-notify
     ];
 
-    # direnv
-    programs.direnv = {
-      enable = true;
-    };
-
     # tooling management
     programs.mise = {
       enable = true;
-      enableZshIntegration = true;
+      enableZshIntegration = false;
       globalConfig = {
         settings = {
           pipx_uvx = true;

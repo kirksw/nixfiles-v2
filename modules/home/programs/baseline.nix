@@ -1,4 +1,9 @@
-{ pkgs, lib, config, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
 
 {
   options = {
@@ -34,11 +39,8 @@
       unrar
       unzip
 
-      # ai
-      # not really build for mac
-      # ollama
-      # llama-cpp
-      # oterm
+      # proton
+      pass-cli
 
       # credential
       docker-credential-helpers

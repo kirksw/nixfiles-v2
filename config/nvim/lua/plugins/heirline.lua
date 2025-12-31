@@ -18,7 +18,7 @@ return {
       local heirline = require("heirline")
       local lib = require("heirline-components.all")
       local conditions = require("heirline.conditions")
-      -- local utils = require("heirline.utils")
+      local utils = require("heirline.utils")
 
       -- Setup
       lib.init.subscribe_to_events()
@@ -31,37 +31,36 @@ return {
           lib.component.tabline_buffers(),
           lib.component.tabline_tabpages(),
         },
-        -- NOTE: disabled for now as no real use-case
-        -- winbar = { -- UI breadcrumbs bar
-        --   init = function(self)
-        --     self.bufnr = vim.api.nvim_get_current_buf()
-        --   end,
-        --   fallthrough = false,
-        --   -- Winbar for terminal, neotree, and aerial.
-        --   {
-        --     condition = function()
-        --       return not lib.condition.is_active()
-        --     end,
-        --     {
-        --       lib.component.neotree(),
-        --       lib.component.compiler_play(),
-        --       lib.component.fill(),
-        --       lib.component.compiler_build_type(),
-        --       lib.component.compiler_redo(),
-        --       lib.component.aerial(),
-        --     },
-        --   },
-        --   -- Regular winbar
-        --   {
-        --     lib.component.neotree(),
-        --     lib.component.compiler_play(),
-        --     lib.component.fill(),
-        --     lib.component.breadcrumbs(),
-        --     lib.component.fill(),
-        --     lib.component.compiler_redo(),
-        --     lib.component.aerial(),
-        --   },
-        -- },
+        --winbar = { -- UI breadcrumbs bar
+        --  init = function(self)
+        --    self.bufnr = vim.api.nvim_get_current_buf()
+        --  end,
+        --  fallthrough = false,
+        --  -- Winbar for terminal, neotree, and aerial.
+        --  {
+        --    condition = function()
+        --      return not lib.condition.is_active()
+        --    end,
+        --    {
+        --      lib.component.neotree(),
+        --      lib.component.compiler_play(),
+        --      lib.component.fill(),
+        --      lib.component.compiler_build_type(),
+        --      lib.component.compiler_redo(),
+        --      lib.component.aerial(),
+        --    },
+        --  },
+        --  -- Regular winbar
+        --  {
+        --    lib.component.neotree(),
+        --    lib.component.compiler_play(),
+        --    lib.component.fill(),
+        --    lib.component.breadcrumbs(),
+        --    lib.component.fill(),
+        --    lib.component.compiler_redo(),
+        --    lib.component.aerial(),
+        --  },
+        --},
         statusline = {
           hl = { fg = "fg", bg = "bg" },
           lib.component.mode(),
@@ -74,17 +73,19 @@ return {
           lib.component.nav(),
           lib.component.mode({ surround = { separator = "right" } }),
         },
-        opts = {
-          -- if the callback returns true, the winbar will be disabled for that window
-          -- the args parameter corresponds to the table argument passed to autocommand callbacks. :h nvim_lua_create_autocmd()
-          disable_winbar_cb = function(args)
-            return conditions.buffer_matches({
-              buftype = { "nofile", "prompt", "help", "quickfix" },
-              filetype = { "^git.*", "fugitive", "Trouble", "dashboard", "mini.files" },
-            }, args.buf)
-          end,
-        },
+        --opts = {
+        --  -- if the callback returns true, the winbar will be disabled for that window
+        --  -- the args parameter corresponds to the table argument passed to autocommand callbacks. :h nvim_lua_create_autocmd()
+        --  disable_winbar_cb = function(args)
+        --    return conditions.buffer_matches({
+        --      buftype = { "nofile", "prompt", "help", "quickfix" },
+        --      filetype = { "^git.*", "fugitive", "Trouble", "dashboard", "mini.files" },
+        --    }, args.buf)
+        --  end,
+        --},
       })
+
+      vim.o.showtabline = 2
     end,
   },
 }

@@ -1,4 +1,5 @@
 {
+  self,
   inputs,
   pkgs,
   lib,
@@ -10,6 +11,9 @@
 let
   lunarLegacy = inputs.lunar-tools.packages.${pkgs.stdenv.hostPlatform.system}.lunar-legacy-files;
   lunarLegacyRoot = "${lunarLegacy}/.zplug/repos/lunarway/lw-zsh";
+  selectedPreset = builtins.fromTOML (
+    builtins.readFile "${self}/config/zsh/starship/presets/pure.toml"
+  );
 in
 {
   options = {
@@ -18,104 +22,119 @@ in
 
   config = lib.mkIf config.zsh.enable {
     programs = {
-      zoxide = {
+      starship = {
         enable = true;
         enableZshIntegration = true;
+        settings = selectedPreset;
       };
 
       fzf = {
         enable = true;
-        enableZshIntegration = true;
+        enableZshIntegration = false; # defer
       };
 
-      starship = {
+      zoxide = {
         enable = true;
-        enableZshIntegration = true;
+        enableZshIntegration = false; # defer
+      };
+
+      direnv = {
+        enable = true;
+        enableZshIntegration = false; # defer
+        nix-direnv.enable = true;
       };
 
       yazi = {
         enable = true;
         package = pkgs.yazi;
-
-        enableZshIntegration = true;
+        enableZshIntegration = false; # defer
       };
 
       zsh = {
         enable = true;
-
         autocd = true;
         enableCompletion = true;
-        autosuggestion.enable = true;
-        syntaxHighlighting.enable = true;
+
+        # DISABLED - manually deferred below
+        autosuggestion.enable = false;
+        syntaxHighlighting.enable = false;
+
         defaultKeymap = "viins";
+        completionInit = "autoload -Uz compinit && compinit -C -u";
 
-        # NOTE: use-this for debugging performance issues
-        zprof.enable = true;
+        # NOTE: uncomment for debugging
+        # zprof.enable = true;
 
-        plugins = [
-          {
-            name = "zshdefer";
-            src = pkgs.zsh-defer;
-            file = "share/zsh-defer/zsh-defer.zsh";
-          }
-          {
-            name = "lunar";
-            src = "${pkgs.lunar-zsh-plugin}/share/zsh/plugins/lunar-zsh-plugin/";
-            file = "lunar.plugin.zsh";
-          }
-        ];
+        plugins = [ ];
 
         shellAliases = {
           la = "ls -la";
           ll = "ls -l";
           nu = "pushd ${nixDirectory} && nix flake update && popd";
           ns = "pushd ${nixDirectory} && sudo darwin-rebuild --flake .#aarch64-darwin && popd";
+
           gn = "gitnow";
           "docker-compose" = "docker compose";
           hubble = "aws_wrapper hubble";
           k9s = "k8s_wrapper k9s";
           kubectl = "k8s_wrapper kubectl";
-          schema = "async-schema-tooling";
-          ast = "async-schema-tooling";
         };
 
-        history.size = 10000;
-        history.path = "${config.xdg.dataHome}/zsh/history";
+        history = {
+          size = 10000;
+          path = "${config.xdg.dataHome}/zsh/history";
+        };
 
         # NOTE: 500: early init, 550: before comp, 1000: general, 1500: last
-        initContent =
-          let
-            zshConfigEarlyInit = lib.mkOrder 500 ''
-              # Early NIX config
-            '';
+        initContent = lib.mkMerge [
+          (lib.mkOrder 500 ''
+            # Load nix (critical for PATH)
+            if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+              . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+              . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+            fi
 
-            zshConfig = lib.mkOrder 1000 ''
-              # General NIX config
-              if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
-                . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-                . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
-              fi
+            # Inline brew PATH (faster than eval subshell)
+            if [[ -d /opt/homebrew ]]; then
+              export HOMEBREW_PREFIX="/opt/homebrew"
+              export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+              export HOMEBREW_REPOSITORY="/opt/homebrew"
+              export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+              export MANPATH="/opt/homebrew/share/man:$MANPATH"
+              export INFOPATH="/opt/homebrew/share/info:$INFOPATH"
+            fi
 
-              if [[ $(uname -m) == 'arm64' ]]; then
-                  eval "$(/opt/homebrew/bin/brew shellenv)"
-              fi
+            export PATH="$HOME/.local/bin:$PATH"
 
-              # refresh $GITHUB_ACCESS_TOKEN if unset
-              if [[ $GITHUB_ACCESS_TOKEN == "" ]]; then
-                export GITHUB_ACCESS_TOKEN=$(gh auth token);
-              fi
+            #if [[ $TERM != "dumb" ]]; then
+            #  eval "${self}/config/zsh/starship_init.zsh"
+            #fi
+          '')
 
-              if [[ $GITHUB_TOKEN == "" ]]; then
-                export GITHUB_TOKEN=$(gh auth token);
-              fi
+          (lib.mkOrder 1000 (''
+            if (( $+commands[direnv] )); then
+              eval "$(direnv hook zsh)"
+            fi
 
-              export PATH="$HOME/.local/bin:$PATH"
-            '';
-          in
-          lib.mkMerge [
-            zshConfigEarlyInit
-            zshConfig
-          ];
+            if (( $+commands[mise] )); then
+              eval "$(mise activate zsh --shims)"
+            fi
+
+            # load zsh-defer first
+            source "${pkgs.zsh-defer}/share/zsh-defer/zsh-defer.plugin.zsh"
+
+            # Defer plugins
+            zsh-defer eval "$(${pkgs.zoxide}/bin/zoxide init zsh)"
+            zsh-defer source "${pkgs.fzf}/share/fzf/key-bindings.zsh"
+            zsh-defer source "${pkgs.fzf}/share/fzf/completion.zsh"
+            zsh-defer eval "$(${pkgs.yazi}/bin/yazi --init zsh 2>/dev/null || true)"
+            zsh-defer source "${pkgs.lunar-zsh-plugin}/share/zsh/plugins/lunar-zsh-plugin/lunar.plugin.zsh"
+
+            # load last
+            source "${pkgs.zsh-autosuggestions}/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+            source "${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+          ''))
+        ];
       };
     };
 
@@ -130,12 +149,6 @@ in
       file.".zplug/repos/lunarway/lw-zsh/".source = "${lunarLegacyRoot}";
 
       file.".aws/config".source = "${pkgs.lunar-zsh-plugin}/.aws/config";
-    };
-
-    xdg.configFile = {
-      "starship.toml" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/starship/rose-pine.toml";
-      };
     };
   };
 }

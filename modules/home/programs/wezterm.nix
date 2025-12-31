@@ -15,6 +15,7 @@
     programs.wezterm = {
       enable = true;
       package = inputs.wezterm.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      enableZshIntegration = false;
 
       extraConfig = ''
         local wezterm = require("wezterm")
