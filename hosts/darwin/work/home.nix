@@ -36,6 +36,7 @@
   wezterm.enable = true;
   qemu.enable = true;
   aidev.enable = true;
+  treekanga.enable = true;
 
   # disabled custom modules
   communication.enable = false;

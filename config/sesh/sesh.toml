@@ -15,15 +15,7 @@ path = "~/git/github.com/kirksw/scratchpad"
 startup_command = "lv ."
 preview_command = "bat --color=always ~/git/github.com/kirksw/scratchpad/README.md"
 
-[github]
-cache_timeout = 600
-clone_dir = "~/git"
-use_ssh = true
-show_uncloned = true
-include_personal = true
-show_description = false
-
-[[github.organizations]]
-name = "lunarway"
-
-sort_order = ["tmux", "config", "github", "tmuxinator", "zoxide"]
+[[session]]
+name = "hubble-continuum/review"
+path = "~/git/github.com/lunarway/hubble-continuum/review"
+startup_command = "gh dash"

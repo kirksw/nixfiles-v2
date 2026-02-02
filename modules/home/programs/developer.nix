@@ -1,4 +1,5 @@
 {
+  self,
   pkgs,
   lib,
   config,
@@ -149,5 +150,21 @@ in
         fi
       '') ssh.keys}
     '';
+
+    programs.sesh = {
+      enable = true;
+      enableAlias = true;
+      enableTmuxIntegration = true;
+      settings = builtins.fromTOML (builtins.readFile "${self}/config/sesh/sesh.toml");
+    };
+
+    programs.gh-dash = {
+      enable = true;
+      settings = {
+        repoPaths = {
+          "lunarway/hubble-continuum" = "/Users/kisw/git/github.com/lunarway/hubble-continuum/review";
+        };
+      };
+    };
   };
 }

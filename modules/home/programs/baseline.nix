@@ -40,7 +40,7 @@
       unzip
 
       # proton
-      pass-cli
+      proton-pass-cli
 
       # credential
       docker-credential-helpers

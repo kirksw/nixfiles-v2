@@ -1,11 +1,8 @@
 {
   lib,
   stdenv,
-  fetchurl,
+  fetchzip,
   makeWrapper,
-  writeShellScript,
-  jq,
-  curl,
   testers,
 }:
 
@@ -15,43 +12,42 @@ let
   # proton use macos designation instead of darwin
   os = if stdenv.hostPlatform.isDarwin then "macos" else stdenv.hostPlatform.parsed.kernel.name;
 
-  supportedCombinations = versions.passCliVersions.urls or { };
+  supportedCombinations = versions.treekangaVersions.urls or { };
   isSupported = supportedCombinations ? ${os} && supportedCombinations.${os} ? ${arch};
   versionInfo =
     if isSupported then
-      versions.passCliVersions.urls.${os}.${arch}
+      versions.treekangaVersions.urls.${os}.${arch}
     else
       throw "Unsupported platform: ${os}-${arch}";
 
   inherit (versionInfo) url hash;
-  inherit (versions.passCliVersions) version;
+  inherit (versions.treekangaVersions) version;
 in
 stdenv.mkDerivation (finalAttrs: {
-  pname = "proton-pass-cli";
+  pname = "treekanga";
   inherit version;
 
-  src = fetchurl {
+  src = fetchzip {
     inherit url;
     sha256 = hash;
   };
 
   nativeBuildInputs = [ makeWrapper ];
 
-  dontUnpack = true;
   dontBuild = true;
   dontConfigure = true;
+
+  postUnpack = ''
+    echo "=== postUnpack: PWD=$PWD ==="
+    ls -la
+    echo "=== tree (maxdepth 4) ==="
+    find . -maxdepth 4 -print
+  '';
 
   installPhase = ''
     runHook preInstall
 
-    install -Dm755 $src $out/bin/pass-cli
-    wrapProgram $out/bin/pass-cli \
-      --prefix PATH : ${
-        lib.makeBinPath [
-          jq
-          curl
-        ]
-      }
+    install -Dm755 treekanga $out/bin/treekanga
 
     runHook postInstall
   '';
@@ -59,13 +55,13 @@ stdenv.mkDerivation (finalAttrs: {
   passthru = {
     tests.version = testers.testVersion {
       package = finalAttrs.finalPackage;
-      command = "pass-cli --version";
+      command = "treekanga --version";
     };
-    updateScript = writeShellScript "update-version" ''
-      set -euo pipefail
-      ${lib.getExe curl} -fsSL -o ${./versions.json} \
-        https://proton.me/download/pass-cli/versions.json
-    '';
+    # updateScript = writeShellScript "update-version" ''
+    #   set -euo pipefail
+    #   ${lib.getExe curl} -fsSL -o ${./versions.json} \
+    #     ???
+    # '';
   };
 
   meta = {
@@ -73,7 +69,7 @@ stdenv.mkDerivation (finalAttrs: {
     platforms = lib.platforms.linux ++ lib.platforms.darwin;
     license = lib.licenses.gpl3Only;
     maintainers = [ lib.maintainers.kirksw ];
-    mainProgram = "pass-cli";
+    mainProgram = "treekanga";
     sourceProvenance = with lib.sourceTypes; [ binaryNativeCode ];
   };
 })

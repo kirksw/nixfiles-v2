@@ -2,15 +2,23 @@
   description = "Starter Configuration for MacOS and NixOS";
 
   inputs = {
-    #nixpkgs-edge.url = "github:nixos/nixpkgs/release-25.05";
-    #nixpkgs-stable.url = "github:nixos/nixpkgs/release-25.05";
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    home-manager = {
-      url = "github:nix-community/home-manager";
+    # NOTE: for unstable
+    # nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    # darwin = {
+    #   url = "github:nix-darwin/nix-darwin";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    # home-manager = {
+    #   url = "github:nix-community/home-manager";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
+    darwin = {
+      url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    darwin = {
-      url = "github:nix-darwin/nix-darwin";
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew = {
@@ -24,7 +32,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     lunar-tools = {
-      url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/add-rds-access";
+      url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/streamline-wrappers";
     };
     sops-nix = {
       url = "github:Mic92/sops-nix";
@@ -126,13 +134,52 @@
         };
       };
     in
-    flake-utils.lib.eachDefaultSystem (system: {
-      apps = {
-        build = mylibs.app.mkApp "build" system;
-        switch = mylibs.app.mkApp "switch" system;
-        rollback = mylibs.app.mkApp "rollback" system;
-      };
-    })
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+
+        # Auto-discover packages from packages/*/default.nix
+        packagesDir = ./packages;
+        packageNames = builtins.filter (name: builtins.pathExists (packagesDir + "/${name}/default.nix")) (
+          builtins.attrNames (builtins.readDir packagesDir)
+        );
+
+        packages = builtins.listToAttrs (
+          map (name: {
+            inherit name;
+            value = pkgs.callPackage (packagesDir + "/${name}") { };
+          }) packageNames
+        );
+
+        # Update script that runs all package updateScripts
+        updateAllPackages = pkgs.writeShellScriptBin "update-packages" ''
+          set -euo pipefail
+          cd ${toString ./.}
+          echo "Updating all packages..."
+          ${builtins.concatStringsSep "\n" (
+            map (name: ''
+              echo "→ Updating ${name}..."
+              ${packages.${name}.updateScript or "echo 'No updateScript for ${name}'"}
+            '') packageNames
+          )}
+          echo "Done!"
+        '';
+      in
+      {
+        inherit packages;
+
+        apps = {
+          build = mylibs.app.mkApp "build" system;
+          switch = mylibs.app.mkApp "switch" system;
+          rollback = mylibs.app.mkApp "rollback" system;
+          update-packages = {
+            type = "app";
+            program = "${updateAllPackages}/bin/update-packages";
+          };
+        };
+      }
+    )
     // {
       darwinConfigurations = builtins.mapAttrs mylibs.darwin.mkDarwinSystem darwinSystems;
     }

@@ -12,11 +12,19 @@
   };
 
   config = lib.mkIf config.tmux.enable {
+    home = {
+      packages = with pkgs; [
+        gitmux
+      ];
+
+      file.".config/gitmux/gitmux.conf".source = "${self}/config/gitmux/gitmux.conf";
+    };
+
     programs.tmux = {
       enable = true;
 
       shell = "${pkgs.zsh}/bin/zsh";
-      terminal = "screen-256color";
+      terminal = "tmux-256color";
       prefix = "C-a";
       keyMode = "vi";
       mouse = true;
@@ -38,7 +46,6 @@
       ];
 
       extraConfig = ''
-        set-option -g status-style bg=default
         set -g @rose_pine_variant 'main' # Options are 'main', 'moon' or 'dawn'
 
         set -g @rose_pine_host 'on'
@@ -48,13 +55,21 @@
         set -g @rose_pine_bar_bg_disable 'on' # Disables background color, for transparent terminal emulators
         set -g @rose_pine_bar_bg_disabled_color_option 'default'
 
-        set -g @rose_pine_only_windows 'on' # Leaves only the window module, for max focus and space
+        set -g @rose_pine_only_windows 'off' # Leaves only the window module, for max focus and space
         set -g @rose_pine_disable_active_window_menu 'on' # Disables the menu that shows the active window on the left
 
         set -g @rose_pine_default_window_behavior 'on' # Forces tmux default window list behaviour
         set -g @rose_pine_show_current_program 'on' # Forces tmux to show the current running program as window name
         set -g @rose_pine_show_pane_directory 'on' # Forces tmux to show the current directory as window name
-        # Previously set -g @rose_pine_window_tabs_enabled
+
+        # Cleanup
+        set -g @rose_pine_user 'off'
+        set -g @rose_pine_host 'off'
+        set -g @rose_pine_hostname_short 'off'
+        set -g @rose_pine_status_right_append_section '#[fg=#9ccfd8] #(git -C "#{pane_current_path}" rev-parse --abbrev-ref HEAD 2>/dev/null)'
+
+        # NOTE: maybe remove the below
+        set -g @rose_pine_window_tabs_enabled 'on'
 
         # Example values for these can be:
         set -g @rose_pine_left_separator ' > ' # The strings to use as separators are 1-space padded
@@ -77,11 +92,7 @@
         set -g @rose_pine_window_count '5' # Specify a number of windows, if there are more than the number, do the same as width_to_hide
 
         # combining tmux and nvim status lines
-        set -g focus-events on
         set -g status-style bg=default
-        # set -g status-left-length 90
-        # set -g status-right-length 90
-        # set -g status-justify absolute-centre
 
         # pane management binds
         unbind %
@@ -101,58 +112,19 @@
         bind -T copy-mode-vi y send-keys -X copy-selection  # copy text with "y"
         unbind -T copy-mode-vi MouseDragEnd2Pane
 
-        # session management binds
-        bind-key "T" run-shell "sesh connect \"$(
-          sesh list --icons | fzf-tmux -p 90%,80% \
-            --no-sort --ansi --border-label ' sesh ' --prompt '⚡  ' \
-            --header '  ^a all ^t tmux ^g github ^c configs ^x zoxide ^d tmux kill ^f find' \
-            --bind 'tab:down,btab:up' \
-            --bind 'ctrl-a:change-prompt(⚡  )+reload(sesh list --icons)' \
-            --bind 'ctrl-t:change-prompt(🪟  )+reload(sesh list -t --icons)' \
-            --bind 'ctrl-g:change-prompt(🐙  )+reload(sesh list -g --icons)' \
-            --bind 'ctrl-c:change-prompt(⚙️  )+reload(sesh list -c --icons)' \
-            --bind 'ctrl-x:change-prompt(📁  )+reload(sesh list -z --icons)' \
-            --bind 'ctrl-f:change-prompt(🔎  )+reload(fd -H -d 2 -t d -E .Trash . ~)' \
-            --bind 'ctrl-d:execute(tmux kill-session -t {2..})+change-prompt(⚡  )+reload(sesh list --icons)' \
-            --preview-window 'right:75%:wrap' \
-            --preview 'sesh preview {}'
-        )\""
-
-        bind-key "K" display-popup -E -w 90% "sesh connect \"$(
-          sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --height 50 --prompt='⚡'
-        )\""
-
-        bind-key "G" display-popup -E -w 90% "sesh connect \"$(
-          sesh list -g | gum filter --limit 1 --placeholder 'Pick a repo' --height 50 --prompt='⚡'
-        )\""
-
-        bind-key "R" display-popup -E -w 90% "yazi"
-
         # clear screen
         bind C-l send-keys 'C-l'
 
-        # settings for sesh 
-        set -g default-terminal "screen-256color"
-        set -as terminal-overrides ",xterm*:extkeys:Tc"
+        # binds?
+        set -g set-clipboard on
         set -g allow-passthrough on
         set -g extended-keys on
         set -g detach-on-destroy off
+        bind -T copy-mode-vi Enter send-keys -X copy-selection-and-cancel
 
         # reload config
-        bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded..."
+        bind r run-shell "tmux source-file ~/.config/tmux/tmux.conf && tmux display-message 'Config reloaded'"
       '';
     };
-
-    home.shellAliases = {
-      t = "sesh connect $(sesh list | fzf)";
-      k = "sesh list -i | gum filter --limit 1 --placeholder 'Pick a sesh' --height 50 --prompt='⚡'";
-    };
-
-    home.file.".config/sesh/sesh.toml".source = "${self}/config/sesh/sesh.toml";
-    home.file.".config/sesh/scripts/startup.sh" = {
-      source = "${self}/config/sesh/scripts/startup.sh";
-      executable = true;
-    };
-
   };
 }

@@ -9,8 +9,6 @@
 }:
 
 let
-  lunarLegacy = inputs.lunar-tools.packages.${pkgs.stdenv.hostPlatform.system}.lunar-legacy-files;
-  lunarLegacyRoot = "${lunarLegacy}/.zplug/repos/lunarway/lw-zsh";
   selectedPreset = builtins.fromTOML (
     builtins.readFile "${self}/config/zsh/starship/presets/pure.toml"
   );
@@ -31,6 +29,7 @@ in
       fzf = {
         enable = true;
         enableZshIntegration = false; # defer
+        tmux.enableShellIntegration = true;
       };
 
       zoxide = {
@@ -144,9 +143,6 @@ in
         yq
         gum
       ];
-
-      # NOTE: legacy shim for old lw-zsh plugins; remove when replacement tooling reaches full parity
-      file.".zplug/repos/lunarway/lw-zsh/".source = "${lunarLegacyRoot}";
 
       file.".aws/config".source = "${pkgs.lunar-zsh-plugin}/.aws/config";
     };

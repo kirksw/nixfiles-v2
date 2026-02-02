@@ -21,11 +21,8 @@
       shuttle
       hamctl
       hubble
-      sesh
       dagger
-      fuzzy-clone
       gitnow
-      async-schema-tooling
       lunarctl
       cursor-cli
       amp-cli

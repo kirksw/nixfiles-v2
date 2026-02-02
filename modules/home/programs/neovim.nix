@@ -34,27 +34,6 @@
         nil
         nixfmt
       ];
-
-      #extraPackages = with pkgs; [
-      #  # mason requirements
-      #  gopls
-      #  delve
-      #  gotools
-      #  gofumpt
-      #  tree-sitter
-      #  nixfmt
-      #  nil
-      #  # langs
-      #  ocaml
-      #  go_1_25
-      #  ruby_3_4
-      #  nodejs_20
-      #  lua5_1
-      #  # utils
-      #  pngpaste
-      #  imagemagick
-      #  mermaid-cli
-      #];
     };
 
     home.shellAliases = {
