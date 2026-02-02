@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-unstable,
   lib,
   config,
   nixDirectory,
@@ -12,7 +13,7 @@
   };
 
   config = lib.mkIf config.aidev.enable {
-    home.packages = with pkgs; [
+    home.packages = with pkgs-unstable; [
       opencode
       claude-code
       claude-code-router

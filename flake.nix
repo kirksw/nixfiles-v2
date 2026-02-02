@@ -2,17 +2,11 @@
   description = "Starter Configuration for MacOS and NixOS";
 
   inputs = {
-    # NOTE: for unstable
-    # nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    # darwin = {
-    #   url = "github:nix-darwin/nix-darwin";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # home-manager = {
-    #   url = "github:nix-community/home-manager";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+    # Stable base
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-25.11-darwin";
+
+    # Unstable for bleeding-edge packages (AI tools, etc.)
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     darwin = {
       url = "github:nix-darwin/nix-darwin/nix-darwin-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -52,6 +46,7 @@
       nix-homebrew,
       home-manager,
       nixpkgs,
+      nixpkgs-unstable,
       disko,
       flake-utils,
       lunar-tools,

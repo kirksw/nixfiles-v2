@@ -5,7 +5,7 @@
 }:
 
 let
-  inherit (inputs) darwin;
+  inherit (inputs) darwin nixpkgs-unstable;
   homeManagerHelpers = import ./homemanager.nix {
     inherit
       lib
@@ -16,9 +16,16 @@ let
 
   mkDarwinSystem =
     hostname: config:
+    let
+      # Create unstable pkgs for this system
+      pkgs-unstable = import nixpkgs-unstable {
+        system = config.system;
+        config.allowUnfree = true;
+      };
+    in
     darwin.lib.darwinSystem {
       specialArgs = {
-        inherit inputs self;
+        inherit inputs self pkgs-unstable;
       }
       // config;
       modules = [

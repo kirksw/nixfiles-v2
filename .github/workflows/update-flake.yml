@@ -1,0 +1,68 @@
+name: Update Flake Lock
+
+on:
+  # Run weekly on Monday at 9am UTC
+  schedule:
+    - cron: '0 9 * * 1'
+  # Allow manual trigger from GitHub UI
+  workflow_dispatch:
+    inputs:
+      inputs_to_update:
+        description: 'Specific inputs to update (comma-separated, leave empty for all)'
+        required: false
+        default: ''
+
+jobs:
+  update-flake-lock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Update flake.lock
+        id: update
+        run: |
+          if [ -n "${{ github.event.inputs.inputs_to_update }}" ]; then
+            # Update specific inputs
+            IFS=',' read -ra INPUTS <<< "${{ github.event.inputs.inputs_to_update }}"
+            for input in "${INPUTS[@]}"; do
+              echo "Updating input: $input"
+              nix flake update "$input"
+            done
+          else
+            # Update all inputs
+            echo "Updating all flake inputs..."
+            nix flake update
+          fi
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(flake): update flake.lock'
+          title: 'chore(flake): update flake.lock'
+          body: |
+            ## Automated flake.lock update
+
+            This PR was automatically created by the update-flake workflow.
+
+            ### Updated inputs
+            ```
+            ${{ github.event.inputs.inputs_to_update || 'all inputs' }}
+            ```
+
+            ### How to test
+            1. Check out this branch
+            2. Run `apps/aarch64-darwin/build` to verify it builds
+            3. Run `apps/aarch64-darwin/switch` to apply
+
+            ---
+            *Triggered by: ${{ github.event_name }}*
+          branch: flake-update
+          delete-branch: true
+          labels: |
+            dependencies
+            automated

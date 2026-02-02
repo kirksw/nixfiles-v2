@@ -8,6 +8,7 @@
 let
   inherit (inputs)
     nixpkgs
+    nixpkgs-unstable
     sops-nix
     disko
     home-manager
@@ -18,10 +19,17 @@ let
 
   mkNixosSystem =
     hostname: config:
+    let
+      # Create unstable pkgs for this system
+      pkgs-unstable = import nixpkgs-unstable {
+        system = config.system;
+        config.allowUnfree = true;
+      };
+    in
     nixpkgs.lib.nixosSystem {
       inherit (config) system;
       specialArgs = {
-        inherit inputs self;
+        inherit inputs self pkgs-unstable;
       }
       // config;
       modules = [
