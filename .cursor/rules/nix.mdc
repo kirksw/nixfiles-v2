@@ -1,0 +1,134 @@
+---
+description: Nix language patterns and conventions for this repository
+globs: ["*.nix", "flake.nix", "flake.lock"]
+alwaysApply: false
+---
+
+# Nix Code Guidelines
+
+## Formatting
+
+- Use `nixfmt` style (2-space indentation)
+- Place `inherit` statements on their own line
+- Group related attributes together
+
+## Module Pattern
+
+Always follow the standard module pattern:
+
+```nix
+{ pkgs, lib, config, ... }:
+
+{
+  options = {
+    module.<name>.enable = lib.mkEnableOption "description";
+  };
+
+  config = lib.mkIf config.module.<name>.enable {
+    # configuration here
+  };
+}
+```
+
+## Common Patterns in This Repo
+
+### Adding Packages
+
+```nix
+# In a module's config block:
+home.packages = with pkgs; [
+  package-name
+];
+```
+
+### Symlinking Dotfiles
+
+```nix
+# For XDG config (preferred)
+xdg.configFile."app" = {
+  source = config.lib.file.mkOutOfStoreSymlink 
+    "${config.home.homeDirectory}/nixfiles-v2/config/app";
+  recursive = true;
+};
+
+# For home directory files
+home.file.".config/app" = {
+  source = config.lib.file.mkOutOfStoreSymlink 
+    "${config.home.homeDirectory}/nixfiles-v2/config/app";
+  recursive = true;
+};
+```
+
+### Conditional Imports
+
+```nix
+# Using lib.optionals
+modules = [
+  ./base.nix
+] ++ lib.optionals condition [
+  ./optional.nix
+];
+```
+
+## Flake Structure
+
+- `inputs` - External dependencies (nixpkgs, home-manager, etc.)
+- `outputs` - What this flake provides (systems, packages, apps)
+- Systems defined in `darwinSystems` and `nixosSystems` attrsets
+- Helper functions in `lib/`
+
+## Overlays
+
+```nix
+# overlays/<name>/default.nix
+final: prev: {
+  package = prev.package.overrideAttrs (old: {
+    # modifications
+  });
+}
+```
+
+## Testing Changes
+
+### Quick Tests
+
+```bash
+nix flake check              # Validate syntax
+nix flake show               # Show all outputs
+apps/aarch64-darwin/build    # Build without applying
+apps/aarch64-darwin/switch   # Apply changes
+```
+
+### Evaluate Specific Options
+
+```bash
+# Check option value
+nix eval .#darwinConfigurations.lunar.config.system.stateVersion
+
+# List packages
+nix eval .#darwinConfigurations.lunar.config.home-manager.users.kisw.home.packages --apply 'map (p: p.name)'
+```
+
+### Interactive REPL
+
+```bash
+nix repl .#
+# > darwinConfigurations.lunar.config.<tab>
+# > :p nixosConfigurations.nixos-ry6a.config.services
+```
+
+### Debug Failures
+
+```bash
+nix build .#darwinConfigurations.lunar.system --show-trace -L
+```
+
+### Build Specific Outputs
+
+```bash
+# Darwin system
+nix build .#darwinConfigurations.lunar.system
+
+# Custom package
+nix build .#treekanga
+```

@@ -2,35 +2,58 @@
 
 You are an expert Nix/NixOS/Darwin developer working in `nixfiles-v2`.
 
-## 🚨 CRITICAL: READ THE HANDBOOK FIRST 🚨
+## First Steps
 
-Before answering any query or writing any code, you **MUST** read and internalize the **NixFiles Agent Handbook**:
-👉 `docs/agents/README.md`
+1. **Read the handbook**: `docs/agents/README.md`
+2. **Check tasks**: `docs/agents/todo.md`
+3. **Review recent changes**: `git log --oneline -10`
 
-This handbook contains:
-1.  **Architecture**: How the flake, modules, and hosts are wired.
-2.  **Workflows**: The correct commands to build, switch, and test.
-3.  **Protocols**: Rules for secrets (SOPS), commits, and documentation.
+## Architecture Quick Reference
 
-## Quick Reference Rules
-
-- **Secrets**: NEVER commit plaintext. Use `sops-nix`.
-- **Edits**: Prefer modifying existing modules in `modules/` over creating new ones unless necessary.
-- **Testing**:
-  - macOS: `nix run nix-darwin -- check .#lunar`
-  - Linux: `nix flake check`
-- **Documentation**:
-  - Log session changes in `docs/agents/YYYY-MM-DD/README.md`.
-  - Update `docs/agents/todo.md` with new tasks.
-
-## Common Commands
-
-```bash
-# macOS Switch
-apps/aarch64-darwin/switch
-
-# macOS Build (No Activation)
-apps/aarch64-darwin/build
+```
+flake.nix          → Entry point, system definitions
+lib/               → Helper functions (darwin.nix, nixos.nix, etc.)
+hosts/             → Host-specific configs
+modules/           → Reusable modules (EDIT THESE FIRST)
+  ├── home/        → Home-manager modules
+  ├── darwin/      → macOS-specific
+  └── nixos/       → Linux-specific
+config/            → Dotfiles (symlinked by modules)
+secrets/           → SOPS-encrypted secrets
 ```
 
-Refer to `docs/agents/README.md` for the complete guide.
+## Critical Rules
+
+- **Secrets**: NEVER commit plaintext. Use `sops-nix`.
+- **Edits**: Prefer modifying existing modules over creating new ones.
+- **Test before switch**: Always build first to catch errors.
+
+## Commands
+
+| Action | Command |
+|--------|---------|
+| Build (macOS) | `apps/aarch64-darwin/build` |
+| Switch (macOS) | `apps/aarch64-darwin/switch` |
+| Rollback | `apps/aarch64-darwin/rollback` |
+| Check flake | `nix flake check` |
+| Update inputs | `nix flake update` |
+
+## Module Pattern
+
+```nix
+{ pkgs, lib, config, ... }:
+{
+  options.module.<name>.enable = lib.mkEnableOption "description";
+  config = lib.mkIf config.module.<name>.enable {
+    # configuration
+  };
+}
+```
+
+## Session Protocol
+
+1. Update `docs/agents/todo.md` with completed/new tasks
+2. Commit changes with descriptive messages
+3. Test with `build` before `switch`
+
+See `docs/agents/README.md` for complete documentation.
