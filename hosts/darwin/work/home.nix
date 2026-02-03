@@ -37,6 +37,7 @@
   qemu.enable = true;
   aidev.enable = true;
   treekanga.enable = true;
+  opencode.enable = true;
 
   # disabled custom modules
   communication.enable = false;

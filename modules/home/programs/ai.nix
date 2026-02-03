@@ -14,17 +14,8 @@
 
   config = lib.mkIf config.aidev.enable {
     home.packages = with pkgs-unstable; [
-      opencode
       claude-code
-      claude-code-router
       ollama
     ];
-
-    xdg.configFile = {
-      "opencode" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/opencode/";
-        recursive = true;
-      };
-    };
   };
 }
