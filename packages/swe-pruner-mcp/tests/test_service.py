@@ -1,9 +1,6 @@
 import asyncio
 import json
 import os
-import shutil
-
-import pytest
 
 from swe_pruner_mcp.server import SWEPrunerService, run_rg_search
 
@@ -84,9 +81,6 @@ def test_prune_writes_stats_file_with_compression_ratio(tmp_path):
 
 
 def test_run_rg_search_returns_matches(tmp_path):
-    if shutil.which("rg") is None:
-        pytest.skip("rg is not available in test environment")
-
     sample = tmp_path / "a.py"
     sample.write_text("def login_user():\n    return 1\n", encoding="utf-8")
     output = run_rg_search("login_user", str(tmp_path), 100)
@@ -94,9 +88,6 @@ def test_run_rg_search_returns_matches(tmp_path):
 
 
 def test_run_rg_search_returns_no_match_message(tmp_path):
-    if shutil.which("rg") is None:
-        pytest.skip("rg is not available in test environment")
-
     sample = tmp_path / "a.py"
     sample.write_text("def login_user():\n    return 1\n", encoding="utf-8")
     output = run_rg_search("does_not_exist_123", str(tmp_path), 100)
