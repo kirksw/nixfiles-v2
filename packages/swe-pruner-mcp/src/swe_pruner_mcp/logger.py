@@ -1,7 +1,6 @@
 """JSON logger for SWE-Pruner MCP operations"""
 import json
-import os
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +21,7 @@ class PrunerLogger:
     def _ensure_stats_file(self):
         """Ensure stats file exists with valid JSON array"""
         path = Path(self.stats_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
         if not path.exists():
             self._write_stats([])
 
@@ -54,7 +54,7 @@ class PrunerLogger:
     ):
         """Log a pruning operation to the stats file"""
         entry = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "operation": operation,
             "input_size": input_size,
             "output_size": output_size,

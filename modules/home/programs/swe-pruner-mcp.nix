@@ -1,12 +1,14 @@
 {
   self,
+  pkgs,
   lib,
   config,
   ...
 }:
 
 let
-  swePrunerMcp = self.pkgs.swe-pruner-mcp or null;
+  system = pkgs.stdenv.hostPlatform.system;
+  swePrunerMcp = self.packages.${system}.swe-pruner-mcp or null;
 in
 {
   options.homeModules.swePrunerMcp.enable =
@@ -16,9 +18,20 @@ in
     assertions = [
       {
         assertion = swePrunerMcp != null;
-        message = "swe-pruner-mcp package must be built first with 'nix build .#swe-pruner-mcp'";
+        message = "swe-pruner-mcp package is missing from flake outputs for this system.";
       }
     ];
+
+    home.sessionVariables = {
+      STATS_FILE = "${config.home.homeDirectory}/.cache/swe-pruner/stats.json";
+      MODEL_PATH = "${config.home.homeDirectory}/.cache/swe-pruner/models/code-pruner";
+    };
+
+    home.activation.swePrunerMcpDirs = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      mkdir -p "${config.home.homeDirectory}/.cache/swe-pruner/models"
+      mkdir -p "${config.home.homeDirectory}/.cache/swe-pruner"
+    '';
+
     home.packages = [ swePrunerMcp ];
   };
 }

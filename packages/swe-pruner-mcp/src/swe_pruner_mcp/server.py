@@ -1,7 +1,9 @@
-"""SWE-Pruner MCP Server"""
+"""SWE-Pruner MCP Server."""
 import os
+import re
 import sys
 import logging
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -22,21 +24,46 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+def run_rg_search(pattern: str, search_root: str, max_matches: int) -> str:
+    """Run ripgrep and return stdout or a no-match marker."""
+    rg_cmd = [
+        "rg",
+        "--line-number",
+        "--with-filename",
+        "--hidden",
+        "--glob",
+        "!.git",
+        "--max-count",
+        str(max_matches),
+        pattern,
+        search_root,
+    ]
+    result = subprocess.run(
+        rg_cmd,
+        capture_output=True,
+        text=True,
+        timeout=20,
+    )
+    if result.stdout:
+        return result.stdout
+    return f"No matches found for pattern: {pattern}"
+
+
 class SWEPrunerService:
-    """Service to load and use SWE-Pruner model"""
+    """Service to load and use SWE-Pruner model."""
 
     def __init__(self, model_path: str | None = None):
-        """Initialize pruner service and load model"""
+        """Initialize pruner service."""
         self.model_path = model_path or os.getenv("MODEL_PATH")
         self.stats_file = os.getenv("STATS_FILE")
         self.logger = PrunerLogger(self.stats_file)
 
         self.tokenizer = None
         self.model = None
-        self._load_model()
+        self._model_load_attempted = False
 
     def _load_model(self):
-        """Load SWE-Pruner model from HuggingFace or local path"""
+        """Load SWE-Pruner model from HuggingFace or local path."""
         try:
             if self.model_path and Path(self.model_path).exists():
                 logger.info(f"Loading model from local path: {self.model_path}")
@@ -55,7 +82,123 @@ class SWEPrunerService:
             logger.info("Model loaded successfully!")
         except Exception as e:
             logger.error(f"Failed to load model: {e}")
-            logger.warning("Will operate in fallback mode (no pruning)")
+            logger.warning("Will operate in heuristic fallback mode (no model scoring)")
+
+    def _ensure_model_loaded(self):
+        """Attempt model loading once per process."""
+        if self._model_load_attempted:
+            return
+        self._model_load_attempted = True
+        self._load_model()
+
+    @staticmethod
+    def _tokenize_query(query: str) -> list[str]:
+        tokens = re.findall(r"[A-Za-z_][A-Za-z0-9_]{2,}", query.lower())
+        stopwords = {
+            "the",
+            "and",
+            "with",
+            "from",
+            "this",
+            "that",
+            "what",
+            "where",
+            "when",
+            "which",
+            "how",
+            "into",
+            "have",
+            "has",
+            "for",
+            "file",
+            "code",
+        }
+        unique = []
+        seen = set()
+        for token in tokens:
+            if token in stopwords or token in seen:
+                continue
+            seen.add(token)
+            unique.append(token)
+        return unique
+
+    def _fallback_prune(self, code: str, query: str) -> str:
+        """Heuristic line pruning that preserves structure and query matches."""
+        lines = code.splitlines()
+        if not lines:
+            return code
+
+        keywords = self._tokenize_query(query)
+        structural_prefixes = ("import ", "from ", "class ", "def ", "@", "# ")
+
+        keep = set()
+        for idx, line in enumerate(lines):
+            stripped = line.strip()
+            lower = stripped.lower()
+            if stripped.startswith(structural_prefixes):
+                keep.add(idx)
+            if keywords and any(k in lower for k in keywords):
+                keep.add(idx)
+                if idx > 0:
+                    keep.add(idx - 1)
+                if idx + 1 < len(lines):
+                    keep.add(idx + 1)
+
+        if not keep:
+            # Keep a tiny scaffold so callers always get syntactic context.
+            for idx, line in enumerate(lines):
+                if line.strip().startswith(structural_prefixes):
+                    keep.add(idx)
+            if not keep:
+                keep.update(range(min(80, len(lines))))
+
+        ordered = sorted(keep)
+        return "\n".join(lines[i] for i in ordered)
+
+    def _model_prune(self, code: str, query: str) -> str:
+        """Model-backed line relevance scoring with batched inference."""
+        lines = code.splitlines()
+        if len(lines) <= 10:
+            return code
+
+        candidates = [line for line in lines]
+        if not candidates:
+            return code
+
+        # Compute a relevance score per line using sequence classification.
+        scores: list[float] = []
+        batch_size = 64
+        for i in range(0, len(candidates), batch_size):
+            batch = candidates[i : i + batch_size]
+            prompts = [f"{query}\n\n{line}" for line in batch]
+            inputs = self.tokenizer(
+                prompts,
+                return_tensors="pt",
+                truncation=True,
+                max_length=512,
+                padding=True,
+            )
+            with torch.no_grad():
+                outputs = self.model(**inputs)
+                logits = outputs.logits
+                if logits.shape[-1] == 1:
+                    probs = torch.sigmoid(logits).squeeze(-1)
+                else:
+                    probs = torch.softmax(logits, dim=-1)[:, -1]
+                scores.extend(probs.detach().cpu().tolist())
+
+        # Keep top lines plus structural anchors.
+        keep_count = max(20, int(len(lines) * 0.35))
+        ranked = sorted(range(len(scores)), key=lambda idx: scores[idx], reverse=True)
+        keep = set(ranked[:keep_count])
+
+        for idx, line in enumerate(lines):
+            stripped = line.strip()
+            if stripped.startswith(("import ", "from ", "class ", "def ", "@", "# ")):
+                keep.add(idx)
+
+        ordered = sorted(keep)
+        return "\n".join(lines[i] for i in ordered)
 
     async def prune(self, code: str, query: str | None = None) -> tuple[str, dict[str, Any]]:
         """
@@ -70,38 +213,22 @@ class SWEPrunerService:
         """
         input_size = len(code)
 
-        if not query or self.model is None:
+        if not query:
             return code, {
                 "pruned": False,
-                "reason": "No query provided" if not query else "Model not loaded",
+                "reason": "No query provided",
                 "tokens": input_size,
             }
 
         try:
-            # Tokenize and encode
-            inputs = self.tokenizer(
-                code,
-                return_tensors="pt",
-                truncation=True,
-                max_length=4096,
-                padding=True,
-            )
+            self._ensure_model_loaded()
 
-            # Get model predictions
-            with torch.no_grad():
-                outputs = self.model(**inputs)
-                scores = outputs.logits
-                probabilities = torch.softmax(scores, dim=-1)
-
-                # Simple pruning: keep lines with high relevance
-                # This is a simplified approach - real implementation would be more sophisticated
-                keep_ratio = 0.5  # Keep top 50% most relevant
-                k_value = int(probabilities.shape[-1] * (1 - keep_ratio))
-                threshold = torch.kthvalue(probabilities, k_value, dim=-1).values[0]
-
-                # For now, return a simple pruned version
-                # Real implementation would use more sophisticated token-level selection
-                pruned_code = self._simple_prune(code, query, threshold)
+            if self.model is not None and self.tokenizer is not None:
+                pruned_code = self._model_prune(code, query)
+                backend = "model"
+            else:
+                pruned_code = self._fallback_prune(code, query)
+                backend = "heuristic"
 
             output_size = len(pruned_code)
             compression_ratio = 1 - (output_size / input_size) if input_size > 0 else 0
@@ -112,7 +239,10 @@ class SWEPrunerService:
                 input_size=input_size,
                 output_size=output_size,
                 compression_ratio=round(compression_ratio, 4),
-                metadata={"query": query[:100] if query else None},
+                metadata={
+                    "query": query[:100],
+                    "backend": backend,
+                },
             )
 
             logger.info(
@@ -125,6 +255,7 @@ class SWEPrunerService:
                 "tokens": output_size,
                 "original_tokens": input_size,
                 "compression_ratio": compression_ratio,
+                "backend": backend,
             }
 
         except Exception as e:
@@ -142,36 +273,6 @@ class SWEPrunerService:
                 "reason": f"Pruning error: {str(e)}",
                 "tokens": input_size,
             }
-
-    def _simple_prune(self, code: str, query: str, threshold) -> str:
-        """
-        Simple pruning implementation based on query relevance.
-
-        For now, this is a placeholder. Real SWE-Pruner uses
-        more sophisticated token-level selection with a 0.6B model.
-        """
-        # This is a simplified fallback for demonstration
-        # In production, you'd integrate with actual swe-pruner inference code
-        lines = code.split("\n")
-        kept_lines = []
-
-        # Simple keyword matching for demonstration
-        query_lower = query.lower() if query else ""
-        keywords = query_lower.split()
-
-        for line in lines:
-            if not keywords:
-                kept_lines.append(line)
-            elif any(keyword in line.lower() for keyword in keywords):
-                kept_lines.append(line)
-            else:
-                # Keep some context lines (imports, structure)
-                stripped = line.strip()
-                if stripped.startswith(("import ", "from ", "class ", "def ", "# ")):
-                    kept_lines.append(line)
-
-        return "\n".join(kept_lines)
-
 
 def create_server():
     """Create and return MCP server"""
@@ -194,12 +295,22 @@ def create_server():
         context_focus_question = arguments.get("context_focus_question")
 
         try:
-            path = Path(file_path)
+            path = Path(file_path).expanduser()
             if not path.is_file():
                 return [
                     TextContent(
                         type="text",
                         text=f"Error: File not found: {file_path}",
+                    )
+                ]
+
+            max_file_bytes = int(os.getenv("MAX_FILE_BYTES", "2000000"))
+            if path.stat().st_size > max_file_bytes:
+                return [
+                    TextContent(
+                        type="text",
+                        text=f"Error: File too large ({path.stat().st_size} bytes). "
+                        f"MAX_FILE_BYTES={max_file_bytes}",
                     )
                 ]
 
@@ -230,18 +341,9 @@ def create_server():
             raise ValueError("Missing required argument: pattern")
 
         try:
-            # Use subprocess to search (this is a simple implementation)
-            import subprocess
-            result = subprocess.run(
-                ["grep", "-r", pattern, "."],
-                capture_output=True,
-                text=True,
-                timeout=10,
-            )
-
-            output = result.stdout
-            if not output:
-                output = f"No matches found for pattern: {pattern}"
+            search_root = os.getenv("SEARCH_ROOT", ".")
+            max_matches = int(os.getenv("MAX_SEARCH_MATCHES", "1000"))
+            output = run_rg_search(pattern, search_root, max_matches)
 
             result, metadata = await pruner.prune(output, context_focus_question)
 
@@ -252,6 +354,8 @@ def create_server():
 
             return [TextContent(type="text", text=result_text)]
 
+        except FileNotFoundError:
+            return [TextContent(type="text", text="Error: `rg` is not available in PATH")]
         except subprocess.TimeoutExpired:
             return [TextContent(type="text", text="Error: Search timed out after 10 seconds")]
         except Exception as e:

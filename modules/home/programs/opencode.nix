@@ -8,6 +8,61 @@
 }:
 
 let
+  swePrunerMcpPkg = self.packages.${pkgs.stdenv.hostPlatform.system}.swe-pruner-mcp;
+  swePrunerStatsFile = "${config.home.homeDirectory}/.cache/swe-pruner/stats.json";
+  swePrunerModelPath = "${config.home.homeDirectory}/.cache/swe-pruner/models/code-pruner";
+
+  mcpConfig =
+    {
+      # fetches and extracts web page content
+      "web-reader" = {
+        type = "remote";
+        url = "https://api.z.ai/api/mcp/web_reader/mcp";
+        headers = {
+          Authorization = "Bearer {env:zai_token}";
+        };
+      };
+      # provides access to knowledge docs and code from OSS repos
+      zread = {
+        type = "remote";
+        url = "https://api.z.ai/api/mcp/zread/mcp";
+        headers = {
+          Authorization = "Bearer {env:zai_token}";
+        };
+      };
+      # web searches with real time information retrievel
+      web-search-prime = {
+        type = "remote";
+        url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+        headers = {
+          Authorization = "Bearer {env:zai_token}";
+        };
+      };
+      # vision capabilities
+      zai-mcp-server = {
+        type = "local";
+        command = [
+          "npx"
+          "-y"
+          "@z_ai/mcp-server"
+        ];
+        environment = {
+          Z_AI_API_KEY = "{env:zai_token}";
+          Z_AI_MODE = "ZAI";
+        };
+      };
+    }
+    // lib.optionalAttrs config.homeModules.swePrunerMcp.enable {
+      swe-pruner = {
+        type = "local";
+        command = [ "${swePrunerMcpPkg}/bin/swe-pruner-mcp" ];
+        environment = {
+          MODEL_PATH = swePrunerModelPath;
+          STATS_FILE = swePrunerStatsFile;
+        };
+      };
+    };
+
   opencodeconfig = {
     "$schema" = "https://opencode.ai/config.json";
 
@@ -54,58 +109,7 @@ let
       input_newline = "shift+return,ctrl+return,alt+return";
     };
 
-    mcp = {
-      # fetches and extracts web page content
-      "web-reader" = {
-        type = "remote";
-        url = "https://api.z.ai/api/mcp/web_reader/mcp";
-        headers = {
-          Authorization = "Bearer {env:zai_token}";
-        };
-      };
-      # provides access to knowledge docs and code from OSS repos
-      zread = {
-        type = "remote";
-        url = "https://api.z.ai/api/mcp/zread/mcp";
-        headers = {
-          Authorization = "Bearer {env:zai_token}";
-        };
-      };
-      # web searches with real time information retrievel
-      web-search-prime = {
-        type = "remote";
-        url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
-        headers = {
-          Authorization = "Bearer {env:zai_token}";
-        };
-      };
-      # vision capabilities
-      zai-mcp-server = {
-        type = "local";
-        command = [
-          "npx"
-          "-y"
-          "@z_ai/mcp-server"
-        ];
-        environment = {
-          Z_AI_API_KEY = "{env:zai_token}";
-          Z_AI_MODE = "ZAI";
-        };
-      };
-      # SWE-Pruner - context-aware code pruning (WIP)
-      # swe-pruner = {
-      #   type = "local";
-      #   command = [
-      #     "python"
-      #     "-m"
-      #     "swe_pruner_mcp.server"
-      #   ];
-      #   environment = {
-      #     MODEL_PATH = "${config.home.homeDirectory}/.cache/swe-pruner/models/code-pruner";
-      #     STATS_FILE = "${config.home.homeDirectory}/.cache/swe-pruner/stats.json";
-      #   };
-      # };
-    };
+    mcp = mcpConfig;
   };
 
   mkOpencodeWrapper =

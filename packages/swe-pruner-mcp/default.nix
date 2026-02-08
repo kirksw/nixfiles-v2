@@ -1,20 +1,16 @@
 {
-  pkgs ? import <nixpkgs> { },
+  lib,
+  python312Packages,
 }:
 
-pkgs.python312Packages.buildPythonPackage rec {
+python312Packages.buildPythonPackage rec {
   pname = "swe-pruner-mcp";
   version = "0.1.0";
   format = "pyproject";
 
-  src = pkgs.fetchFromGitHub {
-    owner = "Ayanami1314";
-    repo = "swe-pruner";
-    rev = "public";
-    hash = "sha256-49fqL46xnSbOrt1Uqc5b9cYK0Ql5L7OXMtmyu/vbb1I=";
-  };
+  src = ./.;
 
-  propagatedBuildInputs = with pkgs.python312Packages; [
+  propagatedBuildInputs = with python312Packages; [
     mcp
     torch
     transformers
@@ -22,18 +18,18 @@ pkgs.python312Packages.buildPythonPackage rec {
     pydantic
   ];
 
-  postInstall = ''
-    mkdir -p $out/bin
+  nativeCheckInputs = with python312Packages; [
+    pytestCheckHook
+  ];
 
-    cat > $out/bin/swe-pruner-mcp << 'EOF'
-    #!/bin/sh
-    exec ${pkgs.python312Packages.python.interpreter} -m swe_pruner_mcp.server "$@"
-    EOF
+  nativeBuildInputs = with python312Packages; [
+    hatchling
+  ];
 
-    chmod +x $out/bin/swe-pruner-mcp
-  '';
+  pythonImportsCheck = [ "swe_pruner_mcp.server" ];
+  disabledTests = [ ];
 
-  meta = with pkgs.lib; {
+  meta = with lib; {
     description = "SWE-Pruner MCP server for context-aware code pruning";
     homepage = "https://github.com/Ayanami1314/swe-pruner";
     license = licenses.mit;
