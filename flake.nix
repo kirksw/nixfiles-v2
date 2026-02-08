@@ -33,10 +33,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    wezterm = {
-      url = "github:wezterm/wezterm?dir=nix";
-    };
-
     llm-agents.url = "github:numtide/llm-agents.nix";
     deploy-rs.url = "github:serokell/deploy-rs";
     yazi.url = "github:sxyazi/yazi";
@@ -54,6 +50,43 @@
       ...
     }:
     let
+      requireHostFields =
+        name: required: cfg:
+        let
+          missing = builtins.filter (field: !(builtins.hasAttr field cfg)) required;
+        in
+        assert (
+          missing == [ ]
+        ) || throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missing}";
+        cfg;
+
+      validateHostPaths =
+        name: cfg:
+        let
+          _hostModule =
+            assert builtins.pathExists cfg.hostModule
+            || throw "Host '${name}' points to missing hostModule: ${toString cfg.hostModule}";
+            cfg.hostModule;
+          _homeModule =
+            if cfg ? homeModule && cfg.homeModule != null then
+              assert builtins.pathExists cfg.homeModule
+              || throw "Host '${name}' points to missing homeModule: ${toString cfg.homeModule}";
+              cfg.homeModule
+            else
+              null;
+        in
+        cfg;
+
+      normalizeHost =
+        name: cfg:
+        let
+          withRequired = requireHostFields name [ "system" "user" "hostModule" ] cfg;
+          validated = validateHostPaths name withRequired;
+        in
+        validated // {
+          overlays = validated.overlays or [ ];
+        };
+
       mylibs = import ./lib {
         inherit (nixpkgs) lib;
         inherit inputs self;
@@ -71,13 +104,25 @@
               ;
           };
         in
-        builtins.mapAttrs (_: cfg: cfg // { overlays = defaultOverlays ++ (cfg.overlays or [ ]); }) raw;
+        builtins.mapAttrs (
+          name: cfg:
+          let
+            host = normalizeHost name cfg;
+          in
+          host // { overlays = defaultOverlays ++ host.overlays; }
+        ) raw;
 
       nixosSystems =
         let
           raw = import ./flake/hosts/nixos;
         in
-        builtins.mapAttrs (_: cfg: cfg // { overlays = defaultOverlays ++ (cfg.overlays or [ ]); }) raw;
+        builtins.mapAttrs (
+          name: cfg:
+          let
+            host = normalizeHost name cfg;
+          in
+          host // { overlays = defaultOverlays ++ host.overlays; }
+        ) raw;
 
       mkPackageData = import ./flake/packages.nix { inherit nixpkgs; };
       mkApps = import ./flake/apps.nix {

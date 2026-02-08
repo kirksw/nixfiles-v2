@@ -19,7 +19,8 @@ let
 
   updateAllPackages = pkgs.writeShellScriptBin "update-packages" ''
     set -euo pipefail
-    cd ${toString ../.}
+    repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null || ${pkgs.coreutils}/bin/pwd)"
+    cd "$repo_root"
     echo "Updating all packages..."
     ${builtins.concatStringsSep "\n" (
       map (name: ''
@@ -37,5 +38,8 @@ in
   update-packages = {
     type = "app";
     program = "${updateAllPackages}/bin/update-packages";
+    meta = {
+      description = "Run update scripts for custom packages in this repository.";
+    };
   };
 }

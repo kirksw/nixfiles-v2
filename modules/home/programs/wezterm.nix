@@ -1,5 +1,4 @@
 {
-  inputs,
   pkgs,
   lib,
   config,
@@ -14,7 +13,7 @@
   config = lib.mkIf config.homeModules.wezterm.enable {
     programs.wezterm = {
       enable = true;
-      package = inputs.wezterm.packages.${pkgs.stdenv.hostPlatform.system}.default;
+      package = pkgs.wezterm;
       enableZshIntegration = false;
 
       extraConfig = ''
