@@ -20,3 +20,6 @@ devenv.local.nix
 
 # scatchpad
 scratchpad/
+
+# python
+__pycache__/

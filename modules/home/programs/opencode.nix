@@ -49,6 +49,11 @@ let
       ignore = [ ".git/**" ];
     };
 
+    keybinds = {
+      input_submit = "return";
+      input_newline = "shift+return,ctrl+return,alt+return";
+    };
+
     mcp = {
       # fetches and extracts web page content
       "web-reader" = {
@@ -87,6 +92,19 @@ let
           Z_AI_MODE = "ZAI";
         };
       };
+      # SWE-Pruner - context-aware code pruning (WIP)
+      # swe-pruner = {
+      #   type = "local";
+      #   command = [
+      #     "python"
+      #     "-m"
+      #     "swe_pruner_mcp.server"
+      #   ];
+      #   environment = {
+      #     MODEL_PATH = "${config.home.homeDirectory}/.cache/swe-pruner/models/code-pruner";
+      #     STATS_FILE = "${config.home.homeDirectory}/.cache/swe-pruner/stats.json";
+      #   };
+      # };
     };
   };
 

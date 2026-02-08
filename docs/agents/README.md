@@ -216,8 +216,32 @@ Enable overlays in `flake.nix` under the system's `overlays` list.
    - Any blockers
 
 ---
+  
+  ## 10. MCP Tools
 
-## 10. Useful Aliases
+  Available MCP servers for opencode:
+
+  ### SWE-Pruner
+  Context-aware code pruning tool that reduces token usage by 23-54%. See [SWE-PRUNER.md](./SWE-PRUNER.md) for detailed usage guide.
+
+  **Key Features**:
+  - Model-based pruning (0.6B parameters)
+  - Automatic fallback to full content on errors
+  - Token savings statistics logged to JSON
+  - Tools: `read_pruned`, `search_pruned`
+
+  **Quick Start**:
+  1. Enable module: `swe-pruner-mcp.enable = true`
+  2. Apply: `ns`
+  3. First call loads model (~30s), subsequent calls are fast (~1-2s)
+
+  ### Other Tools
+  - **web-reader**: Fetches web page content
+  - **zread**: Accesses GitHub repo docs and code
+  - **web-search-prime**: Real-time web search
+  - **zai-mcp-server**: Vision capabilities
+
+  ## 10. Useful Aliases
 
 These aliases are available in the shell:
 

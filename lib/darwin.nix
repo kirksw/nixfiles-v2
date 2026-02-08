@@ -35,6 +35,7 @@ let
         }
         inputs.sops-nix.darwinModules.sops
         inputs.home-manager.darwinModules.home-manager
+        inputs.determinate.darwinModules.default
         config.hostModule
         (homeManagerHelpers.mkHomeManagerModule config)
       ]

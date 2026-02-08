@@ -45,13 +45,28 @@ in
   ids.gids.nixbld = 350;
 
   nix.enable = false;
+  determinateNix = {
+    enable = true;
 
-  environment.etc."nix/nix.custom.conf".text = pkgs.lib.mkForce ''
-    trusted-users = kisw root
-    extra-experimental-features = external-builders
-    external-builders = [{"systems":["aarch64-linux","x86_64-linux"],"program":"/usr/local/bin/determinate-nixd","args":["builder"]}]
-    eval-cores = 0
-  '';
+    customSettings = {
+      trusted-users = [
+        "kisw"
+        "root"
+      ];
+      extra-substituters = [
+        "https://cache.numtide.com"
+      ];
+      extra-trusted-public-keys = [
+        "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+      ];
+    };
+  };
+
+  # environment.etc."nix/nix.custom.conf".text = pkgs.lib.mkForce ''
+  #   trusted-users = kisw root
+  #   extra-substituters = https://cache.numtide.com
+  #   extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
+  # '';
 
   security = {
     pam.services.sudo_local = {

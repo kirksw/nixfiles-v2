@@ -118,9 +118,12 @@
         # binds?
         set -g set-clipboard on
         set -g allow-passthrough on
-        set -g extended-keys on
         set -g detach-on-destroy off
         bind -T copy-mode-vi Enter send-keys -X copy-selection-and-cancel
+
+        # ensure can handle commands
+        set -g extended-keys always
+        set -as terminal-features 'xterm*:extkeys'
 
         # reload config
         bind r run-shell "tmux source-file ~/.config/tmux/tmux.conf && tmux display-message 'Config reloaded'"

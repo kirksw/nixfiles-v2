@@ -18,6 +18,7 @@
     nix-homebrew = {
       url = "github:zhaofengli/nix-homebrew";
     };
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/3";
     flake-utils = {
       url = "github:numtide/flake-utils";
     };
@@ -35,6 +36,7 @@
     wezterm = {
       url = "github:wezterm/wezterm?dir=nix";
     };
+    llm-agents.url = "github:numtide/llm-agents.nix";
     deploy-rs.url = "github:serokell/deploy-rs";
     yazi.url = "github:sxyazi/yazi";
   };
@@ -45,6 +47,7 @@
       darwin,
       nix-homebrew,
       home-manager,
+      determinate,
       nixpkgs,
       nixpkgs-unstable,
       disko,
@@ -52,6 +55,7 @@
       lunar-tools,
       sops-nix,
       wezterm,
+      llm-agents,
       deploy-rs,
       yazi,
     }:
@@ -96,6 +100,7 @@
           overlays = [
             lunar-tools.overlays.default
             yazi.overlays.default
+            llm-agents.overlays.default
           ];
           enableHomebrew = true;
           enableLunar = true;

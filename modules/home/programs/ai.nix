@@ -14,7 +14,6 @@
 
   config = lib.mkIf config.aidev.enable {
     home.packages = with pkgs-unstable; [
-      claude-code
       ollama
     ];
   };
