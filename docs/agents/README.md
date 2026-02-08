@@ -9,7 +9,7 @@
 | **Build (macOS)** | `apps/aarch64-darwin/build` |
 | **Switch (macOS)** | `apps/aarch64-darwin/switch` |
 | **Rollback (macOS)** | `apps/aarch64-darwin/rollback` |
-| **Check flake** | `nix flake check` |
+| **Check flake** | `nix flake check --no-build` |
 | **Update packages** | `nix run .#update-packages` |
 | **Update flake inputs** | `nix flake update` |
 
@@ -19,13 +19,14 @@
 
 ```
 nixfiles-v2/
-├── flake.nix           # Entry point - defines systems & inputs
+├── flake.nix           # Thin composition root for flake outputs
+├── flake/              # Split flake concerns (apps/packages/deploy/checks/hosts)
 ├── lib/                # Helper functions for building systems
 │   ├── darwin.nix      # macOS system builder
 │   ├── nixos.nix       # Linux system builder
 │   ├── homemanager.nix # Home-manager integration
 │   └── app.nix         # App builders (build/switch/rollback)
-├── hosts/              # Host-specific configurations
+├── hosts/              # Host implementation modules (actual config logic)
 │   ├── darwin/work/    # macOS "lunar" host
 │   └── nixos/          # Linux hosts (ry6a, ry6b)
 ├── modules/            # Reusable modules (EDIT THESE)
@@ -42,10 +43,11 @@ nixfiles-v2/
 
 ### Key Concepts
 
-1. **Systems are defined in `flake.nix`** under `darwinSystems` and `nixosSystems`
-2. **Modules auto-import** from subdirectories of `modules/*/` (see `default.nix` patterns)
+1. **Host inventory is defined in `flake/hosts/*`** and points to modules in `hosts/*`
+2. **Modules import explicitly** via `modules/*/imports.nix` manifests
 3. **Dotfiles live in `config/`** and are symlinked via home-manager
-4. **Secrets use SOPS** with age keys (see `.sops.yaml`)
+4. **Overlays are assembled once** in `flake/overlays.nix` and injected per system
+5. **Secrets use SOPS** with age keys (see `.sops.yaml`)
 
 ---
 
@@ -58,14 +60,18 @@ All modules follow this pattern (`modules/home/template.nix`):
 
 {
   options = {
-    module.<name>.enable = lib.mkEnableOption "enables <name>";
+    homeModules.<name>.enable = lib.mkEnableOption "enables <name>";
   };
 
-  config = lib.mkIf config.module.<name>.enable {
+  config = lib.mkIf config.homeModules.<name>.enable {
     # Programs, packages, files here
   };
 }
 ```
+
+For other domains:
+- Darwin modules: `darwinModules.<name>.enable`
+- NixOS modules: `nixosModules.<name>.enable`
 
 ### Adding a New Module
 
@@ -178,7 +184,7 @@ See [Section 12: Testing the Flake](#12-testing-the-flake) for comprehensive exa
 
 ## 8. Overlays
 
-Custom overlays in `overlays/*/` modify or add packages:
+Custom overlays in `overlays/*/` modify or add packages. They are loaded via `flake/overlays.nix` and merged into each host inventory record.
 
 ```nix
 # Example: overlays/colima/default.nix
@@ -231,7 +237,7 @@ Enable overlays in `flake.nix` under the system's `overlays` list.
   - Tools: `read_pruned`, `search_pruned`
 
   **Quick Start**:
-  1. Enable module: `swe-pruner-mcp.enable = true`
+  1. Enable module: `homeModules.swePrunerMcp.enable = true`
   2. Apply: `ns`
   3. First call loads model (~30s), subsequent calls are fast (~1-2s)
 
@@ -312,7 +318,7 @@ nix eval .#darwinConfigurations.lunar.config.system.stateVersion
 nix eval .#darwinConfigurations.lunar.config.home-manager.users.kisw.home.packages --apply 'map (p: p.name)'
 
 # Check a module option exists
-nix eval .#darwinConfigurations.lunar.options.module.zsh.enable
+nix eval .#darwinConfigurations.lunar.options.homeModules.zsh.enable
 ```
 
 ### Interactive Testing with REPL

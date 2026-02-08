@@ -2,52 +2,37 @@
 
 ## Overview
 
-This is a nix configuration primarily for macOS, but it can also be used on Linux.
+Nix flake repository for macOS (`nix-darwin`) and Linux (`NixOS`) hosts.
 
-## Roadmap (nice-to-have)
+## Structure
 
-- Reimplement macOS Dock setup via nix-darwin module
-- Validate and document a Linux host example build
+- `hosts/`: concrete host modules (actual machine configuration).
+- `flake/hosts/`: host inventory records consumed by flake composition.
+- `modules/*/imports.nix`: explicit module manifests (no recursive auto-import).
+- `flake/`: split flake concern files (`apps.nix`, `packages.nix`, `deploy.nix`, `checks.nix`, `overlays.nix`).
 
-## Getting started
+## Getting Started
 
-- Install nix `curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --determinate`
-- Clone this repo `cd ~ && git clone git@github.com:kirksw/nixfiles-v2.git`
-- Update username in `flake.nix` and `home-manager` config
-- Mac: `darwin-rebuild switch --flake ~/nixfiles-v2#aarch64-darwin`
-- Linux: `nixos-rebuild switch --flake ~/nixfiles-v2#x86_64-linux`
+- Install Nix: `curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install --determinate`
+- Clone: `git clone git@github.com:kirksw/nixfiles-v2.git`
+- Validate: `nix flake check --no-build`
+- macOS build/switch: `apps/aarch64-darwin/build` / `apps/aarch64-darwin/switch`
+- Linux switch: `apps/x86_64-linux/switch <hostname>`
 
-## Daily operations
+## Daily Commands
 
-Make sure you commit and push everything after a successful change, this ensures that you can restore to this configuration by checking out that commit.
+- Update flake inputs: `nix flake update`
+- Update custom packages: `nix run .#update-packages`
+- Check structure rules: `./scripts/check-structure.sh`
 
-There are a couple of aliases to make your life easier:
+## Conventions
 
-- Nix switch: `ns` - this will switch the system configuration to the new changes
-- Nix update: `nu` - this will update the nix channels
+- Home module options: `homeModules.<name>.enable`
+- Darwin module options: `darwinModules.<name>.enable`
+- NixOS module options: `nixosModules.<name>.enable`
+- Multi-word option names use `camelCase` (example: `homeModules.aiDev.enable`).
 
-If you want to add a package you can simply add it to the flake, and run `ns` to apply it.
+## Notes
 
-If you want to update the versions of packages, you can run `nu` to update the nix channels, and then run `ns` to apply the changes.
-
-## Deploying config changes to remotes
-
-Typically with remote machines like k3s nodes, you just want to orchestrate changes from a dev machine or CI.
-
-`sudo nixos-rebuild switch --flake .#HOSTNAME --target-host user@REMOTE --build-host user@REMOTE --use-remote-sudo`
-
-## Don't like this?
-
-- uninstall `/nix/nix-installer uninstall`
-
-## References
-
-### inspirations
-
-- [gh:dustinlyons/nisox-config](https://github.com/dustinlyons/nixos-config)
-
-### documentation
-
-- [gh:nixpkgs](https://github.com/NixOS/nixpkgs)
-- [gh:home-manager](https://github.com/nix-community/home-manager/tree/master/modules/programs)
-- [gh:nix-darwin](https://github.com/LnL7/nix-darwin)
+- `deploy` is intentionally retained as a custom flake output for `deploy-rs` compatibility.
+- `nix flake check` may print `unknown flake output 'deploy'`; this warning is expected.
