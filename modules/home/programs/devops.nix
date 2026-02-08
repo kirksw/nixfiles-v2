@@ -25,10 +25,10 @@ let
 in
 {
   options = {
-    devops.enable = lib.mkEnableOption "enables devops tooling";
+    homeModules.devops.enable = lib.mkEnableOption "enables devops tooling";
   };
 
-  config = lib.mkIf config.devops.enable {
+  config = lib.mkIf config.homeModules.devops.enable {
     home.packages = with pkgs; [
       # IaC
       tenv

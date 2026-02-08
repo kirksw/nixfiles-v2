@@ -2,16 +2,17 @@
   pkgs,
   lib,
   config,
+  paths,
   nixDirectory,
   ...
 }:
 
 {
   options = {
-    neovim.enable = lib.mkEnableOption "enables neovim";
+    homeModules.neovim.enable = lib.mkEnableOption "enables neovim";
   };
 
-  config = lib.mkIf config.neovim.enable {
+  config = lib.mkIf config.homeModules.neovim.enable {
     programs.neovim = {
       enable = true;
       package = pkgs.neovim-unwrapped;
@@ -42,7 +43,10 @@
 
     xdg.configFile = {
       "nvim" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/nvim/";
+        source = paths.mkRepoConfigSymlink {
+          inherit config nixDirectory;
+          path = "nvim";
+        };
         recursive = true;
       };
     };

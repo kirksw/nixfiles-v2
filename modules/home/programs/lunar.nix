@@ -8,10 +8,10 @@
 
 {
   options = {
-    lunar.enable = lib.mkEnableOption "enables lunar tooling";
+    homeModules.lunar.enable = lib.mkEnableOption "enables lunar tooling";
   };
 
-  config = lib.mkIf config.lunar.enable {
+  config = lib.mkIf config.homeModules.lunar.enable {
     home.packages = with pkgs; [
       # general tooling
       kubeseal

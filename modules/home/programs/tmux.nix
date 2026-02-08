@@ -8,10 +8,10 @@
 
 {
   options = {
-    tmux.enable = lib.mkEnableOption "enables tmux";
+    homeModules.tmux.enable = lib.mkEnableOption "enables tmux";
   };
 
-  config = lib.mkIf config.tmux.enable {
+  config = lib.mkIf config.homeModules.tmux.enable {
     home = {
       packages = with pkgs; [
         gitmux

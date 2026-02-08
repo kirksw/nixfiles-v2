@@ -8,10 +8,10 @@
 
 {
   options = {
-    wezterm.enable = lib.mkEnableOption "enables wezterm";
+    homeModules.wezterm.enable = lib.mkEnableOption "enables wezterm";
   };
 
-  config = lib.mkIf config.wezterm.enable {
+  config = lib.mkIf config.homeModules.wezterm.enable {
     programs.wezterm = {
       enable = true;
       package = inputs.wezterm.packages.${pkgs.stdenv.hostPlatform.system}.default;

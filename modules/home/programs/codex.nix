@@ -42,10 +42,10 @@ let
 in
 {
   options = {
-    codex.enable = lib.mkEnableOption "enables codex";
+    homeModules.codex.enable = lib.mkEnableOption "enables codex";
   };
 
-  config = lib.mkIf config.codex.enable {
+  config = lib.mkIf config.homeModules.codex.enable {
     sops.secrets = {
       "api/lunar/openai" = {
         sopsFile = "${self}/secrets/api/lunar.yaml";

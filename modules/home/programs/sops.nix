@@ -84,10 +84,10 @@ let
 in
 {
   options = {
-    sops.enable = lib.mkEnableOption "enables sops";
+    homeModules.sops.enable = lib.mkEnableOption "enables sops";
   };
 
-  config = lib.mkIf config.sops.enable {
+  config = lib.mkIf config.homeModules.sops.enable {
     sops = {
       defaultSopsFormat = "yaml";
       age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";

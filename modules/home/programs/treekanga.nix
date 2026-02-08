@@ -2,21 +2,25 @@
   pkgs,
   lib,
   config,
+  paths,
   nixDirectory,
   ...
 }:
 
 {
   options = {
-    treekanga.enable = lib.mkEnableOption "enables treekanga";
+    homeModules.treekanga.enable = lib.mkEnableOption "enables treekanga";
   };
 
-  config = lib.mkIf config.treekanga.enable {
+  config = lib.mkIf config.homeModules.treekanga.enable {
     home.packages = [ pkgs.treekanga ];
 
     xdg.configFile = {
       "treekanga" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/nvim/";
+        source = paths.mkRepoConfigSymlink {
+          inherit config nixDirectory;
+          path = "treekanga";
+        };
         recursive = true;
       };
     };

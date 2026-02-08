@@ -7,10 +7,10 @@
 
 {
   options = {
-    aerospace.enable = lib.mkEnableOption "enables aerospace tiling wm";
+    darwinModules.aerospace.enable = lib.mkEnableOption "enables aerospace tiling wm";
   };
 
-  config = lib.mkIf config.aerospace.enable {
+  config = lib.mkIf config.darwinModules.aerospace.enable {
     services.aerospace = {
       enable = true;
       settings = {

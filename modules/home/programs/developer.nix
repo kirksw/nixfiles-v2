@@ -48,10 +48,10 @@ let
 in
 {
   options = {
-    developer.enable = lib.mkEnableOption "enables developer tools";
+    homeModules.developer.enable = lib.mkEnableOption "enables developer tools";
   };
 
-  config = lib.mkIf config.developer.enable {
+  config = lib.mkIf config.homeModules.developer.enable {
     # development tools
     home.packages = with pkgs; [
       # cli tools

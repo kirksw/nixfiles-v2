@@ -6,10 +6,10 @@
 
 {
   options = {
-    ghostty.enable = lib.mkEnableOption "enables ghostty";
+    homeModules.ghostty.enable = lib.mkEnableOption "enables ghostty";
   };
 
-  config = lib.mkIf config.ghostty.enable {
+  config = lib.mkIf config.homeModules.ghostty.enable {
     programs.ghostty = {
       enable = true;
       package = null; # package = inputs.ghostty.packages.${pkgs.system}.default;

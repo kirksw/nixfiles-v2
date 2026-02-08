@@ -2,10 +2,10 @@
 
 {
   options = {
-    module.enable = lib.mkEnableOption "enables module";
+    darwinModules.module.enable = lib.mkEnableOption "enables module";
   };
 
-  config = lib.mkIf config.module.enable {
+  config = lib.mkIf config.darwinModules.module.enable {
     programs.module = {
       enable = true;
       # other settings here
@@ -26,4 +26,3 @@
     };
   };
 }
-

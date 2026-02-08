@@ -7,10 +7,10 @@
 
 {
   options = {
-    module.baseline.enable = lib.mkEnableOption "enables baseline packages";
+    homeModules.baseline.enable = lib.mkEnableOption "enables baseline packages";
   };
 
-  config = lib.mkIf config.module.baseline.enable {
+  config = lib.mkIf config.homeModules.baseline.enable {
     home.packages = with pkgs; [
       # General packages for development and system management
       bat

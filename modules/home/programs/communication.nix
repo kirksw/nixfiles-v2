@@ -7,10 +7,10 @@
 
 {
   options = {
-    communication.enable = lib.mkEnableOption "enables communication tooling";
+    homeModules.communication.enable = lib.mkEnableOption "enables communication tooling";
   };
 
-  config = lib.mkIf config.communication.enable {
+  config = lib.mkIf config.homeModules.communication.enable {
     home.packages = with pkgs; [
       whatsapp-for-mac
       discord

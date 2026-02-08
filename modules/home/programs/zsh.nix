@@ -15,10 +15,10 @@ let
 in
 {
   options = {
-    zsh.enable = lib.mkEnableOption "enables zsh";
+    homeModules.zsh.enable = lib.mkEnableOption "enables zsh";
   };
 
-  config = lib.mkIf config.zsh.enable {
+  config = lib.mkIf config.homeModules.zsh.enable {
     programs = {
       starship = {
         enable = true;

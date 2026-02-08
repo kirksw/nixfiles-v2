@@ -2,7 +2,6 @@
   lib,
   inputs,
   self,
-  overlays ? [ ],
 }:
 
 let
@@ -36,7 +35,7 @@ let
         disko.nixosModules.disko
         sops-nix.nixosModules.sops
         config.hostModule
-        { nixpkgs.overlays = overlays; }
+        { nixpkgs.overlays = (config.overlays or [ ]); }
       ]
       ++ lib.optionals (config.enableHomeManager or false) [
         home-manager.nixosModules.home-manager

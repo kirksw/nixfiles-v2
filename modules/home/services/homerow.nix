@@ -7,10 +7,10 @@
 
 {
   options = {
-    homerow.enable = lib.mkEnableOption "enables homerow mods";
+    homeModules.homerow.enable = lib.mkEnableOption "enables homerow mods";
   };
 
-  config = lib.mkIf config.homerow.enable {
+  config = lib.mkIf config.homeModules.homerow.enable {
     # services.kanata = {
     #   enable = true;
 

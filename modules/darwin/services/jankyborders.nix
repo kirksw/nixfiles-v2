@@ -6,10 +6,10 @@
 
 {
   options = {
-    jankyborders.enable = lib.mkEnableOption "enables jankyborders";
+    darwinModules.jankyborders.enable = lib.mkEnableOption "enables jankyborders";
   };
 
-  config = lib.mkIf config.jankyborders.enable {
+  config = lib.mkIf config.darwinModules.jankyborders.enable {
     services.jankyborders = {
       enable = true;
       width = 8.0;

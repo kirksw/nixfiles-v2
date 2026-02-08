@@ -147,7 +147,7 @@
   };
 
   # custom modules
-  my.k3s = {
+  nixosModules.k3s = {
     enable = true;
     role = "server";
     nodeName = "nixos-ry6a";

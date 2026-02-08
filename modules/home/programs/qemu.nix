@@ -7,10 +7,10 @@
 
 {
   options = {
-    qemu.enable = lib.mkEnableOption "enables qemu";
+    homeModules.qemu.enable = lib.mkEnableOption "enables qemu";
   };
 
-  config = lib.mkIf config.qemu.enable {
+  config = lib.mkIf config.homeModules.qemu.enable {
     home.packages = with pkgs; [
       qemu
       #binfmt

@@ -23,35 +23,35 @@
 
   # enabled custom modules
   # security
-  sops.enable = true;
+  homeModules.sops.enable = true;
   # dev tooling
-  zsh.enable = true;
-  developer.enable = true;
-  colima.enable = true;
-  devops.enable = true;
+  homeModules.zsh.enable = true;
+  homeModules.developer.enable = true;
+  homeModules.colima.enable = true;
+  homeModules.devops.enable = true;
   # company
-  lunar.enable = true;
+  homeModules.lunar.enable = true;
   # editors
-  neovim.enable = true;
+  homeModules.neovim.enable = true;
   # multiplexer
-  tmux.enable = true;
-  zellij.enable = false;
+  homeModules.tmux.enable = true;
+  homeModules.zellij.enable = false;
   # terminal
-  ghostty.enable = false;
-  wezterm.enable = true;
-  qemu.enable = true;
+  homeModules.ghostty.enable = false;
+  homeModules.wezterm.enable = true;
+  homeModules.qemu.enable = true;
   # ai tooling
-  aidev.enable = true;
-  treekanga.enable = true;
-  opencode.enable = true;
-  codex.enable = true;
-  swe-pruner-mcp.enable = false;
+  homeModules.aidev.enable = true;
+  homeModules.treekanga.enable = true;
+  homeModules.opencode.enable = true;
+  homeModules.codex.enable = true;
+  homeModules.swePrunerMcp.enable = false;
   # misc
-  youtube.enable = true;
+  homeModules.youtube.enable = true;
 
   # disabled custom modules
-  communication.enable = false;
-  homerow.enable = false;
-  gcloud.enable = false;
-  vscode.enable = false;
+  homeModules.communication.enable = false;
+  homeModules.homerow.enable = false;
+  homeModules.gcloud.enable = false;
+  homeModules.vscode.enable = false;
 }

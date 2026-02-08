@@ -4,6 +4,9 @@
   inputs,
 }:
 
+let
+  paths = import ./paths.nix { };
+in
 {
   mkHomeManagerModule =
     config:
@@ -19,7 +22,12 @@
           ../modules/home
         ];
         extraSpecialArgs = {
-          inherit inputs self pkgs-unstable;
+          inherit
+            inputs
+            self
+            pkgs-unstable
+            paths
+            ;
         }
         // config;
       };

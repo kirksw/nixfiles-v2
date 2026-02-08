@@ -6,10 +6,10 @@
 }:
 
 let
-  cfg = config.my.k3s;
+  cfg = config.nixosModules.k3s;
 in
 {
-  options.my.k3s = {
+  options.nixosModules.k3s = {
     enable = lib.mkEnableOption "enables k3s on this node";
 
     role = lib.mkOption {
@@ -64,7 +64,7 @@ in
     };
   };
 
-  # Only apply when this module is enabled via my.k3s.enable
+  # Only apply when this module is enabled via nixosModules.k3s.enable
   config = lib.mkIf cfg.enable {
     # Kernel prerequisites for container networking
     # Set sysctls required by k3s/kubelet and CNIs

@@ -6,10 +6,10 @@
 
 {
   options = {
-    zellij.enable = lib.mkEnableOption "enables zellij";
+    homeModules.zellij.enable = lib.mkEnableOption "enables zellij";
   };
 
-  config = lib.mkIf config.zellij.enable {
+  config = lib.mkIf config.homeModules.zellij.enable {
     programs.zellij = {
       enable = true;
       enableZshIntegration = false;

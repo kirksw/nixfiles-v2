@@ -19,9 +19,9 @@ in
   ];
 
   # modules
-  aerospace.enable = true;
-  tailscale.enable = true;
-  jankyborders.enable = true;
+  darwinModules.aerospace.enable = true;
+  darwinModules.tailscale.enable = true;
+  darwinModules.jankyborders.enable = true;
 
   # specific host config
   nixpkgs.config.allowUnfree = true;

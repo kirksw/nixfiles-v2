@@ -133,10 +133,10 @@ let
 in
 {
   options = {
-    opencode.enable = lib.mkEnableOption "enables opencode";
+    homeModules.opencode.enable = lib.mkEnableOption "enables opencode";
   };
 
-  config = lib.mkIf config.opencode.enable {
+  config = lib.mkIf config.homeModules.opencode.enable {
     sops.secrets = {
       "zai" = {
         sopsFile = "${self}/secrets/api/default.yaml";

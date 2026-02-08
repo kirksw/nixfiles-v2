@@ -9,6 +9,7 @@
     inherit
       lib
       inputs
+      self
       ;
   };
   darwin = import ./darwin.nix {
@@ -31,4 +32,5 @@
       inputs
       ;
   };
+  paths = import ./paths.nix { };
 }

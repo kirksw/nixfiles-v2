@@ -2,16 +2,17 @@
   pkgs,
   lib,
   config,
+  paths,
   nixDirectory,
   ...
 }:
 
 {
   options = {
-    sketchybar.enable = lib.mkEnableOption "enables sketchybar";
+    homeModules.sketchybar.enable = lib.mkEnableOption "enables sketchybar";
   };
 
-  config = lib.mkIf config.sketchybar.enable {
+  config = lib.mkIf config.homeModules.sketchybar.enable {
     programs.sketchybar = {
       enable = true;
 
@@ -27,7 +28,10 @@
 
     xdg.configFile = {
       "sketchybar" = {
-        source = config.lib.file.mkOutOfStoreSymlink "${nixDirectory}/config/sketchybar";
+        source = paths.mkRepoConfigSymlink {
+          inherit config nixDirectory;
+          path = "sketchybar";
+        };
         recursive = true;
       };
     };
