@@ -6,12 +6,6 @@
   ...
 }:
 
-let
-  nixConfFormat = pkgs.formats.nixConf {
-    package = pkgs.nix;
-    version = "2.31";
-  };
-in
 {
   imports = [
     ../../../modules/shared
@@ -61,12 +55,6 @@ in
       ];
     };
   };
-
-  # environment.etc."nix/nix.custom.conf".text = pkgs.lib.mkForce ''
-  #   trusted-users = kisw root
-  #   extra-substituters = https://cache.numtide.com
-  #   extra-trusted-public-keys = niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g=
-  # '';
 
   security = {
     pam.services.sudo_local = {
