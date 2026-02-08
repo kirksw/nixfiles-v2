@@ -39,7 +39,6 @@
       plugins = with pkgs; [
         tmuxPlugins.vim-tmux-navigator
         tmuxPlugins.tmux-fzf
-        tmuxPlugins.rose-pine
         tmuxPlugins.better-mouse-mode
         tmuxPlugins.battery
         tmuxPlugins.cpu
@@ -66,8 +65,6 @@
         set -g @rose_pine_user 'off'
         set -g @rose_pine_host 'off'
         set -g @rose_pine_hostname_short 'off'
-        set -g @rose_pine_status_right_append_section '#[fg=#9ccfd8] #(git -C "#{pane_current_path}" rev-parse --abbrev-ref HEAD 2>/dev/null)'
-
         # NOTE: maybe remove the below
         set -g @rose_pine_window_tabs_enabled 'on'
 
@@ -87,7 +84,7 @@
         set -g @rose_pine_window_status_separator "  " # Changes the default icon that appears between window names
 
         # Very beta and specific opt-in settings, tested on v3.2a, look at issue #10
-        set -g @rose_pine_prioritize_windows 'on' # Disables the right side functionality in a certain window count / terminal width
+        set -g @rose_pine_prioritize_windows 'off' # Keep right-side sections stable across initial load/reload
         set -g @rose_pine_width_to_hide '80' # Specify a terminal width to toggle off most of the right side functionality
         set -g @rose_pine_window_count '5' # Specify a number of windows, if there are more than the number, do the same as width_to_hide
 
@@ -124,6 +121,14 @@
         # ensure can handle commands
         set -g extended-keys always
         set -as terminal-features 'xterm*:extkeys'
+
+        # Clear stale plugin append state from older configs to avoid duplicate git segment.
+        set -gu @rose_pine_status_right_append_section
+
+        # Load rose-pine after theme options so first startup matches reload behavior.
+        run-shell ${pkgs.tmuxPlugins.rose-pine}/share/tmux-plugins/rose-pine/rose-pine.tmux
+        # Keep git branch visible even if rose-pine rewrites/trims status-right.
+        set -ag status-right '#[fg=#9ccfd8]  #(git -C "#{pane_current_path}" rev-parse --abbrev-ref HEAD 2>/dev/null)'
 
         # reload config
         bind r run-shell "tmux source-file ~/.config/tmux/tmux.conf && tmux display-message 'Config reloaded'"
