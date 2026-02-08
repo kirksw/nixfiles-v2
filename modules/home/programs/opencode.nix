@@ -90,10 +90,53 @@ let
           apiKey = "{env:zai_token}";
         };
       };
+
+      anthropic = {
+        name = "anthropic";
+      };
+
+      openai = {
+        name = "openai";
+      };
     };
 
     model = "zai/glm-4.7";
     small_model = "zai/glm-4.5-air";
+
+    agent = {
+      claude-senior = {
+        description = "Senior engineer A - Claude Opus 4.6 for complex architecture, deep code reasoning, and nuanced refactoring";
+        mode = "all";
+        model = {
+          providerID = "anthropic";
+          modelID = "claude-opus-4-6-20250219";
+        };
+        temperature = 0.3;
+        prompt = ''
+          You are a senior software engineer with deep expertise in system architecture,
+          code quality, and software design patterns. You approach problems methodically,
+          consider edge cases, and provide thorough, well-reasoned solutions. When reviewing
+          code, you focus on correctness, maintainability, security, and performance. You
+          are direct and concise in your communication.
+        '';
+      };
+      gpt-senior = {
+        description = "Senior engineer B - GPT 5.3 for complex problem solving, algorithm design, and cross-domain analysis";
+        mode = "all";
+        model = {
+          providerID = "openai";
+          modelID = "gpt-5.3";
+        };
+        temperature = 0.3;
+        prompt = ''
+          You are a senior software engineer with deep expertise in algorithm design,
+          data modeling, and cross-domain problem solving. You excel at breaking down
+          complex problems into manageable components, designing comprehensive test
+          strategies, and performance optimization. You are direct and concise in your
+          communication.
+        '';
+      };
+    };
 
     compaction = {
       auto = true;
