@@ -1,0 +1,24 @@
+name: Flake Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  flake-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Evaluate flake (no build)
+        run: nix flake check --no-build
+
+      - name: Build SWE-Pruner package
+        run: nix build .#swe-pruner-mcp

@@ -14,6 +14,7 @@
 
   # modules
   darwinModules.aerospace.enable = true;
+  darwinModules.dock.enable = true;
   darwinModules.tailscale.enable = true;
   darwinModules.jankyborders.enable = true;
 
@@ -92,15 +93,6 @@
         "com.apple.mouse.tapBehavior" = 1;
         "com.apple.sound.beep.volume" = 0.0;
         "com.apple.sound.beep.feedback" = 0;
-      };
-
-      dock = {
-        autohide = true;
-        show-recents = false;
-        launchanim = true;
-        orientation = "left";
-        tilesize = 48;
-        mru-spaces = false;
       };
 
       finder = {
