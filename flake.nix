@@ -128,6 +128,17 @@
       mkApps = import ./flake/apps.nix {
         inherit nixpkgs mylibs;
       };
+      appCommandsBySystem = {
+        aarch64-darwin = [
+          "build"
+          "switch"
+          "rollback"
+        ];
+        x86_64-linux = [
+          "build"
+          "switch"
+        ];
+      };
 
       deploy = import ./flake/deploy.nix {
         inherit self deploy-rs;
@@ -147,6 +158,7 @@
 
         apps = mkApps {
           inherit system;
+          appCommands = appCommandsBySystem.${system} or [ ];
           inherit (packageData) packageNames packages;
         };
       }

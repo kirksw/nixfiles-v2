@@ -1,6 +1,11 @@
 { nixpkgs, mylibs }:
 {
   system,
+  appCommands ? [
+    "build"
+    "switch"
+    "rollback"
+  ],
   packageNames,
   packages,
 }:
@@ -31,10 +36,15 @@ let
     echo "Done!"
   '';
 in
-{
-  build = mylibs.app.mkApp "build" system;
-  switch = mylibs.app.mkApp "switch" system;
-  rollback = mylibs.app.mkApp "rollback" system;
+(
+  builtins.listToAttrs (
+    map (name: {
+      inherit name;
+      value = mylibs.app.mkApp name system;
+    }) appCommands
+  )
+)
+// {
   update-packages = {
     type = "app";
     program = "${updateAllPackages}/bin/update-packages";
