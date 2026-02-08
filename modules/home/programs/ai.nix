@@ -9,10 +9,10 @@
 
 {
   options = {
-    homeModules.aidev.enable = lib.mkEnableOption "enables ai dev tooling";
+    homeModules.aiDev.enable = lib.mkEnableOption "enables ai dev tooling";
   };
 
-  config = lib.mkIf config.homeModules.aidev.enable {
+  config = lib.mkIf config.homeModules.aiDev.enable {
     home.packages = with pkgs-unstable; [
       ollama
     ];
