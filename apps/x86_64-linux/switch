@@ -13,7 +13,7 @@ fi
 
 if [[ $# -lt 1 ]]; then
   echo -e "${YELLOW}Usage:${NC} $0 <hostname> [--] [extra nixos-rebuild args]"
-  echo -e "Example: $0 home-desktop"
+  echo -e "Example: $0 nixos-ry6a"
   exit 2
 fi
 
