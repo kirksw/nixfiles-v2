@@ -38,7 +38,7 @@ The SWE-Pruner MCP server is already integrated into your nixfiles-v2 configurat
 1. **Enable the module** (if not already enabled)
    ```nix
    # In hosts/darwin/work/home.nix, ensure:
-   swe-pruner-mcp.enable = true;
+   homeModules.swePrunerMcp.enable = true;
    ```
 
 2. **Apply configuration**
@@ -46,7 +46,8 @@ The SWE-Pruner MCP server is already integrated into your nixfiles-v2 configurat
    apps/aarch64-darwin/switch
    ```
 
-The model will automatically download during the first run.
+The server attempts model-backed pruning when a model is available at `MODEL_PATH`.
+If no model is available, it falls back to heuristic pruning.
 
 ## Usage
 
@@ -211,11 +212,11 @@ ls -la $MODEL_PATH
 grep "swe-pruner" ~/Library/Application\ Support/opencode/config.json
 
 # Check module is enabled
-grep "swe-pruner-mcp.enable" hosts/darwin/work/home.nix
+grep "homeModules.swePrunerMcp.enable" hosts/darwin/work/home.nix
 ```
 
 **Solution**:
-- Ensure `swe-pruner-mcp.enable = true` in home config
+- Ensure `homeModules.swePrunerMcp.enable = true` in home config
 - Rebuild: `apps/aarch64-darwin/switch`
 - Restart opencode
 
@@ -270,7 +271,7 @@ If you want to disable SWE-Pruner:
 
 ```nix
 # In hosts/darwin/work/home.nix
-swe-pruner-mcp.enable = false;
+homeModules.swePrunerMcp.enable = false;
 ```
 
 Then apply:

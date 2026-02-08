@@ -13,13 +13,13 @@ This package is installed as part of your nixfiles-v2 configuration:
 ```bash
 # Enable the module
 # In hosts/darwin/work/home.nix, add:
-swe-pruner-mcp.enable = true;
+homeModules.swePrunerMcp.enable = true;
 
 # Apply changes
 ns
 ```
 
-The model is automatically downloaded and cached in the nix store, then copied to `$HOME/.cache/swe-pruner/models/` on first activation.
+At runtime, the server will try to load a model from `MODEL_PATH` if it exists. If no model is available, it falls back to heuristic pruning and still returns useful output.
 
 ## Usage
 
@@ -67,17 +67,18 @@ search_pruned(
 
 ## How Pruning Works
 
-1. **First Run (slow)**: Model loads from cache (~30 seconds)
-2. **Subsequent Runs (fast)**: Model already loaded, pruning takes 1-2 seconds
-3. **Fallback Behavior**: If pruning fails, full content is returned automatically
+1. **No Query**: returns full content.
+2. **With Query + Model Available**: uses model-backed line relevance scoring.
+3. **With Query + No Model**: uses heuristic pruning fallback.
+4. **Fallback Behavior**: if pruning fails, full content is returned automatically.
 4. **Statistics**: All operations logged to `$HOME/.cache/swe-pruner/stats.json`
 
 ## Performance
 
 - **Token Savings**: 23-54% on average (based on SWE-Pruner paper)
-- **First Call Latency**: ~30s (model loading)
-- **Subsequent Calls**: ~1-2s (pruning only)
-- **Model Size**: 2.3GB (cached in nix store)
+- **First model-backed call**: can be slow (model load)
+- **Heuristic fallback**: fast and available without model files
+- **Model size**: depends on chosen model path
 
 ## Statistics
 
