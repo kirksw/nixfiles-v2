@@ -18,7 +18,9 @@ jobs:
         uses: DeterminateSystems/nix-installer-action@main
 
       - name: Evaluate flake (no build)
-        run: nix flake check --no-build
+        run: nix flake check --no-build --impure
+        env:
+          NIXPKGS_ALLOW_UNFREE: "1"
 
       - name: Build SWE-Pruner package
         run: nix build .#swe-pruner-mcp
