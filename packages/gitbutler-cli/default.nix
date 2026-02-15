@@ -41,6 +41,8 @@ stdenv.mkDerivation (finalAttrs: {
     runHook preInstall
 
     install -Dm755 GitButler.app/Contents/MacOS/gitbutler-tauri $out/bin/but
+    install -Dm755 GitButler.app/Contents/MacOS/gitbutler-git-askpass $out/bin/gitbutler-git-askpass
+    install -Dm755 GitButler.app/Contents/MacOS/gitbutler-git-setsid $out/bin/gitbutler-git-setsid
 
     runHook postInstall
   '';
