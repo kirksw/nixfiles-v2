@@ -12,56 +12,55 @@ let
   swePrunerStatsFile = "${config.home.homeDirectory}/.cache/swe-pruner/stats.json";
   swePrunerModelPath = "${config.home.homeDirectory}/.cache/swe-pruner/models/code-pruner";
 
-  mcpConfig =
-    {
-      # fetches and extracts web page content
-      "web-reader" = {
-        type = "remote";
-        url = "https://api.z.ai/api/mcp/web_reader/mcp";
-        headers = {
-          Authorization = "Bearer {env:zai_token}";
-        };
-      };
-      # provides access to knowledge docs and code from OSS repos
-      zread = {
-        type = "remote";
-        url = "https://api.z.ai/api/mcp/zread/mcp";
-        headers = {
-          Authorization = "Bearer {env:zai_token}";
-        };
-      };
-      # web searches with real time information retrievel
-      web-search-prime = {
-        type = "remote";
-        url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
-        headers = {
-          Authorization = "Bearer {env:zai_token}";
-        };
-      };
-      # vision capabilities
-      zai-mcp-server = {
-        type = "local";
-        command = [
-          "npx"
-          "-y"
-          "@z_ai/mcp-server"
-        ];
-        environment = {
-          Z_AI_API_KEY = "{env:zai_token}";
-          Z_AI_MODE = "ZAI";
-        };
-      };
-    }
-    // lib.optionalAttrs config.homeModules.swePrunerMcp.enable {
-      swe-pruner = {
-        type = "local";
-        command = [ "${swePrunerMcpPkg}/bin/swe-pruner-mcp" ];
-        environment = {
-          MODEL_PATH = swePrunerModelPath;
-          STATS_FILE = swePrunerStatsFile;
-        };
+  mcpConfig = {
+    # fetches and extracts web page content
+    "web-reader" = {
+      type = "remote";
+      url = "https://api.z.ai/api/mcp/web_reader/mcp";
+      headers = {
+        Authorization = "Bearer {env:zai_token}";
       };
     };
+    # provides access to knowledge docs and code from OSS repos
+    zread = {
+      type = "remote";
+      url = "https://api.z.ai/api/mcp/zread/mcp";
+      headers = {
+        Authorization = "Bearer {env:zai_token}";
+      };
+    };
+    # web searches with real time information retrievel
+    web-search-prime = {
+      type = "remote";
+      url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+      headers = {
+        Authorization = "Bearer {env:zai_token}";
+      };
+    };
+    # vision capabilities
+    zai-mcp-server = {
+      type = "local";
+      command = [
+        "npx"
+        "-y"
+        "@z_ai/mcp-server"
+      ];
+      environment = {
+        Z_AI_API_KEY = "{env:zai_token}";
+        Z_AI_MODE = "ZAI";
+      };
+    };
+  }
+  // lib.optionalAttrs config.homeModules.swePrunerMcp.enable {
+    swe-pruner = {
+      type = "local";
+      command = [ "${swePrunerMcpPkg}/bin/swe-pruner-mcp" ];
+      environment = {
+        MODEL_PATH = swePrunerModelPath;
+        STATS_FILE = swePrunerStatsFile;
+      };
+    };
+  };
 
   opencodeconfig = {
     "$schema" = "https://opencode.ai/config.json";
@@ -100,17 +99,14 @@ let
       };
     };
 
-    model = "zai/glm-4.7";
-    small_model = "zai/glm-4.5-air";
+    model = "zai-coding-plan/glm-5.0";
+    small_model = "zai-coding-plan/glm-4.5-air";
 
     agent = {
       claude-senior = {
         description = "Senior engineer A - Claude Opus 4.6 for complex architecture, deep code reasoning, and nuanced refactoring";
         mode = "all";
-        model = {
-          providerID = "anthropic";
-          modelID = "claude-opus-4-6-20250219";
-        };
+        model = "anthropic/claude-opus-4-6";
         temperature = 0.3;
         prompt = ''
           You are a senior software engineer with deep expertise in system architecture,
@@ -123,10 +119,7 @@ let
       gpt-senior = {
         description = "Senior engineer B - GPT 5.3 for complex problem solving, algorithm design, and cross-domain analysis";
         mode = "all";
-        model = {
-          providerID = "openai";
-          modelID = "gpt-5.3";
-        };
+        model = "openai/gpt-5.2";
         temperature = 0.3;
         prompt = ''
           You are a senior software engineer with deep expertise in algorithm design,

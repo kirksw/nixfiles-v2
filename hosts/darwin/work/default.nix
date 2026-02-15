@@ -39,11 +39,20 @@
 
   ids.gids.nixbld = 350;
 
-  nix.enable = false;
   determinateNix = {
     enable = true;
 
+    determinateNixd = {
+      authentication.additionalNetrcSources = [
+        "/etc/nix/netrc"
+      ];
+    };
+
     customSettings = {
+      extra-sandbox-paths = [
+        "/etc/nix/netrc"
+        "/nix/var/determinate/netrc"
+      ];
       trusted-users = [
         "kisw"
         "root"

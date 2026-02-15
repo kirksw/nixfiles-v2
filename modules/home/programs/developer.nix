@@ -1,6 +1,7 @@
 {
   self,
   pkgs,
+  pkgs-unstable,
   lib,
   config,
   git,
@@ -82,6 +83,8 @@ in
       duckdb
       # used to notify of theme changes
       dark-mode-notify
+      # gitbutler cli
+      gitbutler-cli
     ];
 
     # tooling management

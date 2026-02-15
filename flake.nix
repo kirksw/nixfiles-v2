@@ -25,7 +25,7 @@
     };
 
     lunar-tools = {
-      url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/streamline-wrappers";
+      url = "git+ssh://git@github.com/lunarway/lw-nix?ref=feat/refactor";
     };
 
     sops-nix = {
@@ -55,22 +55,24 @@
         let
           missing = builtins.filter (field: !(builtins.hasAttr field cfg)) required;
         in
-        assert (
-          missing == [ ]
-        ) || throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missing}";
+        assert
+          (missing == [ ])
+          || throw "Host '${name}' is missing required fields: ${builtins.concatStringsSep ", " missing}";
         cfg;
 
       validateHostPaths =
         name: cfg:
         let
           _hostModule =
-            assert builtins.pathExists cfg.hostModule
-            || throw "Host '${name}' points to missing hostModule: ${toString cfg.hostModule}";
+            assert
+              builtins.pathExists cfg.hostModule
+              || throw "Host '${name}' points to missing hostModule: ${toString cfg.hostModule}";
             cfg.hostModule;
           _homeModule =
             if cfg ? homeModule && cfg.homeModule != null then
-              assert builtins.pathExists cfg.homeModule
-              || throw "Host '${name}' points to missing homeModule: ${toString cfg.homeModule}";
+              assert
+                builtins.pathExists cfg.homeModule
+                || throw "Host '${name}' points to missing homeModule: ${toString cfg.homeModule}";
               cfg.homeModule
             else
               null;
@@ -83,7 +85,8 @@
           withRequired = requireHostFields name [ "system" "user" "hostModule" ] cfg;
           validated = validateHostPaths name withRequired;
         in
-        validated // {
+        validated
+        // {
           overlays = validated.overlays or [ ];
         };
 
