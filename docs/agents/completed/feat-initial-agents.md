@@ -63,5 +63,8 @@ nix run .#sync-agents                                      # copies to ~/.config
 
 ### Follow-up
 
-- Add more skills as needed using the skill-creator.
-- Consider automating sync via home-manager activation.
+Items added to `docs/BACKLOG.md`:
+- P2 S Automate agent sync via home-manager activation.
+- P2 XS Add `steps` limits to subagents for cost control.
+- P2 S Tighten `mid-engineer` bash permissions.
+- P3 S Vendor update script for skill-creator.

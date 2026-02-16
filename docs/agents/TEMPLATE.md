@@ -55,3 +55,4 @@ _Filled in after completion, before moving to `docs/agents/completed/`._
 ### Follow-up
 
 - Any remaining work or future improvements.
+- All follow-up items must be added to `docs/BACKLOG.md` with priority and effort estimate.

@@ -60,8 +60,21 @@ Every agent-related change follows a plan-implement-test-complete cycle:
 2. **Implement**: build the feature (agents, skills, flake apps, modules).
 3. **Test**: validate with `nix flake check --no-build`, `nix run .#sync-agents`, and any relevant build commands. Record commands and results in the plan doc.
 4. **Complete**: fill in the summary section of the plan doc and move it to `docs/agents/completed/feat-<name>.md`.
+5. **Backlog**: any remaining follow-up items or new ideas discovered during the work must be added to `docs/BACKLOG.md` with an effort estimate and priority.
 
 Sync agents/skills to local OpenCode config: `nix run .#sync-agents`.
+
+## Backlog Management
+All todo items are tracked in `docs/BACKLOG.md`. Each item must include:
+- **Priority**: `P0` (critical), `P1` (high), `P2` (medium), `P3` (low).
+- **Effort**: `XS` (<1h), `S` (1-4h), `M` (half day), `L` (1-2 days), `XL` (3+ days).
+- **Description**: concise, actionable task description.
+- **Source**: where the item originated (feature plan, review, ad-hoc).
+
+Items are added when:
+- A feature plan has follow-up work remaining after completion.
+- A new improvement idea surfaces during any session.
+- A review or audit identifies work to be done.
 
 ## Security & Configuration Tips
 - Never commit plaintext secrets; keep secrets under `secrets/` and edit with `sops`.
