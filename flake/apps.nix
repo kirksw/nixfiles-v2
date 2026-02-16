@@ -35,6 +35,33 @@ let
     )}
     echo "Done!"
   '';
+
+  syncAgents = pkgs.writeShellScriptBin "sync-agents" ''
+    set -euo pipefail
+
+    repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null || ${pkgs.coreutils}/bin/pwd)"
+    source_agents="$repo_root/agents/agents"
+    source_skills="$repo_root/agents/skills"
+    target_root="$HOME/.config/opencode"
+    target_agents="$target_root/agents"
+    target_skills="$target_root/skills"
+
+    if [ ! -d "$source_agents" ]; then
+      echo "Missing source directory: $source_agents" >&2
+      exit 1
+    fi
+
+    if [ ! -d "$source_skills" ]; then
+      echo "Missing source directory: $source_skills" >&2
+      exit 1
+    fi
+
+    ${pkgs.coreutils}/bin/mkdir -p "$target_agents" "$target_skills"
+    ${pkgs.coreutils}/bin/cp -R "$source_agents"/. "$target_agents"/
+    ${pkgs.coreutils}/bin/cp -R "$source_skills"/. "$target_skills"/
+
+    echo "Synced OpenCode assets to $target_root"
+  '';
 in
 (
   builtins.listToAttrs (
@@ -50,6 +77,14 @@ in
     program = "${updateAllPackages}/bin/update-packages";
     meta = {
       description = "Run update scripts for custom packages in this repository.";
+    };
+  };
+
+  sync-agents = {
+    type = "app";
+    program = "${syncAgents}/bin/sync-agents";
+    meta = {
+      description = "Copy repository agents and skills to ~/.config/opencode.";
     };
   };
 }
