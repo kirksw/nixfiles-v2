@@ -112,11 +112,15 @@
         # clear screen
         bind C-l send-keys 'C-l'
 
-        # binds?
+        # binds
         set -g set-clipboard on
         set -g allow-passthrough on
         set -g detach-on-destroy off
         bind -T copy-mode-vi Enter send-keys -X copy-selection-and-cancel
+
+        # ezgit bind
+        # bind-key "g" run-shell "tmux display-popup -E -w 80% -h 70% 'ezgit tui'"
+        bind-key "g" display-popup -E -w 80% -h 70% 'ezgit tui'
 
         # ensure can handle commands
         set -g extended-keys always

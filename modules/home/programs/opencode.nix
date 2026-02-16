@@ -17,6 +17,7 @@ let
     "web-reader" = {
       type = "remote";
       url = "https://api.z.ai/api/mcp/web_reader/mcp";
+      enabled = false;
       headers = {
         Authorization = "Bearer {env:zai_token}";
       };
@@ -25,6 +26,7 @@ let
     zread = {
       type = "remote";
       url = "https://api.z.ai/api/mcp/zread/mcp";
+      enabled = false;
       headers = {
         Authorization = "Bearer {env:zai_token}";
       };
@@ -33,6 +35,7 @@ let
     web-search-prime = {
       type = "remote";
       url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
+      enabled = false;
       headers = {
         Authorization = "Bearer {env:zai_token}";
       };
@@ -40,6 +43,7 @@ let
     # vision capabilities
     zai-mcp-server = {
       type = "local";
+      enabled = false;
       command = [
         "npx"
         "-y"
@@ -54,6 +58,7 @@ let
   // lib.optionalAttrs config.homeModules.swePrunerMcp.enable {
     swe-pruner = {
       type = "local";
+      enabled = false;
       command = [ "${swePrunerMcpPkg}/bin/swe-pruner-mcp" ];
       environment = {
         MODEL_PATH = swePrunerModelPath;
@@ -99,37 +104,47 @@ let
       };
     };
 
-    model = "zai-coding-plan/glm-5.0";
-    small_model = "zai-coding-plan/glm-4.5-air";
+    #model = "zai-coding-plan/glm-5.0";
+    #small_model = "zai-coding-plan/glm-4.5-air";
 
-    agent = {
-      claude-senior = {
-        description = "Senior engineer A - Claude Opus 4.6 for complex architecture, deep code reasoning, and nuanced refactoring";
-        mode = "all";
-        model = "anthropic/claude-opus-4-6";
-        temperature = 0.3;
-        prompt = ''
-          You are a senior software engineer with deep expertise in system architecture,
-          code quality, and software design patterns. You approach problems methodically,
-          consider edge cases, and provide thorough, well-reasoned solutions. When reviewing
-          code, you focus on correctness, maintainability, security, and performance. You
-          are direct and concise in your communication.
-        '';
-      };
-      gpt-senior = {
-        description = "Senior engineer B - GPT 5.3 for complex problem solving, algorithm design, and cross-domain analysis";
-        mode = "all";
-        model = "openai/gpt-5.2";
-        temperature = 0.3;
-        prompt = ''
-          You are a senior software engineer with deep expertise in algorithm design,
-          data modeling, and cross-domain problem solving. You excel at breaking down
-          complex problems into manageable components, designing comprehensive test
-          strategies, and performance optimization. You are direct and concise in your
-          communication.
-        '';
-      };
-    };
+    #agent = {
+    #  architect = {
+    #    description = "Claude Opus 4.6 for complex architecture, deep code reasoning, and nuanced refactoring";
+    #    mode = "all";
+    #    model = "anthropic/claude-opus-4-6";
+    #    temperature = 0.6;
+    #    prompt = ''
+    #      You are a senior software engineer with deep expertise in system architecture,
+    #      code quality, and software design patterns. You approach problems methodically,
+    #      consider edge cases, and provide thorough, well-reasoned solutions. When reviewing
+    #      code, you focus on correctness, maintainability, security, and performance. You
+    #      are direct and concise in your communication.
+    #    '';
+    #  };
+    #  developer = {
+    #    description = "GPT 5.3 for complex problem solving, algorithm design, and cross-domain analysis";
+    #    mode = "all";
+    #    model = "openai/gpt-5.3-codex";
+    #    temperature = 0.3;
+    #    prompt = ''
+    #      You are a senior software engineer with deep expertise in algorithm design,
+    #      data modeling, and cross-domain problem solving. You excel at breaking down
+    #      complex problems into manageable components, designing comprehensive test
+    #      strategies, and performance optimization. You are direct and concise in your
+    #      communication.
+    #    '';
+    #  };
+    #  speed_developer = {
+    #    description = "GPT 5.3 spark for extreme output speed for straightforward implementations or corrections";
+    #    mode = "all";
+    #    model = "openai/gpt-5.3-codex-spark";
+    #    temperature = 0.3;
+    #    prompt = ''
+    #      You are a software engineer with in implementations. You excel at implementation of defined tasks and.
+    #      rapidly fixing bugs. You are direct and concise in your communication.
+    #    '';
+    #  };
+    #};
 
     compaction = {
       auto = true;
@@ -168,7 +183,7 @@ let
 
       export zai_token=$(cat "$secret_path")
 
-      exec ${pkgs-unstable.opencode}/bin/opencode "$@"
+      exec -a opencode ${pkgs-unstable.opencode}/bin/opencode "$@"
     '';
 in
 {

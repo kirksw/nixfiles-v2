@@ -12,6 +12,7 @@ let
     set -euo pipefail
 
     LUNAR_KEY_PATH="${config.sops.secrets."api/lunar/openai".path}"
+    GITHUB_PAT_PATH="${config.sops.secrets."git/pat".path}"
     CODEX_BIN="${pkgs.llm-agents.codex}/bin/codex"
 
     is_work_project() {
@@ -25,20 +26,21 @@ let
       fi
       export OPENAI_BASE_URL="https://eu.api.openai.com/v1"
       export CODEX_HOME="''${HOME}/.config/lunar/codex"
+      export CODEX_GITHUB_PERSONAL_ACCESS_TOKEN="$(tr -d '[:space:]' < "$GITHUB_PAT_PATH")"
       echo "codex: using work config (lunar api key)" >&2
       if ! "$CODEX_BIN" login status; then
-          cat "$LUNAR_KEY_PATH" | exec "$CODEX_BIN" login --with-api-key
+          cat "$LUNAR_KEY_PATH" | "$CODEX_BIN" login --with-api-key
       fi
       exec "$CODEX_BIN" "$@"
     else
+      export CODEX_GITHUB_PERSONAL_ACCESS_TOKEN="$(tr -d '[:space:]' < "$GITHUB_PAT_PATH")"
       echo "codex: using personal config (ChatGPT account)" >&2
       if ! "$CODEX_BIN" login status; then
-          exec "$CODEX_BIN" login
+          "$CODEX_BIN" login
       fi
       exec "$CODEX_BIN" "$@"
     fi
   '';
-
 in
 {
   options = {
@@ -46,10 +48,16 @@ in
   };
 
   config = lib.mkIf config.homeModules.codex.enable {
+    # NOTE: codex doesn't seem to support oauth with github mcp :/
     sops.secrets = {
       "api/lunar/openai" = {
         sopsFile = "${self}/secrets/api/lunar.yaml";
         key = "openai";
+        mode = "0400";
+      };
+      "git/pat" = {
+        sopsFile = "${self}/secrets/git/pat.yaml";
+        key = "pat";
         mode = "0400";
       };
     };
