@@ -13,7 +13,9 @@ This is a Nix flake-based mono-repo for macOS (`nix-darwin`) and Linux (`NixOS`)
 - `apps/<system>/`: operational wrappers (`build`, `switch`, `rollback`).
 - `scripts/check-structure.sh`: enforces module-manifest and namespace conventions.
 - `secrets/`: SOPS-encrypted YAML secrets.
-- `docs/agents/`: agent playbooks and repo-specific AI workflow notes.
+- `agents/agents/`: OpenCode subagent definitions (markdown files synced to `~/.config/opencode/agents/`).
+- `agents/skills/`: OpenCode skill definitions (synced to `~/.config/opencode/skills/`).
+- `docs/agents/`: feature plans (`feat-*.md`) and completed summaries (`completed/`).
 
 ## Build, Test, and Development Commands
 - `apps/aarch64-darwin/build`: build macOS generation without switching.
@@ -50,6 +52,16 @@ This is a Nix flake-based mono-repo for macOS (`nix-darwin`) and Linux (`NixOS`)
   - Target host(s)/module(s) affected.
   - Commands run to validate (for example: `nix flake check`, `apps/aarch64-darwin/build`).
   - Screenshots only for UI-facing config changes.
+
+## Agent Feature Workflow
+Every agent-related change follows a plan-implement-test-complete cycle:
+
+1. **Plan**: create `docs/agents/feat-<name>.md` from the template (`docs/agents/TEMPLATE.md`). Fill in context, scope, approach, and risks.
+2. **Implement**: build the feature (agents, skills, flake apps, modules).
+3. **Test**: validate with `nix flake check --no-build`, `nix run .#sync-agents`, and any relevant build commands. Record commands and results in the plan doc.
+4. **Complete**: fill in the summary section of the plan doc and move it to `docs/agents/completed/feat-<name>.md`.
+
+Sync agents/skills to local OpenCode config: `nix run .#sync-agents`.
 
 ## Security & Configuration Tips
 - Never commit plaintext secrets; keep secrets under `secrets/` and edit with `sops`.
