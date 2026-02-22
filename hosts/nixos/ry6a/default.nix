@@ -4,6 +4,7 @@
 
 {
   self,
+  lib,
   config,
   pkgs,
   ...
@@ -63,6 +64,7 @@
         "wheel"
       ];
     };
+
   };
 
   # Nix settings
@@ -125,6 +127,7 @@
 
   # we use tailscale for managing ssh access
   services.tailscale.enable = true;
+  systemd.services.tailscaled.restartIfChanged = false;
   networking.nameservers = [
     "100.100.100.100"
     "8.8.8.8"
@@ -143,7 +146,21 @@
         key = "secret";
         mode = "0400";
       };
+
+      "ssh/root/authorizedKey" = {
+        sopsFile = "${self}/secrets/ssh/ry6a-root.yaml";
+        key = "authorizedKey";
+        mode = "0400";
+      };
     };
+  };
+
+  system.activationScripts.rootAuthorizedKey = {
+    deps = [ "setupSecrets" ];
+    text = ''
+      install -d -m 0755 /etc/ssh/authorized_keys.d
+      install -m 0600 -o root -g root ${config.sops.secrets."ssh/root/authorizedKey".path} /etc/ssh/authorized_keys.d/root
+    '';
   };
 
   # custom modules
@@ -153,5 +170,42 @@
     nodeName = "nixos-ry6a";
     clusterInit = true;
     tokenFile = config.sops.secrets."k8s/node/secret".path;
+  };
+
+  services.k3s.manifests = {
+    kubernetes-dashboard = {
+      source = pkgs.fetchurl {
+        url = "https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml";
+        hash = "sha256-lDrkAlHxumTvASxTJxv2dm0Yg90CQJPoVFZ7VkQ3ZLg=";
+      };
+    };
+
+    kubernetes-dashboard-admin.content = [
+      {
+        apiVersion = "v1";
+        kind = "ServiceAccount";
+        metadata = {
+          name = "admin-user";
+          namespace = "kubernetes-dashboard";
+        };
+      }
+      {
+        apiVersion = "rbac.authorization.k8s.io/v1";
+        kind = "ClusterRoleBinding";
+        metadata.name = "admin-user";
+        roleRef = {
+          apiGroup = "rbac.authorization.k8s.io";
+          kind = "ClusterRole";
+          name = "cluster-admin";
+        };
+        subjects = [
+          {
+            kind = "ServiceAccount";
+            name = "admin-user";
+            namespace = "kubernetes-dashboard";
+          }
+        ];
+      }
+    ];
   };
 }

@@ -27,6 +27,9 @@
       "kirksw"
       "lunarway"
       "default"
+      "k8s"
+      "ry4a"
+      "ry6b"
     ];
   };
   overlays = [

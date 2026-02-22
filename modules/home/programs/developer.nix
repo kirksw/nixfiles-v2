@@ -46,6 +46,50 @@ let
         path = "${config.sops.templates."gitprofile-${profileName}".path}";
       }) (dirsOf profileName)
     ) profileNames;
+
+  homelabSshHosts = [
+    {
+      match = "nixos-ry6a";
+      hostname = "nixos-ry6a";
+      user = "k8s";
+      key = "k8s";
+    }
+    {
+      match = "ry4a";
+      hostname = "ry4a";
+      user = "k8s";
+      key = "ry4a";
+    }
+    {
+      match = "ry6b";
+      hostname = "ry6b";
+      user = "k8s";
+      key = "ry6b";
+    }
+  ];
+
+  generateHomelabSshMatchblocks =
+    hosts:
+    builtins.listToAttrs (
+      lib.filter (value: value != null) (
+        map (
+          host:
+          if lib.elem host.key ssh.keys then
+            {
+              name = host.match;
+              value = {
+                inherit (host) hostname user;
+                identityFile = "${config.sops.secrets."ssh/${host.key}/private".path}";
+                identitiesOnly = true;
+                forwardAgent = true;
+                addKeysToAgent = "yes";
+              };
+            }
+          else
+            null
+        ) hosts
+      )
+    );
 in
 {
   options = {
@@ -108,7 +152,7 @@ in
       enable = true;
       enableDefaultConfig = false;
 
-      matchBlocks = generateSshMatchblocks profileNames;
+      matchBlocks = (generateSshMatchblocks profileNames) // (generateHomelabSshMatchblocks homelabSshHosts);
     };
 
     # every programmers best friend
