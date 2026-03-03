@@ -19,6 +19,8 @@ $aws"""
 
 [directory]
 style = "blue"
+truncation_length = 2
+truncate_to_repo = false
 
 [character]
 success_symbol = "[❯](purple)"

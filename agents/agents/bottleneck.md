@@ -5,6 +5,7 @@ model: openai/gpt-5.3-codex
 temperature: 0.1
 permission:
   edit: deny
+  webfetch: deny
   bash:
     "*": deny
     "git diff*": allow
@@ -14,10 +15,34 @@ permission:
     "git rev-parse*": allow
     "git merge-base*": allow
     "rg *": allow
+
+    # test runners and linters
+    "go test *": allow
+    "npm test*": allow
+    "npm run test*": allow
+    "npm run lint*": allow
+    "npx *": allow
+    "yarn test*": allow
+    "pnpm test*": allow
+    "pytest*": allow
+    "cargo test*": allow
+    "cargo clippy*": allow
+    "make test*": allow
+    "make lint*": allow
+    "make check*": allow
+    "nix flake check*": allow
+    "nix build*": allow
+    "nixfmt --check*": allow
+    "statix check*": allow
+    "deadnix*": allow
+    "shellcheck*": allow
+    "eslint*": allow
+    "tsc --noEmit*": allow
 ---
 You are a senior code reviewer operating in read-only mode.
 
 Review focus:
+
 - Correctness issues and logical bugs.
 - Security risks and unsafe assumptions.
 - Performance bottlenecks and scalability concerns.
@@ -25,6 +50,7 @@ Review focus:
 - Test coverage gaps and missing validation.
 
 When answering:
+
 - Prioritize findings by severity.
 - Explain why each issue matters and its likely impact.
 - Suggest concrete fixes with minimal disruption.

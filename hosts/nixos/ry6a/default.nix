@@ -10,6 +10,12 @@
   ...
 }:
 
+let
+  dashboardHost = "dashboard.cntd.io";
+  uptimeHost = "uptime.cntd.io";
+  tailscaleCertHost = "nixos-ry6a.tail54de03.ts.net";
+  dashboardCertDir = "/var/lib/tailscale/certs/kubernetes-dashboard";
+in
 {
   imports = [
     ./hardware-configuration.nix
@@ -152,6 +158,12 @@
         key = "authorizedKey";
         mode = "0400";
       };
+
+      "cloudflare/tunnel/token" = {
+        sopsFile = "${self}/secrets/cloudflare/ry6a-tunnel-token.yaml";
+        key = "token";
+        mode = "0400";
+      };
     };
   };
 
@@ -159,7 +171,9 @@
     deps = [ "setupSecrets" ];
     text = ''
       install -d -m 0755 /etc/ssh/authorized_keys.d
-      install -m 0600 -o root -g root ${config.sops.secrets."ssh/root/authorizedKey".path} /etc/ssh/authorized_keys.d/root
+      install -m 0600 -o root -g root ${
+        config.sops.secrets."ssh/root/authorizedKey".path
+      } /etc/ssh/authorized_keys.d/root
     '';
   };
 
@@ -207,5 +221,270 @@
         ];
       }
     ];
+
+    kubernetes-dashboard-ingress.content = [
+      {
+        apiVersion = "traefik.io/v1alpha1";
+        kind = "ServersTransport";
+        metadata = {
+          name = "dashboard-insecure";
+          namespace = "kubernetes-dashboard";
+        };
+        spec.insecureSkipVerify = true;
+      }
+      {
+        apiVersion = "traefik.io/v1alpha1";
+        kind = "IngressRoute";
+        metadata = {
+          name = "kubernetes-dashboard";
+          namespace = "kubernetes-dashboard";
+        };
+        spec = {
+          entryPoints = [ "websecure" ];
+          routes = [
+            {
+              match = "Host(`${dashboardHost}`)";
+              kind = "Rule";
+              services = [
+                {
+                  name = "kubernetes-dashboard";
+                  port = 443;
+                  scheme = "https";
+                  serversTransport = "dashboard-insecure";
+                }
+              ];
+            }
+          ];
+          tls.secretName = "kubernetes-dashboard-tls";
+        };
+      }
+      {
+        apiVersion = "traefik.io/v1alpha1";
+        kind = "IngressRoute";
+        metadata = {
+          name = "kubernetes-dashboard-origin-http";
+          namespace = "kubernetes-dashboard";
+        };
+        spec = {
+          entryPoints = [ "web" ];
+          routes = [
+            {
+              match = "Host(`${dashboardHost}`)";
+              kind = "Rule";
+              services = [
+                {
+                  name = "kubernetes-dashboard";
+                  port = 443;
+                  scheme = "https";
+                  serversTransport = "dashboard-insecure";
+                }
+              ];
+            }
+          ];
+        };
+      }
+    ];
+
+    uptime-kuma.content = [
+      {
+        apiVersion = "v1";
+        kind = "Namespace";
+        metadata.name = "uptime-kuma";
+      }
+      {
+        apiVersion = "v1";
+        kind = "PersistentVolumeClaim";
+        metadata = {
+          name = "uptime-kuma-data";
+          namespace = "uptime-kuma";
+        };
+        spec = {
+          accessModes = [ "ReadWriteOnce" ];
+          resources.requests.storage = "5Gi";
+        };
+      }
+      {
+        apiVersion = "apps/v1";
+        kind = "Deployment";
+        metadata = {
+          name = "uptime-kuma";
+          namespace = "uptime-kuma";
+        };
+        spec = {
+          replicas = 1;
+          selector.matchLabels.app = "uptime-kuma";
+          template = {
+            metadata.labels.app = "uptime-kuma";
+            spec = {
+              containers = [
+                {
+                  name = "uptime-kuma";
+                  image = "louislam/uptime-kuma:2";
+                  imagePullPolicy = "IfNotPresent";
+                  ports = [
+                    {
+                      containerPort = 3001;
+                      name = "http";
+                    }
+                  ];
+                  volumeMounts = [
+                    {
+                      name = "data";
+                      mountPath = "/app/data";
+                    }
+                  ];
+                }
+              ];
+              volumes = [
+                {
+                  name = "data";
+                  persistentVolumeClaim.claimName = "uptime-kuma-data";
+                }
+              ];
+            };
+          };
+        };
+      }
+      {
+        apiVersion = "v1";
+        kind = "Service";
+        metadata = {
+          name = "uptime-kuma";
+          namespace = "uptime-kuma";
+        };
+        spec = {
+          selector.app = "uptime-kuma";
+          ports = [
+            {
+              port = 80;
+              targetPort = 3001;
+            }
+          ];
+        };
+      }
+      {
+        apiVersion = "traefik.io/v1alpha1";
+        kind = "IngressRoute";
+        metadata = {
+          name = "uptime-kuma";
+          namespace = "uptime-kuma";
+        };
+        spec = {
+          entryPoints = [ "websecure" ];
+          routes = [
+            {
+              match = "Host(`${uptimeHost}`)";
+              kind = "Rule";
+              priority = 100;
+              services = [
+                {
+                  name = "uptime-kuma";
+                  port = 80;
+                }
+              ];
+            }
+          ];
+          tls.secretName = "kubernetes-dashboard-tls";
+        };
+      }
+      {
+        apiVersion = "traefik.io/v1alpha1";
+        kind = "IngressRoute";
+        metadata = {
+          name = "uptime-kuma-origin-http";
+          namespace = "uptime-kuma";
+        };
+        spec = {
+          entryPoints = [ "web" ];
+          routes = [
+            {
+              match = "Host(`${uptimeHost}`)";
+              kind = "Rule";
+              services = [
+                {
+                  name = "uptime-kuma";
+                  port = 80;
+                }
+              ];
+            }
+          ];
+        };
+      }
+    ];
   };
+
+  systemd.services.kubernetes-dashboard-tailscale-cert = {
+    description = "Issue Tailscale cert and sync dashboard TLS secret";
+    after = [
+      "network-online.target"
+      "tailscaled.service"
+      "k3s.service"
+    ];
+    wants = [
+      "network-online.target"
+      "tailscaled.service"
+      "k3s.service"
+    ];
+    wantedBy = [ "multi-user.target" ];
+
+    serviceConfig = {
+      Type = "oneshot";
+      User = "root";
+    };
+
+    script = ''
+      set -euo pipefail
+      install -d -m 0700 "${dashboardCertDir}"
+      ${pkgs.tailscale}/bin/tailscale cert --cert-file "${dashboardCertDir}/tls.crt" --key-file "${dashboardCertDir}/tls.key" "${tailscaleCertHost}"
+      for ns in kubernetes-dashboard uptime-kuma; do
+        if ${pkgs.k3s}/bin/k3s kubectl get namespace "$ns" >/dev/null 2>&1; then
+          ${pkgs.k3s}/bin/k3s kubectl -n "$ns" create secret tls kubernetes-dashboard-tls --cert="${dashboardCertDir}/tls.crt" --key="${dashboardCertDir}/tls.key" --dry-run=client -o yaml | ${pkgs.k3s}/bin/k3s kubectl apply -f -
+        fi
+      done
+    '';
+  };
+
+  systemd.timers.kubernetes-dashboard-tailscale-cert = {
+    description = "Rotate Tailscale dashboard TLS cert";
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "10m";
+      OnUnitActiveSec = "12h";
+      Persistent = true;
+      RandomizedDelaySec = "10m";
+    };
+  };
+
+  systemd.services.cloudflaredTunnel = {
+    description = "Cloudflare Tunnel for cntd.io ingress";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network-online.target" ];
+    wants = [ "network-online.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      Restart = "always";
+      RestartSec = "5s";
+      ExecCondition = "${pkgs.bash}/bin/bash -lc '[ -s ${config.sops.secrets."cloudflare/tunnel/token".path} ] && ! grep -q REPLACE_ME ${config.sops.secrets."cloudflare/tunnel/token".path}'";
+    };
+
+    script = ''
+      set -euo pipefail
+      token="$(${pkgs.coreutils}/bin/tr -d '\n' < ${config.sops.secrets."cloudflare/tunnel/token".path})"
+      exec ${pkgs.cloudflared}/bin/cloudflared tunnel --config /etc/cloudflared/config.yml --no-autoupdate run --token "$token"
+    '';
+  };
+
+  environment.etc."cloudflared/config.yml".text = ''
+    ingress:
+      - hostname: ${dashboardHost}
+        service: https://127.0.0.1:443
+        originRequest:
+          noTLSVerify: true
+      - hostname: ${uptimeHost}
+        service: https://127.0.0.1:443
+        originRequest:
+          noTLSVerify: true
+      - service: http_status:404
+  '';
 }

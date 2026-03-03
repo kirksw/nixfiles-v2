@@ -78,6 +78,8 @@
           alt-shift-s = "exec-and-forget open -a /Applications/Slack.app";
           alt-shift-g = "exec-and-forget open -na ghostty";
           alt-shift-a = "exec-and-forget ${self}/config/aerospace/raycast-ai.sh";
+          alt-shift-n = "exec-and-forget ${self}/config/aerospace/popup-notes.sh";
+          alt-shift-c = "exec-and-forget ${self}/config/aerospace/popup-ai.sh";
         };
         mode.service.binding = {
           esc = [

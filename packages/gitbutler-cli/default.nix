@@ -40,9 +40,9 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    install -Dm755 GitButler.app/Contents/MacOS/gitbutler-tauri $out/bin/but
-    install -Dm755 GitButler.app/Contents/MacOS/gitbutler-git-askpass $out/bin/gitbutler-git-askpass
-    install -Dm755 GitButler.app/Contents/MacOS/gitbutler-git-setsid $out/bin/gitbutler-git-setsid
+    install -Dm755 Contents/MacOS/gitbutler-tauri $out/bin/but
+    install -Dm755 Contents/MacOS/gitbutler-git-askpass $out/bin/gitbutler-git-askpass
+    install -Dm755 Contents/MacOS/gitbutler-git-setsid $out/bin/gitbutler-git-setsid
 
     runHook postInstall
   '';
@@ -55,7 +55,7 @@ stdenv.mkDerivation (finalAttrs: {
     updateScript = writeShellScript "update-gitbutler-cli" ''
       set -euo pipefail
 
-      VERSION_JSON=${./versions.json}
+      VERSION_JSON="$repo_root/packages/gitbutler-cli/versions.json"
 
       # Fetch latest version info for aarch64
       AARCH64_INFO=$(${lib.getExe curl} -fsSL https://app.gitbutler.com/releases/release/darwin-aarch64/0.0.0)

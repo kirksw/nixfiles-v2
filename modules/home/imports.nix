@@ -11,6 +11,7 @@
   ./programs/lunar.nix
   ./programs/neovim.nix
   ./programs/opencode.nix
+  ./programs/pi-coding-agent.nix
   ./programs/qemu.nix
   ./programs/sketchybar.nix
   ./programs/sops.nix

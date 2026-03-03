@@ -1,5 +1,6 @@
 {
   pkgs,
+  pkgs-unstable,
   lib,
   config,
   ...
@@ -40,7 +41,7 @@
       unzip
 
       # proton
-      proton-pass-cli
+      pkgs-unstable.proton-pass-cli
 
       # credential
       docker-credential-helpers

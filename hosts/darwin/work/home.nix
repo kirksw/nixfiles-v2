@@ -45,6 +45,7 @@
   homeModules.treekanga.enable = true;
   homeModules.opencode.enable = true;
   homeModules.codex.enable = true;
+  homeModules.piCodingAgent.enable = true;
   homeModules.swePrunerMcp.enable = false;
   # misc
   homeModules.youtube.enable = true;

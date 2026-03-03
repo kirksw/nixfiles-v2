@@ -24,7 +24,7 @@ let
 
   updateAllPackages = pkgs.writeShellScriptBin "update-packages" ''
     set -euo pipefail
-    repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null || ${pkgs.coreutils}/bin/pwd)"
+    export repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null || ${pkgs.coreutils}/bin/pwd)"
     cd "$repo_root"
     echo "Updating all packages..."
     ${builtins.concatStringsSep "\n" (

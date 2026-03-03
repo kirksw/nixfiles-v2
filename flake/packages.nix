@@ -1,7 +1,10 @@
 { nixpkgs }:
 system:
 let
-  pkgs = import nixpkgs { inherit system; };
+  pkgs = import nixpkgs {
+    inherit system;
+    config.allowUnfree = true;
+  };
   packagesDir = ../packages;
   packageNames = builtins.filter (name: builtins.pathExists (packagesDir + "/${name}/default.nix")) (
     builtins.attrNames (builtins.readDir packagesDir)

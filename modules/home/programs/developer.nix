@@ -115,7 +115,7 @@ in
       zig
       rustup
       coursier
-      nodejs_24
+      nodejs_22
       python312
       # doc
       pandoc
@@ -152,7 +152,8 @@ in
       enable = true;
       enableDefaultConfig = false;
 
-      matchBlocks = (generateSshMatchblocks profileNames) // (generateHomelabSshMatchblocks homelabSshHosts);
+      matchBlocks =
+        (generateSshMatchblocks profileNames) // (generateHomelabSshMatchblocks homelabSshHosts);
     };
 
     # every programmers best friend
@@ -210,6 +211,10 @@ in
       settings = {
         repoPaths = {
           "lunarway/hubble-continuum" = "/Users/kisw/git/github.com/lunarway/hubble-continuum/review";
+          "lunarway/hubble-flink-platform" =
+            "/Users/kisw/git/github.com/lunarway/hubble-flink-platform/review";
+          "lunarway/lunar-way-hubble-transformations" =
+            "/Users/kisw/git/github.com/lunarway/lunarway/lunar-way-hubble-transformations/review";
         };
       };
     };
