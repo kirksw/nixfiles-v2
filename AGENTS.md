@@ -13,7 +13,7 @@ This is a Nix flake-based mono-repo for macOS (`nix-darwin`) and Linux (`NixOS`)
 - `apps/<system>/`: operational wrappers (`build`, `switch`, `rollback`).
 - `scripts/check-structure.sh`: enforces module-manifest and namespace conventions.
 - `secrets/`: SOPS-encrypted YAML secrets.
-- `agents/agents/`: OpenCode subagent definitions (markdown files synced to `~/.config/opencode/agents/`).
+- `agents/opencode/agents/`: OpenCode subagent definitions (markdown files synced to `~/.config/opencode/agents/`).
 - `agents/skills/`: OpenCode skill definitions (synced to `~/.config/opencode/skills/`).
 - `docs/agents/`: feature plans (`feat-*.md`) and completed summaries (`completed/`).
 

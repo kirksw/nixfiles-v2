@@ -40,27 +40,81 @@ let
     set -euo pipefail
 
     repo_root="$(${pkgs.git}/bin/git rev-parse --show-toplevel 2>/dev/null || ${pkgs.coreutils}/bin/pwd)"
-    source_agents="$repo_root/agents/agents"
-    source_skills="$repo_root/agents/skills"
-    target_root="$HOME/.config/opencode"
-    target_agents="$target_root/agents"
-    target_skills="$target_root/skills"
+    source_opencode_agents="$repo_root/agents/opencode/agents"
+    source_opencode_agents_guide="$repo_root/agents/opencode/AGENTS.md"
+    source_shared_skills="$repo_root/agents/skills"
+    source_pi_agents="$repo_root/agents/pi/agents"
+    source_pi_agents_guide="$repo_root/agents/pi/AGENTS.md"
+    source_pi_extensions="$repo_root/agents/pi/extensions"
+    source_pi_prompts="$repo_root/agents/pi/prompts"
 
-    if [ ! -d "$source_agents" ]; then
-      echo "Missing source directory: $source_agents" >&2
+    target_opencode_root="$HOME/.config/opencode"
+    target_opencode_agents="$target_opencode_root/agents"
+    target_opencode_skills="$target_opencode_root/skills"
+    target_opencode_agents_guide="$target_opencode_root/AGENTS.md"
+
+    target_pi_root="$HOME/.pi/agent"
+    target_pi_agents="$target_pi_root/agents"
+    target_pi_skills="$target_pi_root/skills"
+    target_pi_extensions="$target_pi_root/extensions"
+    target_pi_prompts="$target_pi_root/prompts"
+    target_pi_agents_guide="$target_pi_root/AGENTS.md"
+
+    if [ ! -d "$source_opencode_agents" ]; then
+      echo "Missing source directory: $source_opencode_agents" >&2
       exit 1
     fi
 
-    if [ ! -d "$source_skills" ]; then
-      echo "Missing source directory: $source_skills" >&2
+    if [ ! -f "$source_opencode_agents_guide" ]; then
+      echo "Missing source file: $source_opencode_agents_guide" >&2
       exit 1
     fi
 
-    ${pkgs.coreutils}/bin/mkdir -p "$target_agents" "$target_skills"
-    ${pkgs.coreutils}/bin/cp -R "$source_agents"/. "$target_agents"/
-    ${pkgs.coreutils}/bin/cp -R "$source_skills"/. "$target_skills"/
+    if [ ! -d "$source_shared_skills" ]; then
+      echo "Missing source directory: $source_shared_skills" >&2
+      exit 1
+    fi
 
-    echo "Synced OpenCode assets to $target_root"
+    if [ ! -d "$source_pi_agents" ]; then
+      echo "Missing source directory: $source_pi_agents" >&2
+      exit 1
+    fi
+
+    if [ ! -f "$source_pi_agents_guide" ]; then
+      echo "Missing source file: $source_pi_agents_guide" >&2
+      exit 1
+    fi
+
+    if [ ! -d "$source_pi_extensions" ]; then
+      echo "Missing source directory: $source_pi_extensions" >&2
+      exit 1
+    fi
+
+    if [ ! -d "$source_pi_prompts" ]; then
+      echo "Missing source directory: $source_pi_prompts" >&2
+      exit 1
+    fi
+
+    ${pkgs.coreutils}/bin/mkdir -p \
+      "$target_opencode_agents" \
+      "$target_opencode_skills" \
+      "$target_pi_agents" \
+      "$target_pi_skills" \
+      "$target_pi_extensions" \
+      "$target_pi_prompts"
+
+    ${pkgs.coreutils}/bin/cp -R "$source_opencode_agents"/. "$target_opencode_agents"/
+    ${pkgs.coreutils}/bin/cp -R "$source_shared_skills"/. "$target_opencode_skills"/
+    ${pkgs.coreutils}/bin/cp "$source_opencode_agents_guide" "$target_opencode_agents_guide"
+
+    ${pkgs.coreutils}/bin/cp -R "$source_pi_agents"/. "$target_pi_agents"/
+    ${pkgs.coreutils}/bin/cp -R "$source_shared_skills"/. "$target_pi_skills"/
+    ${pkgs.coreutils}/bin/cp -R "$source_pi_extensions"/. "$target_pi_extensions"/
+    ${pkgs.coreutils}/bin/cp -R "$source_pi_prompts"/. "$target_pi_prompts"/
+    ${pkgs.coreutils}/bin/cp "$source_pi_agents_guide" "$target_pi_agents_guide"
+
+    echo "Synced OpenCode assets to $target_opencode_root"
+    echo "Synced pi assets to $target_pi_root"
   '';
 in
 (
@@ -84,7 +138,7 @@ in
     type = "app";
     program = "${syncAgents}/bin/sync-agents";
     meta = {
-      description = "Copy repository agents and skills to ~/.config/opencode.";
+      description = "Copy repository agents/skills to OpenCode and pi config directories.";
     };
   };
 }

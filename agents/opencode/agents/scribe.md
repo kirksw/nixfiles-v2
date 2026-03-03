@@ -42,7 +42,7 @@ changed before writing anything. Do not invent or summarize from memory — deri
 
 ## Documents you do not own
 
-- `agents/AGENTS.md` — LLM-facing workflow instructions. Not yours to touch.
+- `agents/opencode/AGENTS.md` — LLM-facing workflow instructions. Not yours to touch.
 - Any source code, Nix files, configs, or agent prompt files.
 
 ## Session docs
