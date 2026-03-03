@@ -8,6 +8,28 @@
 }:
 
 let
+  system = pkgs.stdenv.hostPlatform.system;
+  swePrunerMcpPkg = self.packages.${system}.swe-pruner-mcp or null;
+
+  codexMcpSection = if config.homeModules.swePrunerMcp.enable && swePrunerMcpPkg != null then
+    ''
+    [mcp_servers.swe-pruner]
+    command = "${swePrunerMcpPkg}/bin/swe-pruner-mcp"
+    environment = { MODEL_PATH = "${config.home.homeDirectory}/.cache/swe-pruner/models/code-pruner", STATS_FILE = "${config.home.homeDirectory}/.cache/swe-pruner/stats.json" }
+    ''
+  else "";
+
+  codexConfig = ''
+    model = "gpt-5.3-codex"
+    model_reasoning_effort = "high"
+
+    ${codexMcpSection}
+
+    [features]
+    experimental_use_rmcp_client = true
+    multi_agent = true
+  '';
+
   mkCodexWrapper = pkgs.writeShellScriptBin "codex" ''
     set -euo pipefail
 
@@ -65,5 +87,7 @@ in
     home.packages = [
       mkCodexWrapper
     ];
+
+    home.file.".codex/config.toml".text = codexConfig;
   };
 }

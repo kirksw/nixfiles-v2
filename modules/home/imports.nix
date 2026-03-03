@@ -4,6 +4,7 @@
   ./programs/codex.nix
   ./programs/colima.nix
   ./programs/communication.nix
+  ./programs/cursor.nix
   ./programs/developer.nix
   ./programs/devops.nix
   ./programs/gcloud.nix

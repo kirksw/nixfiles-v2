@@ -23,7 +23,7 @@ Nix flake repository for macOS (`nix-darwin`) and Linux (`NixOS`) hosts.
 
 - Update flake inputs: `nix flake update`
 - Update custom packages: `nix run .#update-packages`
-- Sync OpenCode + pi agents/skills/extensions/prompts/context files: `nix run .#sync-agents`
+- Sync OpenCode, Claude, Cursor, Codex, and pi agents/skills/config assets: `nix run .#sync-agents`
 - Check structure rules: `./scripts/check-structure.sh`
 
 ## Conventions

@@ -46,7 +46,8 @@
   homeModules.opencode.enable = true;
   homeModules.codex.enable = true;
   homeModules.piCodingAgent.enable = true;
-  homeModules.swePrunerMcp.enable = false;
+  homeModules.swePrunerMcp.enable = true;
+  homeModules.cursor.enable = true;
   # misc
   homeModules.youtube.enable = true;
 

@@ -33,4 +33,10 @@
       ;
   };
   paths = import ./paths.nix { };
+  mcp = import ./mcp.nix {
+    inherit
+      lib
+      self
+      ;
+  };
 }

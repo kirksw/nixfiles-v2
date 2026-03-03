@@ -13,8 +13,9 @@ Effort: `XS` <1h, `S` 1-4h, `M` half day, `L` 1-2 days, `XL` 3+ days.
 
 ## Open
 
+- P2 XS Manually smoke-test PI todo extension in interactive session (`/todos`, branch switch/fork replay) (feat-pi-todo-extension)
+- P2 S Add frontmatter/schema validator for Claude/Cursor/Codex agent assets (feat-multi-platform-agent-support)
 - P2 S Add pi agent frontmatter validator to check `name`/`description`/`tools` consistency (feat-pi-agent-support)
-- P2 S Add optional prune mode to `sync-agents` to remove stale files from OpenCode/pi target dirs (feat-pi-agent-support)
 - P2 S Automate agent sync via home-manager activation instead of manual `nix run .#sync-agents` (feat-initial-agents)
 - P2 XS Add `steps` limits to subagents for cost control (feat-initial-agents)
 - P2 S Tighten `mid-engineer` bash permissions to deny destructive commands (feat-initial-agents)

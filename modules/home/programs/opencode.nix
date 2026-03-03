@@ -58,7 +58,7 @@ let
   // lib.optionalAttrs config.homeModules.swePrunerMcp.enable {
     swe-pruner = {
       type = "local";
-      enabled = false;
+      enabled = true;
       command = [ "${swePrunerMcpPkg}/bin/swe-pruner-mcp" ];
       environment = {
         MODEL_PATH = swePrunerModelPath;

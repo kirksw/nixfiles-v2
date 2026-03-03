@@ -46,6 +46,10 @@ should be independently committable and describable in one line. This gives `scr
 git log to document from and makes review by `bottleneck` more effective. Commit each chunk
 as you complete it — do not batch unrelated changes into a single commit.
 
+## Context Management
+
+Use `swe-pruner-mcp` skill when reading large files (>500 lines) or searching codebases with many matches. The MCP tools `read_pruned` and `search_pruned` reduce token usage by 23-54% by returning only context-relevant code.
+
 ## Anti-Patterns
 
 - Do not delegate a task to multiple implementation agents in parallel on the same files.

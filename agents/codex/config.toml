@@ -1,0 +1,63 @@
+model = "gpt-5.3-codex"
+model_reasoning_effort = "high"
+
+[projects."/Users/kisw/nixfiles-v2"]
+trust_level = "trusted"
+
+[projects."/Users/kisw/git/github.com/kirksw/ezgit"]
+trust_level = "trusted"
+
+[projects."/Users/kisw/git/github.com/kirksw/workagents"]
+trust_level = "trusted"
+
+[projects."/Users/kisw/git/github.com/kirksw/scratchpad"]
+trust_level = "trusted"
+
+[projects."/Users/kisw/projects/work/lw-zsh"]
+trust_level = "trusted"
+
+[projects."/Users/kisw/git/github.com/kirksw/engram"]
+trust_level = "trusted"
+
+[projects."/Users/kisw/git/github.com/kirksw/workbench"]
+trust_level = "trusted"
+
+[features]
+experimental_use_rmcp_client = true
+multi_agent = true
+
+[agents]
+max_threads = 6
+max_depth = 1
+
+[agents."10xBEAST"]
+description = "Unblocks engineers, challenges bad plans, and forces decisions when progress stalls."
+config_file = "agents/10xBEAST.toml"
+
+[agents."code-monkey"]
+description = "Handles the majority of engineering tasks — implementation, bug fixes, refactors, and maintenance."
+config_file = "agents/code-monkey.toml"
+
+[agents."the-architect"]
+description = "Designs system architecture, API boundaries, and implementation plans for complex changes."
+config_file = "agents/the-architect.toml"
+
+[agents.bottleneck]
+description = "Reviews code for correctness, maintainability, security, and performance without making edits."
+config_file = "agents/bottleneck.toml"
+
+[agents."chaos-demon"]
+description = "Finds how things break — reports failure modes, edge cases, and resilience gaps without suggesting fixes."
+config_file = "agents/chaos-demon.toml"
+
+[agents."code-red"]
+description = "Performs security and vulnerability audits with threat-focused, prioritized remediation guidance in read-only mode."
+config_file = "agents/code-red.toml"
+
+[agents.scribe]
+description = "Updates documentation after work completes — session logs, README, ARCHITECTURE, and reference docs. Uses git commits as the changelog."
+config_file = "agents/scribe.toml"
+
+[agents.explore]
+description = "Fast exploration agent for understanding codebases, finding files, and gathering context."
+config_file = "agents/explore.toml"
