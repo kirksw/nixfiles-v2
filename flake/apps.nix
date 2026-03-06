@@ -65,17 +65,15 @@ let
 
     source_codex_agents="$repo_root/agents/codex/agents"
     source_codex_guide="$repo_root/agents/codex/AGENTS.md"
-    source_codex_config="$repo_root/agents/codex/config.toml"
 
     source_pi_agents="$repo_root/agents/pi/agents"
     source_pi_agents_guide="$repo_root/agents/pi/AGENTS.md"
     source_pi_extensions="$repo_root/agents/pi/extensions"
     source_pi_prompts="$repo_root/agents/pi/prompts"
 
-    target_opencode_root="$HOME/.config/opencode"
-    target_opencode_agents="$target_opencode_root/agents"
-    target_opencode_skills="$target_opencode_root/skills"
-    target_opencode_agents_guide="$target_opencode_root/AGENTS.md"
+    # opencode profiles (agents/skills synced to both)
+    target_opencode_personal="$HOME/.config/opencode/profiles/personal/opencode"
+    target_opencode_work="$HOME/.config/opencode/profiles/work/opencode"
 
     target_claude_root="$HOME/.claude"
     target_claude_agents="$target_claude_root/agents"
@@ -87,11 +85,9 @@ let
     target_cursor_skills="$target_cursor_root/skills"
     target_cursor_guide="$target_cursor_root/AGENTS.md"
 
-    target_codex_root="$HOME/.codex"
-    target_codex_agents="$target_codex_root/agents"
-    target_codex_skills="$target_codex_root/skills"
-    target_codex_guide="$target_codex_root/AGENTS.md"
-    target_codex_config="$target_codex_root/config.toml"
+    # codex profiles (agents/skills synced to both, config.toml is nix-managed)
+    target_codex_personal="$HOME/.config/codex/profiles/personal"
+    target_codex_work="$HOME/.config/codex/profiles/work"
 
     target_pi_root="$HOME/.pi/agent"
     target_pi_agents="$target_pi_root/agents"
@@ -145,11 +141,6 @@ let
       exit 1
     fi
 
-    if [ ! -f "$source_codex_config" ]; then
-      echo "Missing source file: $source_codex_config" >&2
-      exit 1
-    fi
-
     if [ ! -d "$source_pi_agents" ]; then
       echo "Missing source directory: $source_pi_agents" >&2
       exit 1
@@ -171,22 +162,31 @@ let
     fi
 
     ${pkgs.coreutils}/bin/mkdir -p \
-      "$target_opencode_agents" \
-      "$target_opencode_skills" \
+      "$target_opencode_personal/agents" \
+      "$target_opencode_personal/skills" \
+      "$target_opencode_work/agents" \
+      "$target_opencode_work/skills" \
       "$target_claude_agents" \
       "$target_claude_skills" \
       "$target_cursor_agents" \
       "$target_cursor_skills" \
-      "$target_codex_agents" \
-      "$target_codex_skills" \
+      "$target_codex_personal/agents" \
+      "$target_codex_personal/skills" \
+      "$target_codex_work/agents" \
+      "$target_codex_work/skills" \
       "$target_pi_agents" \
       "$target_pi_skills" \
       "$target_pi_extensions" \
       "$target_pi_prompts"
 
-    sync_tree "$source_opencode_agents" "$target_opencode_agents"
-    sync_tree "$source_shared_skills" "$target_opencode_skills"
-    ${pkgs.coreutils}/bin/cp "$source_opencode_agents_guide" "$target_opencode_agents_guide"
+    # opencode: sync to both profiles
+    sync_tree "$source_opencode_agents" "$target_opencode_personal/agents"
+    sync_tree "$source_shared_skills" "$target_opencode_personal/skills"
+    ${pkgs.coreutils}/bin/cp "$source_opencode_agents_guide" "$target_opencode_personal/AGENTS.md"
+
+    sync_tree "$source_opencode_agents" "$target_opencode_work/agents"
+    sync_tree "$source_shared_skills" "$target_opencode_work/skills"
+    ${pkgs.coreutils}/bin/cp "$source_opencode_agents_guide" "$target_opencode_work/AGENTS.md"
 
     sync_tree "$source_claude_agents" "$target_claude_agents"
     sync_tree "$source_shared_skills" "$target_claude_skills"
@@ -196,10 +196,14 @@ let
     sync_tree "$source_shared_skills" "$target_cursor_skills"
     ${pkgs.coreutils}/bin/cp "$source_cursor_guide" "$target_cursor_guide"
 
-    sync_tree "$source_codex_agents" "$target_codex_agents"
-    sync_tree "$source_shared_skills" "$target_codex_skills"
-    ${pkgs.coreutils}/bin/cp "$source_codex_guide" "$target_codex_guide"
-    ${pkgs.coreutils}/bin/cp "$source_codex_config" "$target_codex_config"
+    # codex: sync to both profiles (config.toml is nix-managed)
+    sync_tree "$source_codex_agents" "$target_codex_personal/agents"
+    sync_tree "$source_shared_skills" "$target_codex_personal/skills"
+    ${pkgs.coreutils}/bin/cp "$source_codex_guide" "$target_codex_personal/AGENTS.md"
+
+    sync_tree "$source_codex_agents" "$target_codex_work/agents"
+    sync_tree "$source_shared_skills" "$target_codex_work/skills"
+    ${pkgs.coreutils}/bin/cp "$source_codex_guide" "$target_codex_work/AGENTS.md"
 
     sync_tree "$source_pi_agents" "$target_pi_agents"
     sync_tree "$source_shared_skills" "$target_pi_skills"
@@ -207,10 +211,10 @@ let
     sync_tree "$source_pi_prompts" "$target_pi_prompts"
     ${pkgs.coreutils}/bin/cp "$source_pi_agents_guide" "$target_pi_agents_guide"
 
-    echo "Synced OpenCode assets to $target_opencode_root"
+    echo "Synced OpenCode assets to $target_opencode_personal and $target_opencode_work"
     echo "Synced Claude assets to $target_claude_root"
     echo "Synced Cursor assets to $target_cursor_root"
-    echo "Synced Codex assets to $target_codex_root"
+    echo "Synced Codex assets to $target_codex_personal and $target_codex_work"
     echo "Synced pi assets to $target_pi_root"
   '';
 in

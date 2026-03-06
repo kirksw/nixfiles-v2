@@ -8,6 +8,7 @@
 }:
 
 let
+  homeDir = config.home.homeDirectory;
   system = pkgs.stdenv.hostPlatform.system;
   swePrunerMcpPkg = self.packages.${system}.swe-pruner-mcp or null;
 
@@ -15,7 +16,7 @@ let
     ''
     [mcp_servers.swe-pruner]
     command = "${swePrunerMcpPkg}/bin/swe-pruner-mcp"
-    environment = { MODEL_PATH = "${config.home.homeDirectory}/.cache/swe-pruner/models/code-pruner", STATS_FILE = "${config.home.homeDirectory}/.cache/swe-pruner/stats.json" }
+    environment = { MODEL_PATH = "${homeDir}/.cache/swe-pruner/models/code-pruner", STATS_FILE = "${homeDir}/.cache/swe-pruner/stats.json" }
     ''
   else "";
 
@@ -29,6 +30,10 @@ let
     experimental_use_rmcp_client = true
     multi_agent = true
   '';
+
+  # --- profile paths ---
+  personalHome = "${homeDir}/.config/codex/profiles/personal";
+  workHome = "${homeDir}/.config/codex/profiles/work";
 
   mkCodexWrapper = pkgs.writeShellScriptBin "codex" ''
     set -euo pipefail
@@ -47,16 +52,17 @@ let
         exit 1
       fi
       export OPENAI_BASE_URL="https://eu.api.openai.com/v1"
-      export CODEX_HOME="''${HOME}/.config/lunar/codex"
+      export CODEX_HOME="${workHome}"
       export CODEX_GITHUB_PERSONAL_ACCESS_TOKEN="$(tr -d '[:space:]' < "$GITHUB_PAT_PATH")"
-      echo "codex: using work config (lunar api key)" >&2
+      echo "codex: using work profile (lunar)" >&2
       if ! "$CODEX_BIN" login status; then
           cat "$LUNAR_KEY_PATH" | "$CODEX_BIN" login --with-api-key
       fi
       exec "$CODEX_BIN" "$@"
     else
+      export CODEX_HOME="${personalHome}"
       export CODEX_GITHUB_PERSONAL_ACCESS_TOKEN="$(tr -d '[:space:]' < "$GITHUB_PAT_PATH")"
-      echo "codex: using personal config (ChatGPT account)" >&2
+      echo "codex: using personal profile (ChatGPT account)" >&2
       if ! "$CODEX_BIN" login status; then
           "$CODEX_BIN" login
       fi
@@ -88,6 +94,10 @@ in
       mkCodexWrapper
     ];
 
-    home.file.".codex/config.toml".text = codexConfig;
+    # personal profile config
+    xdg.configFile."codex/profiles/personal/config.toml".text = codexConfig;
+
+    # work profile config (same config, different auth state managed at runtime)
+    xdg.configFile."codex/profiles/work/config.toml".text = codexConfig;
   };
 }

@@ -8,12 +8,25 @@
 }:
 
 let
+  homeDir = config.home.homeDirectory;
   swePrunerMcpPkg = self.packages.${pkgs.stdenv.hostPlatform.system}.swe-pruner-mcp;
-  swePrunerStatsFile = "${config.home.homeDirectory}/.cache/swe-pruner/stats.json";
-  swePrunerModelPath = "${config.home.homeDirectory}/.cache/swe-pruner/models/code-pruner";
+  swePrunerStatsFile = "${homeDir}/.cache/swe-pruner/stats.json";
+  swePrunerModelPath = "${homeDir}/.cache/swe-pruner/models/code-pruner";
 
-  mcpConfig = {
-    # fetches and extracts web page content
+  swePrunerMcp = lib.optionalAttrs config.homeModules.swePrunerMcp.enable {
+    swe-pruner = {
+      type = "local";
+      enabled = true;
+      command = [ "${swePrunerMcpPkg}/bin/swe-pruner-mcp" ];
+      environment = {
+        MODEL_PATH = swePrunerModelPath;
+        STATS_FILE = swePrunerStatsFile;
+      };
+    };
+  };
+
+  # --- personal profile config ---
+  personalMcp = {
     "web-reader" = {
       type = "remote";
       url = "https://api.z.ai/api/mcp/web_reader/mcp";
@@ -22,7 +35,6 @@ let
         Authorization = "Bearer {env:zai_token}";
       };
     };
-    # provides access to knowledge docs and code from OSS repos
     zread = {
       type = "remote";
       url = "https://api.z.ai/api/mcp/zread/mcp";
@@ -31,7 +43,6 @@ let
         Authorization = "Bearer {env:zai_token}";
       };
     };
-    # web searches with real time information retrievel
     web-search-prime = {
       type = "remote";
       url = "https://api.z.ai/api/mcp/web_search_prime/mcp";
@@ -40,7 +51,6 @@ let
         Authorization = "Bearer {env:zai_token}";
       };
     };
-    # vision capabilities
     zai-mcp-server = {
       type = "local";
       enabled = false;
@@ -54,20 +64,9 @@ let
         Z_AI_MODE = "ZAI";
       };
     };
-  }
-  // lib.optionalAttrs config.homeModules.swePrunerMcp.enable {
-    swe-pruner = {
-      type = "local";
-      enabled = true;
-      command = [ "${swePrunerMcpPkg}/bin/swe-pruner-mcp" ];
-      environment = {
-        MODEL_PATH = swePrunerModelPath;
-        STATS_FILE = swePrunerStatsFile;
-      };
-    };
-  };
+  } // swePrunerMcp;
 
-  opencodeconfig = {
+  personalConfig = {
     "$schema" = "https://opencode.ai/config.json";
 
     provider = {
@@ -124,31 +123,86 @@ let
       input_newline = "shift+return,ctrl+return,alt+return";
     };
 
-    mcp = mcpConfig;
+    mcp = personalMcp;
   };
 
-  mkOpencodeWrapper =
-    secretPath:
-    pkgs.writeShellScriptBin "opencode" ''
-      set -euo pipefail
+  # --- work profile config ---
+  workMcp = swePrunerMcp;
 
-      secret_path="${secretPath}"
+  workConfig = {
+    "$schema" = "https://opencode.ai/config.json";
 
-      if [ ! -f "$secret_path" ]; then
-        echo "error: secret not found at $secret_path" >&2
+    provider = {
+      openai = {
+        name = "openai";
+        options = {
+          baseURL = "https://eu.api.openai.com/v1";
+        };
+      };
+    };
+
+    agent = {
+      explore = {
+        model = "openai/gpt-5.3-codex";
+      };
+    };
+
+    compaction = {
+      auto = true;
+      prune = true;
+    };
+
+    watcher = {
+      ignore = [ ".git/**" ];
+    };
+
+    keybinds = {
+      input_submit = "return";
+      input_newline = "shift+return,ctrl+return,alt+return";
+    };
+
+    mcp = workMcp;
+  };
+
+  # --- profile paths ---
+  profileBase = "${homeDir}/.config/opencode/profiles";
+  dataProfileBase = "${homeDir}/.local/share/opencode/profiles";
+
+  # --- wrapper ---
+  mkOpencodeWrapper = pkgs.writeShellScriptBin "opencode" ''
+    set -euo pipefail
+
+    ZAI_SECRET_PATH="${config.sops.secrets."zai".path}"
+    LUNAR_OPENAI_KEY_PATH="${config.sops.secrets."api/lunar/openai".path}"
+    OPENCODE_BIN="${pkgs-unstable.opencode}/bin/opencode"
+
+    is_work_project() {
+      [[ "$(pwd)" == ~/git/github.com/lunarway?(/*) ]]
+    }
+
+    if is_work_project; then
+      if [[ ! -f "$LUNAR_OPENAI_KEY_PATH" ]]; then
+        echo "error: missing work API key at $LUNAR_OPENAI_KEY_PATH" >&2
+        exit 1
+      fi
+      export XDG_CONFIG_HOME="${profileBase}/work"
+      export XDG_DATA_HOME="${dataProfileBase}/work"
+      export OPENAI_API_KEY="$(cat "$LUNAR_OPENAI_KEY_PATH")"
+      echo "opencode: using work profile (lunar)" >&2
+      exec -a opencode "$OPENCODE_BIN" "$@"
+    else
+      if [[ ! -f "$ZAI_SECRET_PATH" ]]; then
+        echo "error: secret not found at $ZAI_SECRET_PATH" >&2
         echo "make sure sops is enabled and secrets are activated" >&2
         exit 1
       fi
-
-      if [ ! -r "$secret_path" ]; then
-        echo "error: cannot read secret at $secret_path" >&2
-        exit 1
-      fi
-
-      export zai_token=$(cat "$secret_path")
-
-      exec -a opencode ${pkgs-unstable.opencode}/bin/opencode "$@"
-    '';
+      export XDG_CONFIG_HOME="${profileBase}/personal"
+      export XDG_DATA_HOME="${dataProfileBase}/personal"
+      export zai_token="$(cat "$ZAI_SECRET_PATH")"
+      echo "opencode: using personal profile" >&2
+      exec -a opencode "$OPENCODE_BIN" "$@"
+    fi
+  '';
 in
 {
   options = {
@@ -162,12 +216,23 @@ in
         key = "zai";
         mode = "0400";
       };
+      "api/lunar/openai" = {
+        sopsFile = "${self}/secrets/api/lunar.yaml";
+        key = "openai";
+        mode = "0400";
+      };
     };
 
     home.packages = [
-      (mkOpencodeWrapper config.sops.secrets."zai".path)
+      mkOpencodeWrapper
     ];
 
-    xdg.configFile."opencode/opencode.json".text = builtins.toJSON opencodeconfig;
+    # personal profile config
+    xdg.configFile."opencode/profiles/personal/opencode/opencode.json".text =
+      builtins.toJSON personalConfig;
+
+    # work profile config
+    xdg.configFile."opencode/profiles/work/opencode/opencode.json".text =
+      builtins.toJSON workConfig;
   };
 }
